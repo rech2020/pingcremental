@@ -10,7 +10,7 @@ const sequelize = new Sequelize('database', 'user', 'password', {
 	storage: 'database.sqlite',
 });
 
-const modelsPath = path.join(__dirname, 'models');
+const modelsPath = path.join(__dirname, '../models');
 const modelFiles = fs.readdirSync(modelsPath).filter(file => file.endsWith('.js'));
 var list = {}; // list of all models
 
