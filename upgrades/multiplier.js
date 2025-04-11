@@ -26,7 +26,7 @@ module.exports = {
             multiply: 1+level*0.02,
         }
     },
-    isBuyable(upgrades) {
-        return true;
+    isBuyable(context) {
+        return Object.keys(context.upgrades).includes('redshift');
     }
 }

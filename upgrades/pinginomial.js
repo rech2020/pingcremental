@@ -16,7 +16,7 @@ module.exports = {
             add: 2^(level-1),
         }
     },
-    isBuyable(upgrades) {
+    isBuyable(context) {
         return true;
     }
 }

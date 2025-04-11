@@ -17,4 +17,7 @@ module.exports = {
             special: "blueping"
         };
     },
+    isBuyable(context) {
+        return true;
+    }
 }

@@ -17,7 +17,7 @@ module.exports = {
             multiply: Math.random()*1000 <= (level*15) ? 3 : undefined,
         }
     },
-    isBuyable(upgrades) {
+    isBuyable(context) {
         return true;
     }
 }

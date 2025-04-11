@@ -16,7 +16,7 @@ module.exports = {
             add: level*0.01*context.clicks,
         }
     },
-    isBuyable(upgrades) {
-        return true;
+    isBuyable(context) {
+        return context.clicks >= 1000;
     }
 }

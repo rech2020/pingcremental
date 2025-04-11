@@ -14,7 +14,7 @@ module.exports = {
     getEffect(level, context) {
         return {}
     },
-    isBuyable(upgrades) {
+    isBuyable(context) {
         return true;
     }
 }

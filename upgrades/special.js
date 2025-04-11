@@ -16,7 +16,7 @@ module.exports = {
             multiply: context.rare ? 100 : 1,
         }
     },
-    isBuyable(upgrades) {
+    isBuyable(context) {
         return true;
     }
 }

@@ -22,7 +22,7 @@ module.exports = {
 
         for (const [upgradeId, upgrade] of Object.entries(upgrades)) {
             const upgradeLevel = pUpgrades[upgradeId]
-            if (!upgrade.isBuyable(pUpgrades)) continue;
+            if (!upgrade.isBuyable({ upgrades: pUpgrades, clicks: playerData.clicks })) continue;
             if (upgrade.getPrice(upgradeLevel) === null) {
                 description += 
 `__**${upgrade.getDetails().name}**__ ${upgrade.getDetails().description} (**MAX**)

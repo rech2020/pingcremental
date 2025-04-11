@@ -16,7 +16,7 @@ module.exports = {
             blue: level*0.6
         }
     },
-    isBuyable(upgrades) {
-        return Object.keys(upgrades).includes('blue')
+    isBuyable(context) {
+        return Object.keys(context.upgrades).includes('blue')
     }
 }

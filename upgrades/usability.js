@@ -20,4 +20,7 @@ module.exports = {
             add: context.ping <= 50 ? level*3 : 0,
         }
     },
+    isBuyable(context) {
+        return true;
+    }
 }

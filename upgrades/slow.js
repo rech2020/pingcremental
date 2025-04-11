@@ -16,4 +16,7 @@ module.exports = {
             add: level
         }
     },
+    isBuyable(context) {
+        return true;
+    }
 }
