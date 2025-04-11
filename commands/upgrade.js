@@ -25,9 +25,9 @@ module.exports = {
             if (!upgrade.isBuyable({ upgrades: pUpgrades, clicks: playerData.clicks })) continue;
             if (upgrade.getPrice(upgradeLevel) === null) {
                 description += 
-`__**${upgrade.getDetails().name}**__ ${upgrade.getDetails().description} (**MAX**)
-__${upgrade.getEffectString(upgradeLevel)}__
 `
+__**${upgrade.getDetails().name}**__ ${upgrade.getDetails().description} (**MAX**)
+__${upgrade.getEffectString(upgradeLevel)}__`
                 continue;
             }
 
