@@ -1,6 +1,6 @@
 module.exports = {
     getPrice(currentLevel) {
-        let origPrice = 888 * (2.6^(currentLevel)) // split for sake of being readable
+        let origPrice = 888 * (2.6**(currentLevel)) // split for sake of being readable
         return Math.round(origPrice/1000)*1000 + 888
     },
     getDetails() {
@@ -20,5 +20,6 @@ module.exports = {
     },
     isBuyable(context) {
         return Object.keys(context.upgrades).includes('lucky');
-    }
+    },
+    sortOrder() { return 102 }
 }

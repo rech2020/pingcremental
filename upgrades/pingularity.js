@@ -16,5 +16,6 @@ module.exports = {
     },
     isBuyable(context) {
         return true;
-    }
+    },
+    sortOrder() { return 1000 }
 }

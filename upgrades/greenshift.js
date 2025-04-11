@@ -1,7 +1,7 @@
 module.exports = {
     getPrice(currentLevel) {
         if (currentLevel >= 5) return null; // max of 5
-        return Math.round(1250 * (2.2^(currentLevel^1.25)));
+        return Math.round(1250 * (2.2**(currentLevel^1.25)));
     },
     getDetails() {
         return {
@@ -20,5 +20,6 @@ module.exports = {
     isBuyable(context) {
         if (!context.upgrades['blue'] || !context.upgrades['redshift']) return false;
         return context.upgrades['redshift'] >= 4;
-    }
+    },
+    sortOrder() { return 13 },
 }

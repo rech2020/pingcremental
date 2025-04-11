@@ -1,6 +1,6 @@
 module.exports = {
     getPrice(currentLevel) {
-        return Math.round(100 * (1.5^(currentLevel)))
+        return Math.round(100 * (1.5**(currentLevel)))
     },
     getDetails() {
         return {
@@ -18,5 +18,6 @@ module.exports = {
     },
     isBuyable(context) {
         return true;
-    }
+    },
+    sortOrder() { return 1 },
 }

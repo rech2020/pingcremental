@@ -15,7 +15,7 @@ module.exports = {
                 
                 await command.execute(interaction);
             } else if (interaction.isButton()) {
-                if (interaction.user.id != interaction.message.interaction.user.id) {
+                if (interaction.message.interaction && interaction.user.id != interaction.message.interaction.user.id) {
                     return await interaction.reply({ content: "this one's not yours?", flags: MessageFlags.Ephemeral })
                 }
 
@@ -31,7 +31,7 @@ module.exports = {
                         await buttonCommand.buttons[split[1].split('-')[0]](interaction, split[1].split('-')[1]); 
                     }
                 }
-            } else if (interaction.isSelectMenu()) {
+            } else if (interaction.isStringSelectMenu()) {
                 if (interaction.user.id != interaction.message.interaction.user.id) {
                     return await interaction.reply({ content: "this one's not yours?", flags: MessageFlags.Ephemeral })
                 }
@@ -55,10 +55,14 @@ module.exports = {
                 embeds: [new EmbedBuilder().setTitle("An error occurred!").setDescription(`wuh oh, something broke\n\n${error}`).setColor("ff0000")],
                 flags: MessageFlags.Ephemeral
              }
-            if (interaction.replied || interaction.deferred) {
-                await interaction.followUp(reply);
-            } else {
-                await interaction.reply(reply);
+            try {
+                if (interaction.replied || interaction.deferred) {
+                    await interaction.followUp(reply);
+                } else {
+                    await interaction.reply(reply);
+                }
+            } catch {
+                console.error("[ERROR] error message sending failed? guh")
             }
         }
     },

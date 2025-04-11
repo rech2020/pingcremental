@@ -1,7 +1,7 @@
 module.exports = {
     getPrice(currentLevel) {
         if (currentLevel*1.5 >= 30) return null; // 30% max
-        return 350 * (2^currentLevel)
+        return 350 * (2**currentLevel)
     },
     getDetails() {
         return {
@@ -19,5 +19,6 @@ module.exports = {
     },
     isBuyable(context) {
         return true;
-    }
+    },
+    sortOrder() { return 5 },
 }

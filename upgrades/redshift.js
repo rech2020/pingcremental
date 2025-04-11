@@ -1,6 +1,6 @@
 module.exports = {
     getPrice(currentLevel) {
-        return 250 * (2^currentLevel)
+        return 250 * (2**currentLevel)
     },
     getDetails() {
         return {
@@ -19,5 +19,6 @@ module.exports = {
     },
     isBuyable(context) {
         return Object.keys(context.upgrades).includes('blue')
-    }
+    },
+    sortOrder() { return 12 },
 }

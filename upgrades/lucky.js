@@ -18,5 +18,6 @@ module.exports = {
     },
     isBuyable(context) {
         return Object.keys(context.upgrades).includes('special');
-    }
+    },
+    sortOrder() { return 101 }
 }

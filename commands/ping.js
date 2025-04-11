@@ -53,25 +53,25 @@ async function ping(interaction, isSuper) {
     // do upgrades stuff here
     await playerProfile.save();
 
-    if (playerProfile.clicks === 350) {
-        again.setDisabled(true);
-        const disabledRow = new ActionRowBuilder().addComponents(again);
+    if (playerProfile.clicks === 150) {
+        const button = new ButtonBuilder()
+            .setLabel('that looks important...')
+            .setStyle(ButtonStyle.Secondary)
+            .setCustomId('ping:empty')
+            .setDisabled(true);
+        const disabledRow = new ActionRowBuilder().addComponents(button);
 
-        await interaction.update({
-            content: `${pingMessages(ping, { user: interaction.user, score: playerProfile.score, clicks: playerProfile.clicks })}
-            \`${score} pts\`}
-            you have a lot of pts... why don't you go spend them over in </upgrade:[ID]>?`, // TODO: change to dynamically use ID
-            components: [disabledRow]
-        })
-        
-        await new Promise(resolve => setTimeout(resolve,1500)) // wait 1.5s
         return await interaction.update({
-            components: [row]
+            content: 
+`${pingMessages(ping, { user: interaction.user, score: playerProfile.score, clicks: playerProfile.clicks })}
+\`${playerProfile.score} pts\`
+you have a lot of pts... why don't you go spend them over in </upgrade:1360377407109861648>?`, // TODO: change to dynamically use ID
+            components: [disabledRow]
         })
     }
 
     await interaction.update({
-        content: `${pingMessages(ping, { user: interaction.user, score: playerProfile.score, clicks: playerProfile.clicks })}\n\`${score} pts\`}`,
+        content: `${pingMessages(ping, { user: interaction.user, score: playerProfile.score, clicks: playerProfile.clicks })}\n\`${playerProfile.score} pts\``,
         components: [row]
     });
 }
