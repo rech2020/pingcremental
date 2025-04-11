@@ -21,4 +21,4 @@ for (const file of modelFiles) {
 
 const database = list
 
-module.exports = { database }
+module.exports = database
