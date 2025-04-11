@@ -41,7 +41,7 @@ module.exports = {
             }
 
             ping += Math.round(Math.random()*MAX_PING_OFFSET*2) - MAX_PING_OFFSET;
-            const [playerProfile, _created] = await database.Player.findOrCreate({ where: userId = interaction.user.id })
+            const [playerProfile, _created] = await database.Player.findOrCreate({ where: { userId: interaction.user.id } })
             playerProfile.score += ping;
             playerProfile.clicks += 1;
             // do upgrades stuff here
