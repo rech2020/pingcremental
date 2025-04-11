@@ -31,6 +31,23 @@ module.exports = {
                         await buttonCommand.buttons[split[1].split('-')[0]](interaction, split[1].split('-')[1]); 
                     }
                 }
+            } else if (interaction.isSelectMenu()) {
+                if (interaction.user.id != interaction.message.interaction.user.id) {
+                    return await interaction.reply({ content: "this one's not yours?", flags: MessageFlags.Ephemeral })
+                }
+
+                const dropdownId = interaction.component.customId
+                const split = dropdownId.split(':')
+                const buttonCommand = interaction.client.commands.get(split[0])
+
+                if (split[1]) {
+                    if (!buttonCommand) {
+                        console.log(`[ERROR] No command for dropdown ${dropdownId} (command ${buttonCommand}) was found.`)
+                        return;
+                    } else { 
+                        await buttonCommand.dropdowns[split[1].split('-')[0]](interaction, split[1].split('-')[1]); 
+                    }
+                }
             }
         } catch (error) {
             console.error(error)

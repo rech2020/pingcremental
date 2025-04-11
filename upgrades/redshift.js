@@ -18,6 +18,6 @@ module.exports = {
         }
     },
     isBuyable(upgrades) {
-        return upgrades.contains('blue')
+        return Object.keys(upgrades).includes('blue')
     }
 }
