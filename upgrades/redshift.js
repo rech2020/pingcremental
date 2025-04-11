@@ -14,7 +14,7 @@ module.exports = {
     getEffect(level, context) {
         return {
             blue: level*-0.4,
-            multiplier: 1+(level*0.05)
+            multiply: 1+(level*0.05)
         }
     },
     isBuyable(context) {

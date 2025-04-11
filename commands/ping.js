@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
 const pingMessages = require('./../helpers/pingMessage.js')
 const database = require('./../helpers/database.js')
+const upgrades = require('./../helpers/upgrades.js')
 const MAX_PING_OFFSET = 5
 
 module.exports = {
@@ -45,12 +46,36 @@ async function ping(interaction, isSuper) {
             components: [row]
         })
     }
-
+    
     ping += Math.round(Math.random()*MAX_PING_OFFSET*2) - MAX_PING_OFFSET;
+    let score = ping;
+    
     const [playerProfile, _created] = await database.Player.findOrCreate({ where: { userId: interaction.user.id } })
-    playerProfile.score += ping;
+    
+    const pingMessage = pingMessages(ping, { user: interaction.user, score: playerProfile.score, clicks: playerProfile.clicks })
+    let currentEffects = {
+        mults: [],
+        blue: 0,
+        // more if needed
+    }
+    let effect;
+
+    for (const [upgradeId, level] of Object.entries(playerProfile.upgrades)) {
+        effect = upgrades[upgradeId].getEffect(level, 
+            { ping, blue: currentEffects.blue, clicks: playerProfile.clicks, rare: pingMessage.includes('0.1% chance') } // big long context
+        );
+        if (effect.add) { score += effect.add; }
+        if (effect.multiply) { currentEffects.mults.push(effect.multiply); }
+        if (effect.blue) { currentEffects.blue += effect.blue; }
+    }
+
+    for (const mult of currentEffects.mults) {
+        score *= mult;
+    }
+    score = Math.round(score);
+
     playerProfile.clicks += 1;
-    // do upgrades stuff here
+    playerProfile.score += score;
     await playerProfile.save();
 
     if (playerProfile.clicks === 150) {
@@ -63,7 +88,7 @@ async function ping(interaction, isSuper) {
 
         return await interaction.update({
             content: 
-`${pingMessages(ping, { user: interaction.user, score: playerProfile.score, clicks: playerProfile.clicks })}
+`${pingMessage}
 \`${playerProfile.score} pts\`
 you have a lot of pts... why don't you go spend them over in </upgrade:1360377407109861648>?`, // TODO: change to dynamically use ID
             components: [disabledRow]
@@ -71,7 +96,7 @@ you have a lot of pts... why don't you go spend them over in </upgrade:136037740
     }
 
     await interaction.update({
-        content: `${pingMessages(ping, { user: interaction.user, score: playerProfile.score, clicks: playerProfile.clicks })}\n\`${playerProfile.score} pts\``,
+        content: `${pingMessages(ping, { user: interaction.user, score: playerProfile.score, clicks: playerProfile.clicks })}\n\`${playerProfile.score} pts\` (\`+${score}\`)`,
         components: [row]
     });
 }
