@@ -233,10 +233,9 @@ function get(ping, context) {
     }
 
     if (ping === -1) {
-        ping = "infinite "
+        ping = "unknown "
         messagesList = [
             "i'm lost in cyberspace",
-            "you what?",
             "reality is collapsing, please try again later",
             "milliseconds? more like mystery seconds",
             "if i had a nickel for the amount of milliseconds in this ping, uhhhhhhhh",
@@ -244,6 +243,9 @@ function get(ping, context) {
             "ping is sentient and i think is trying to kill me",
             "the universe stopped responding",
             "your packet got sent through a wormhole, maybe it'll make it back someday",
+            "ping? what's a ping? where am i? what's happening?",
+            "pingn't",
+            "i don't think this is supposed to happen",
         ]
     }
 
