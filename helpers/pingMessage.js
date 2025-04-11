@@ -130,7 +130,7 @@ function get(ping, context) {
         "this ping message is only found in v0.1!",
         "i don't think these tips are particularly useful. right?",
         `it's gonna say (${ping}ms) i just know it`,
-        "clicking the button gives you points!",
+        "clicking the button gives you pts!",
         "i'm glad it's a button and not a command",
         "did you know i run on discord.js?",
         "sqrt(-1) don't know if this is how you do math",
@@ -168,11 +168,11 @@ function get(ping, context) {
 
     if (context.score) {
         if (Math.random()*100 <= 7) messagesList = [
-            `what if you had ${context.score + 15} points? or ${context.score + 3141}? no, that's unreasonable`,
+            `what if you had ${context.score + 15} pts? or ${context.score + 3141}? no, that's unreasonable`,
             `i don't know if i made this clicking too addictive. sorry in advance`,
             `number go up!`,
-            context.score >= 1000 ? `hey you're doing pretty good` : `1000 points seems like a good goal i'd think`,
-            context.score >= 1e6 ? `you have... a megapoint? why?` : `did you know 1,000,000 points is called a megapoint?`,
+            context.score >= 1000 ? `hey you're doing pretty good` : `1000 pts seems like a good goal i'd think`,
+            context.score >= 1e6 ? `you have... a megapt? why?` : `did you know 1,000,000 pts is called a megapt?`,
             `if you keep clicking like this, you'll be the next clicker extraordinaire`,
             `there's no upgrades for this, by the way`,
             `hopefully this ping isn't too much to deal with while you click away`,
@@ -185,7 +185,7 @@ function get(ping, context) {
             `maybe there's a secret ping dimention if you score high enough (but probably not)`,
             `i'm so glad they let you ping eternally`,
             `you're currently #4 in the world! just kidding, i don't actually know`,
-            `do you actually care about my ping? or do you just want points?`,
+            `do you actually care about my ping? or do you just want pts?`,
             context.clicks >= 100 ? `${context.clicks} is a pretty big amount of pings` : `you've pinged me ${context.clicks} times`,
             context.clicks >= 1000 ? `is the carpal tunnel setting in yet? with your ${context.clicks} pings?` : `you've pinged me ${context.clicks} times`,
         ]

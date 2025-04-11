@@ -20,6 +20,11 @@ module.exports = (sequelize) => {
 			defaultValue: 0,
 			allowNull: false,
 		},
+		
+		upgrades: {
+			type: DataTypes.JSON,
+			allowNull: true,
+		}
 	}, {
 		sequelize,
 		timestamps: true,

@@ -1,0 +1,23 @@
+module.exports = {
+    getPrice(currentLevel) {
+
+    },
+    getDetails() {
+        return {
+            description: "",
+            name: "",
+        }
+    },
+    getEffectString(level) {
+        return ""
+    },
+    getEffect(level, context) {
+        return {
+            add: 0,
+            multiply: 1,
+        }
+    },
+    isBuyable(upgrades) {
+        return true;
+    }
+}
