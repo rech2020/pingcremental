@@ -4,6 +4,7 @@ module.exports = {
         for (let i = 0; i < currentLevel; i++) {
             price += (i+3)*50
         }
+        price = Math.round(price * (1.1**currentLevel));
         return price;
     },
     getDetails() {
