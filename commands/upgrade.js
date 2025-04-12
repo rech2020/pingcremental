@@ -64,8 +64,13 @@ async function getEditMessage(interaction) {
     
     const [playerData, _created] = await database.Player.findOrCreate({ where: { userId: interaction.user.id }})
     if (playerData.clicks < 150) {
+        const button = new ButtonBuilder()
+            .setCustomId('upgrade:delete')
+            .setLabel('oh... okay')
+            .setStyle(ButtonStyle.Secondary)
         return {
             content: `*upgrades? what upgrades? you should go back to pinging.*\n-# (${playerData.clicks}/150)`,
+            components: [new ActionRowBuilder().addComponents(button)]
         }
     }
 

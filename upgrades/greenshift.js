@@ -5,16 +5,16 @@ module.exports = {
     },
     getDetails() {
         return {
-            description: "__x1.1__ chance to spawn a blue ping",
+            description: "__x1.15__ chance to spawn a blue ping",
             name: "greenshift?",
         }
     },
     getEffectString(level) {
-        return `x${1+level*0.1}`
+        return `x${1+level*0.15}`
     },
     getEffect(level, context) {
         return {
-            blue: context.blue * level * 0.1
+            blue: context.blue * level * 0.15
         }
     },
     isBuyable(context) {
