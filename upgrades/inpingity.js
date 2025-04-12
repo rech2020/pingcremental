@@ -4,16 +4,16 @@ module.exports = {
     },
     getDetails() {
         return {
-            description: "gain __+(0.01 x clicks)__ pts",
+            description: "gain __+1__ pt for every __350__ clicks",
             name: "inpingity",
         }
     },
     getEffectString(level) {
-        return `+(${(level*0.01).toFixed(2)} x clicks)`
+        return `+${level} per ${350-level+1} clicks`
     },
     getEffect(level, context) {
         return {
-            add: level*0.01*context.clicks,
+            add: level * (context.clicks/(350-level+1)),
         }
     },
     isBuyable(context) {
