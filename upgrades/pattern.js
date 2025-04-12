@@ -5,17 +5,17 @@ module.exports = {
     },
     getDetails() {
         return {
-            description: "gain __x1.05__ pts when last two digits of ping are the same",
+            description: "gain __x1.11__ pts when last two digits of ping are the same",
             name: "pattern recognision",
         }
     },
     getEffectString(level) {
-        return `x${1+level*0.05.toFixed(2)}`
+        return `x${1+level*0.11.toFixed(2)}`
     },
     getEffect(level, context) {
         const pString = `${context.ping}`
         return {
-            multiply: (pString[0] === pString[1]) ? 1 + (level*0.05) : 1,
+            multiply: (pString[0] === pString[1]) ? 1 + (level*0.11) : 1,
         }
     },
     isBuyable(context) {

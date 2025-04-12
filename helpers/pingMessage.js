@@ -182,7 +182,7 @@ function get(ping, context) {
             context.score >= 1000 ? `hey you're doing pretty good` : `1000 pts seems like a good goal i'd think`,
             context.score >= 1e6 ? `you have... a megapt? why?` : `did you know 1,000,000 pts is called a megapt?`,
             `if you keep clicking like this, you'll be the next clicker extraordinaire`,
-            `there's no upgrades for this, by the way`,
+            context.clicks >= 150 ? `there's no... upgrades...? oh, wait` : `there's no upgrades for this, by the way`,
             `hopefully this ping isn't too much to deal with while you click away`,
             `how come you like clicking this so much?`,
             `i mean, i get it, clicking can be fun, but don't you have other things to do? like sleep? eat?`,
@@ -199,19 +199,7 @@ function get(ping, context) {
             `points and pts are not the same, do NOT confuse them`,
         ]
     }
-
-    if (context.super) {
-        messagesList = [
-            `hey, look at that!`,
-            `whoa... it's blue now!?`,
-            `where did that thing come from`,
-            `oooo shiny`,
-            `[SUPER PING ACTIVATED]`,
-            `did you know that blue button will disappear if you don't click it?`,
-
-        ]
-    }
-
+    
     if (ping >= 150 && Math.random()*100 <= 75) messagesList = [
         `wuh oh`,
         `yikes`,
@@ -227,8 +215,8 @@ function get(ping, context) {
         `it hurts it hurts it hurts`,
         `uguuuu`,
     ]
-    
-    // 20% chance to get a regular flavored ping message, so it's not super uncommon
+
+    // 15% chance to get a regular flavored ping message, so it's not super uncommon
     if (Math.random()*100 <= 15) {
         messagesList = [
             "pong :3"
@@ -238,6 +226,28 @@ function get(ping, context) {
     if (Math.random()*1000 <= 1) {
         messagesList = [
             "this one is rare. like, really rare. like, 0.1% chance rare. feel proud of yourself",
+        ]
+    }
+
+    if (context.spawnedSuper) {
+        messagesList = [
+            `hey, look at that!`,
+            `whoa... it's blue now!?`,
+            `where did that thing come from`,
+            `oooo shiny`,
+            `[SUPER PING ACTIVATED]`,
+            `did you know? that blue button will disappear if you don't click it`,
+            `whoa! check it out! a blue thingymabob`,
+        ]
+    }
+
+    if (context.isSuper) {
+        messagesList = [
+            `that's a lot of \`pts\`!`,
+            "whoa",
+            "15x! that's a lot of x! i mean, `pts`",
+            "isn't RNG just beautiful?",
+            "lucky you!",
         ]
     }
 

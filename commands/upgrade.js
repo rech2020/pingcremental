@@ -53,7 +53,7 @@ module.exports = {
             await interaction.update(await getEditMessage(interaction));
 
             return await interaction.followUp({
-                content: `upgraded **${upgradeClass.getDetails().name}** to level ${playerUpgradeLevel+1}!`,
+                content: `upgraded **${upgradeClass.getDetails().name}** to level ${playerUpgradeLevel+1}! you've \`${playerData.score} pts\` left.`,
                 components: [new ActionRowBuilder().addComponents(button)]
             })
         })

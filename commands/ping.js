@@ -26,9 +26,12 @@ module.exports = {
     buttons: {
         "again": (async interaction => {
             await ping(interaction,false)
-        })
+        }),
+        "super": (async interaction => {
+            await ping(interaction,true)
+        }),
     }
-};
+};  
 
 async function ping(interaction, isSuper) {
     let ping = interaction.client.ws.ping;
@@ -52,9 +55,9 @@ async function ping(interaction, isSuper) {
     
     const [playerProfile, _created] = await database.Player.findOrCreate({ where: { userId: interaction.user.id } })
     
-    const pingMessage = pingMessages(ping, { user: interaction.user, score: playerProfile.score, clicks: playerProfile.clicks })
+    let pingMessage = pingMessages(ping, { user: interaction.user, score: playerProfile.score, clicks: playerProfile.clicks, isSuper: isSuper })
     let currentEffects = {
-        mults: [],
+        mults: [isSuper ? 15 : 1],
         blue: 0,
         // more if needed
     }
@@ -67,6 +70,15 @@ async function ping(interaction, isSuper) {
         if (effect.add) { score += effect.add; }
         if (effect.multiply) { currentEffects.mults.push(effect.multiply); }
         if (effect.blue) { currentEffects.blue += effect.blue; }
+    }
+
+    if (Math.random() * 1000 < currentEffects.blue*10) {
+        const superPing = new ButtonBuilder()
+            .setCustomId('ping:super')
+            .setLabel('blue ping!')
+            .setStyle(ButtonStyle.Primary);
+        row.addComponents(superPing);
+        pingMessage = pingMessages(ping, { user: interaction.user, score: playerProfile.score, clicks: playerProfile.clicks, spawnedSuper: true });
     }
 
     for (const mult of currentEffects.mults) {
@@ -96,7 +108,7 @@ you have a lot of pts... why don't you go spend them over in </upgrade:136037740
     }
 
     await interaction.update({
-        content: `${pingMessages(ping, { user: interaction.user, score: playerProfile.score, clicks: playerProfile.clicks })}\n\`${playerProfile.score} pts\` (\`+${score}\`)`,
+        content: `${pingMessage}\n\`${playerProfile.score} pts\` (\`+${score}\`)`,
         components: [row]
     });
 }
