@@ -1,3 +1,5 @@
+import UpgradeTypes from '../helpers/upgradeEnums';
+
 module.exports = {
     getPrice(currentLevel) {
         let origPrice = 888 * (2.6**(currentLevel)) // split for sake of being readable
@@ -21,5 +23,6 @@ module.exports = {
     isBuyable(context) {
         return Object.keys(context.upgrades).includes('lucky');
     },
-    sortOrder() { return 102 }
+    sortOrder() { return 102 },
+    type() { return UpgradeTypes.MULT_BONUS }
 }

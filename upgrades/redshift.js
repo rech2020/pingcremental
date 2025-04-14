@@ -1,3 +1,5 @@
+import UpgradeTypes from '../helpers/upgradeEnums';
+
 module.exports = {
     getPrice(currentLevel) {
         return 250 * (2**currentLevel)
@@ -21,4 +23,5 @@ module.exports = {
         return Object.keys(context.upgrades).includes('blue')
     },
     sortOrder() { return 12 },
+    type() { return UpgradeTypes.BLUE_PING }
 }

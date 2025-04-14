@@ -1,3 +1,5 @@
+import UpgradeTypes from '../helpers/upgradeEnums';
+
 module.exports = {
     getPrice(currentLevel) {
         if (currentLevel === 0) return 1000
@@ -21,4 +23,5 @@ module.exports = {
         return true;
     },
     sortOrder() { return 10 },
+    type() { return UpgradeTypes.BLUE_PING }
 }

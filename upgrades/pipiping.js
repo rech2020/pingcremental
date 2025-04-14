@@ -1,3 +1,5 @@
+import UpgradeTypes from '../helpers/upgradeEnums';
+
 module.exports = {
     getPrice(currentLevel) {
         if (currentLevel*0.5 >= 30) return null; // 10% max
@@ -21,4 +23,6 @@ module.exports = {
         return true;
     },
     sortOrder() { return 5 },
+
+    type() { return UpgradeTypes.MULT_BONUS }
 }

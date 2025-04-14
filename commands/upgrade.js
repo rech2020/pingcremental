@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder } = require('discord.js');
 const upgrades = require('./../helpers/upgrades.js')
 const database = require('./../helpers/database.js');
+const UpgradeTypes = require('./../helpers/upgradeEnums.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -13,6 +14,9 @@ module.exports = {
         delete: (async interaction => {
             await interaction.update(`(bye!)`);
             await interaction.deleteReply(interaction.message);
+        }),
+        category: (async (interaction, newCategory) => {
+            await interaction.update(await getEditMessage(interaction, newCategory));
         })
     },
     dropdowns: {
@@ -32,7 +36,8 @@ module.exports = {
                     .setLabel(msg[Math.floor(Math.random()*msg.length)])
                     .setStyle(ButtonStyle.Secondary)
 
-                return await interaction.reply({
+                await interaction.update(await getEditMessage(interaction, upgradeClass.type())); // fix dropdown remaining after failed upgrade
+                return await interaction.followUp({
                     content: `you dont have enough \`pts\` to afford that! (missing \`${price-playerData.score} pts\`)`,
                     components: [new ActionRowBuilder().addComponents(button)]
                 })
@@ -50,7 +55,7 @@ module.exports = {
                 .setLabel(msg[Math.floor(Math.random()*msg.length)])
                 .setStyle(ButtonStyle.Success)
             
-            await interaction.update(await getEditMessage(interaction));
+            await interaction.update(await getEditMessage(interaction, upgradeClass.type()));
 
             return await interaction.followUp({
                 content: `upgraded **${upgradeClass.getDetails().name}** to level ${playerUpgradeLevel+1}! you've \`${playerData.score} pts\` left.`,
@@ -60,7 +65,7 @@ module.exports = {
     }
 }
 
-async function getEditMessage(interaction) {
+async function getEditMessage(interaction, category) {
     
     const [playerData, _created] = await database.Player.findOrCreate({ where: { userId: interaction.user.id }})
     if (playerData.clicks < 150) {
@@ -74,6 +79,16 @@ async function getEditMessage(interaction) {
         }
     }
 
+    const buttonRow = new ActionRowBuilder();
+    for (const [_key, cat] of Object.entries(UpgradeTypes)) {
+        const button = new ButtonBuilder()
+            .setCustomId(`upgrade:category-${cat}`)
+            .setLabel(cat)
+            .setStyle(ButtonStyle.Primary)
+            .setDisabled(category == cat)
+        buttonRow.addComponents(button)
+    }
+
     const pUpgrades = playerData.upgrades
     const select = new StringSelectMenuBuilder()
         .setCustomId('upgrade:buy')
@@ -85,6 +100,7 @@ async function getEditMessage(interaction) {
 
     for (const [upgradeId, upgrade] of Object.entries(upgrades)) {
         const upgradeLevel = pUpgrades[upgradeId] ?? 0
+        if (upgrade.type() != category) continue;
         if (!upgrade.isBuyable({ upgrades: pUpgrades, clicks: playerData.clicks })) continue;
         if (upgrade.getPrice(upgradeLevel) === null) {
             embed.addFields({ 
@@ -107,5 +123,5 @@ ${upgrade.getEffectString(upgradeLevel)} -> ${upgrade.getEffectString(upgradeLev
         )
     }
 
-    return { embeds: [embed], components: [new ActionRowBuilder().addComponents(select)] }
+    return { embeds: [embed], components: [buttonRow, new ActionRowBuilder().addComponents(select)] }
 }

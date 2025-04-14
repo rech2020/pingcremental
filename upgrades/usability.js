@@ -1,3 +1,5 @@
+import UpgradeTypes from '../helpers/upgradeEnums';
+
 module.exports = {
     getPrice(currentLevel) {
         let price = 150;
@@ -24,5 +26,6 @@ module.exports = {
     isBuyable(context) {
         return true;
     },
-    sortOrder() { return 2 }
+    sortOrder() { return 2 },
+    type() { return UpgradeTypes.ADD_BONUS }
 }

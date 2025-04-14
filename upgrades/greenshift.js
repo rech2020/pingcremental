@@ -1,3 +1,5 @@
+import UpgradeTypes from '../helpers/upgradeEnums';
+
 module.exports = {
     getPrice(currentLevel) {
         if (currentLevel >= 5) return null; // max of 5
@@ -22,4 +24,5 @@ module.exports = {
         return context.upgrades['redshift'] >= 4;
     },
     sortOrder() { return 13 },
+    type() { return UpgradeTypes.BLUE_PING }
 }

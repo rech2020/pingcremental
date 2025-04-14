@@ -1,3 +1,5 @@
+import UpgradeTypes from '../helpers/upgradeEnums';
+
 module.exports = {
     getPrice(currentLevel) {
         return Math.round(1000*(1.75**currentLevel))
@@ -20,4 +22,5 @@ module.exports = {
         return context.clicks >= 1000;
     },
     sortOrder() { return 8 },
+    type() { return UpgradeTypes.ADD_BONUS }
 }

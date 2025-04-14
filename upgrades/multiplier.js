@@ -1,3 +1,5 @@
+import UpgradeTypes from '../helpers/upgradeEnums';
+
 module.exports = {
     getPrice(currentLevel) {
         let price = 100;
@@ -29,5 +31,6 @@ module.exports = {
     isBuyable(context) {
         return Object.keys(context.upgrades).includes('redshift');
     },
-    sortOrder() { return 14 }
+    sortOrder() { return 14 },
+    type() { return UpgradeTypes.FLAT }
 }

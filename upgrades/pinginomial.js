@@ -1,3 +1,5 @@
+import UpgradeTypes from '../helpers/upgradeEnums';
+
 module.exports = {
     getPrice(currentLevel) {
         return Math.round(100*(3**currentLevel))
@@ -19,5 +21,6 @@ module.exports = {
     isBuyable(context) {
         return true;
     },
-    sortOrder() { return 3 }
+    sortOrder() { return 3 },
+    type() { return UpgradeTypes.ADD_BONUS }
 }

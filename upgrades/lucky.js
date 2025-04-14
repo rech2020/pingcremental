@@ -1,3 +1,5 @@
+import UpgradeTypes from '../helpers/upgradeEnums';
+
 module.exports = {
     getPrice(currentLevel) {
         return currentLevel === 0 ? 777 : null;
@@ -19,5 +21,6 @@ module.exports = {
     isBuyable(context) {
         return Object.keys(context.upgrades).includes('special');
     },
-    sortOrder() { return 101 }
+    sortOrder() { return 101 },
+    type() { return UpgradeTypes.ONE_TIME }
 }
