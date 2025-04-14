@@ -88,6 +88,7 @@ async function ping(interaction, isSuper) {
 
     playerProfile.clicks += 1;
     playerProfile.score += score;
+    playerProfile.totalScore += score;
     await playerProfile.save();
 
     if (playerProfile.clicks === 150) {

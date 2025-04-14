@@ -20,7 +20,7 @@ async function run() {
 		list[file] = require(filePath)(sequelize,Sequelize.DataTypes);
 	}
 	
-	await sequelize.sync();
+	await sequelize.sync({ alter: true });
 	sequelize.close();
 }
 

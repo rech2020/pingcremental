@@ -25,7 +25,14 @@ module.exports = (sequelize) => {
 			type: DataTypes.JSON,
 			allowNull: false,
 			defaultValue: {},
-		}
+		},
+
+		totalScore: {
+			type: DataTypes.NUMBER,
+			defaultValue: 0,
+			allowNull: false,
+		},
+
 	}, {
 		sequelize,
 		timestamps: true,
