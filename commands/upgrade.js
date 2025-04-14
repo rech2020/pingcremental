@@ -8,7 +8,7 @@ module.exports = {
 		.setName('upgrade')
 		.setDescription('get stronger pings'),
 	async execute(interaction) {
-        await interaction.reply(await getEditMessage(interaction));
+        await interaction.reply(await getEditMessage(interaction, UpgradeTypes.ADD_BONUS));
 	},
     buttons: {
         delete: (async interaction => {
@@ -84,8 +84,8 @@ async function getEditMessage(interaction, category) {
         const button = new ButtonBuilder()
             .setCustomId(`upgrade:category-${cat}`)
             .setLabel(cat)
-            .setStyle(ButtonStyle.Primary)
-            .setDisabled(category == cat)
+            .setStyle(ButtonStyle.Secondary)
+            .setDisabled(category === cat)
         buttonRow.addComponents(button)
     }
 
