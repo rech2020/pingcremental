@@ -1,4 +1,4 @@
-import UpgradeTypes from '../helpers/upgradeEnums';
+const UpgradeTypes = require('../helpers/upgradeEnums.js');
 
 module.exports = {
     getPrice(currentLevel) {
