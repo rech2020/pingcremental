@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
+const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, InteractionContextType } = require('discord.js');
 const pingMessages = require('./../helpers/pingMessage.js')
 const database = require('./../helpers/database.js')
 const upgrades = require('./../helpers/upgrades.js')
@@ -7,7 +7,8 @@ const MAX_PING_OFFSET = 5
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('ping')
-		.setDescription('ping!'),
+		.setDescription('ping!')
+        .setContexts(InteractionContextType.BotDM, InteractionContextType.Guild, InteractionContextType.PrivateChannel),
 	async execute(interaction) {
 		const again = new ButtonBuilder()
 			.setCustomId('ping:again')

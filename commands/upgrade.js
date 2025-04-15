@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, InteractionContextType } = require('discord.js');
 const upgrades = require('./../helpers/upgrades.js')
 const database = require('./../helpers/database.js');
 const UpgradeTypes = require('./../helpers/upgradeEnums.js');
@@ -6,7 +6,8 @@ const UpgradeTypes = require('./../helpers/upgradeEnums.js');
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('upgrade')
-		.setDescription('get stronger pings'),
+		.setDescription('get stronger pings')
+        .setContexts(InteractionContextType.BotDM, InteractionContextType.Guild, InteractionContextType.PrivateChannel),
 	async execute(interaction) {
         await interaction.reply(await getEditMessage(interaction, UpgradeTypes.ADD_BONUS));
 	},
