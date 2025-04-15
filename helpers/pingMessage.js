@@ -139,6 +139,13 @@ function get(ping, context) {
         "i'm not radioactive, just reactive (to pings)",
         "on an unrelated note, wikipedia is pretty cool",
         "waiter waiter more ping messages please",
+        "english is really hard, cut me some slack",
+        "open source on [github](<https://github.com/MonkeysWithPie/pingcremental>)? neat!",
+        "go figure",
+        "coming soon to a society near you:",
+        "this is a ping message, not a ping pong message",
+        "happy holidays! which one? idk you pick",
+        "happy birthday!",
 
         // these are all references
         "i would never give you up. what? what song?",
@@ -164,7 +171,7 @@ function get(ping, context) {
         context.user ? `${context.user.username.toUpperCase()} IS YOU AND WIN` : "EMPTY IS YOU AND DEFEAT",
         "somewhere, it's raining cats",
         "shouldn't have gone to med school",
-        "i just climbing on a plant and it ate me alive. makes sense",
+        "i just climbed on a plant and it ate me alive. makes sense",
         "the fire and the ice collided with each other and now i'm dead",
         "NO ONE YES PING",
         "ping-spin triple",
