@@ -94,35 +94,32 @@ async function getEditMessage(interaction, category) {
     const select = new StringSelectMenuBuilder()
         .setCustomId('upgrade:buy')
         .setPlaceholder('pick an upgrade')
+    let description = `you have **__\`${playerData.score} pts\`__** to spend...`
     const embed = new EmbedBuilder()
         .setTitle("upgrades")
         .setColor("#73c9ae")
-        .setDescription(`you have **__\`${playerData.score} pts\`__** to spend...`)
 
     for (const [upgradeId, upgrade] of Object.entries(upgrades)) {
         const upgradeLevel = pUpgrades[upgradeId] ?? 0
         if (upgrade.type() != category) continue;
         if (!upgrade.isBuyable({ upgrades: pUpgrades, clicks: playerData.clicks })) continue;
         if (upgrade.getPrice(upgradeLevel) === null) {
-            embed.addFields({ 
-                name: `${upgrade.getDetails().name} (MAX)`, 
-                value: `${upgrade.getDetails().description}\nCurrently ${upgrade.getEffectString(upgradeLevel)}` 
-            })
+            description += `\n**${upgrade.getDetails().emoji} ${upgrade.getDetails().name} (MAX)**\n${upgrade.getDetails().description}\nCurrently ${upgrade.getEffectString(upgradeLevel)}` 
             continue;
         }
 
-        embed.addFields({ 
-            name: `${upgrade.getDetails().name} (Lv${upgradeLevel})`, 
-            value: `${upgrade.getDetails().description}
+        description += `\n**${upgrade.getDetails().emoji} ${upgrade.getDetails().name} (Lv${upgradeLevel})**
+${upgrade.getDetails().description}
 ${upgrade.getEffectString(upgradeLevel)} -> ${upgrade.getEffectString(upgradeLevel+1)} for \`${upgrade.getPrice(upgradeLevel)} pts\`` 
-        })
-        
+
         select.addOptions(
             new StringSelectMenuOptionBuilder()
                 .setLabel(`${upgrade.getDetails().name} | ${upgrade.getPrice(upgradeLevel)} pts`)
                 .setValue(upgradeId)
         )
     }
+
+    embed.setDescription(description)
 
     return { embeds: [embed], components: [buttonRow, new ActionRowBuilder().addComponents(select)] }
 }

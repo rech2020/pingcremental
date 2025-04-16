@@ -8,6 +8,7 @@ module.exports = {
         return {
             description: "getting a rare ping message gives 100x pts",
             name: "i feel special",
+            emoji: "<:upgrade_special:1361881463859187793>",
         }
     },
     getEffectString(level) {

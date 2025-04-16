@@ -9,10 +9,11 @@ module.exports = {
         return {
             description: "__x1.15__ chance to spawn a blue ping (after other upgrades)",
             name: "greenshift?",
+            emoji: "<:upgrade_greenshift:1361881347345612895>",
         }
     },
     getEffectString(level) {
-        return `x${1+level*0.15}`
+        return `x${(1+level*0.15).toFixed(2)}`
     },
     getEffect(level, context) {
         return {

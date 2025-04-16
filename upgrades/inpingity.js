@@ -8,6 +8,7 @@ module.exports = {
         return {
             description: "gain __+1__ pt for every __350__ clicks",
             name: "inpingity",
+            emoji: "<:upgrade_inpingity:1361881355167858720>",
         }
     },
     getEffectString(level) {
@@ -15,7 +16,7 @@ module.exports = {
     },
     getEffect(level, context) {
         return {
-            add: level * (context.clicks/(350-level+1)),
+            add: Math.round(level * (context.clicks/(350-level+1)),2),
         }
     },
     isBuyable(context) {

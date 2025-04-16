@@ -8,6 +8,7 @@ module.exports = {
         return {
             description: "?",
             name: "pingularity",
+            emoji: "<:upgrade_pingularity:1361881430162145451>",
         }
     },
     getEffectString(level) {

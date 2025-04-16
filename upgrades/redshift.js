@@ -8,6 +8,7 @@ module.exports = {
         return {
             description: "__-0.4%__ chance to spawn a blue ping (additive), but __x1.05__ pts",
             name: "redshift",
+            emoji: "<:upgrade_redshift:1361881449225125939>",
         }
     },
     getEffectString(level) {

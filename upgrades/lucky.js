@@ -8,6 +8,7 @@ module.exports = {
         return {
             description: "get +7 pts when ping ends in 7",
             name: "lucky number 7",
+            emoji: "<:upgrade_lucky:1361881365502759013>",
         }
     },
     getEffectString(level) {

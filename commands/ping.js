@@ -62,14 +62,23 @@ async function ping(interaction, isSuper) {
         blue: 0,
         // more if needed
     }
+    let addDisplay = [`<:ping:1361883358832885871> \`+${ping}\``];
+    let multDisplay = [];
+    if (isSuper) multDisplay.push(`<:upgrade_blue:1361881310544527542> __\`x15\`__`);
     let effect;
 
     for (const [upgradeId, level] of Object.entries(playerProfile.upgrades)) {
         effect = upgrades[upgradeId].getEffect(level, 
             { ping, blue: currentEffects.blue, clicks: playerProfile.clicks, rare: pingMessage.includes('0.1% chance'), isSuper: isSuper, } // big long context
         );
-        if (effect.add) { score += effect.add; }
-        if (effect.multiply) { currentEffects.mults.push(effect.multiply); }
+        if (effect.add && effect.add !== 0) { 
+            score += effect.add;
+            addDisplay.push(`${upgrades[upgradeId].getDetails().emoji} \`+${effect.add}\``);
+        }
+        if (effect.multiply && effect.multiply !== 1) { 
+            currentEffects.mults.push(effect.multiply);
+            multDisplay.push(`${upgrades[upgradeId].getDetails().emoji} __\`x${effect.multiply}\`__`);
+         }
         if (effect.blue) { currentEffects.blue += effect.blue; }
     }
 
@@ -110,7 +119,7 @@ you have a lot of pts... why don't you go spend them over in </upgrade:136037740
     }
 
     await interaction.update({
-        content: `${pingMessage}\n\`${playerProfile.score} pts\` (\`+${score}\`)`,
+        content: `${pingMessage}\n\`${playerProfile.score} pts\` (**\`+${score}\`** | ${addDisplay.join(', ')}${multDisplay.length !== 0 ? "," : ""} ${multDisplay.join(', ')})`,
         components: [row]
     });
 }

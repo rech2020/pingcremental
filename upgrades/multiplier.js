@@ -18,6 +18,7 @@ module.exports = {
         return {
             description: "gain __x1.02__ pts",
             name: "fine, just have a multiplier",
+            emoji: "<:upgrade_multiplier:1361881373111222385>",
         }
     },
     getEffectString(level) {
@@ -29,8 +30,8 @@ module.exports = {
         }
     },
     isBuyable(context) {
-        return Object.keys(context.upgrades).includes('redshift');
+        return context.upgrades && context.upgrades.redshift;
     },
     sortOrder() { return 14 },
-    type() { return UpgradeTypes.FLAT }
+    type() { return UpgradeTypes.MULT_BONUS }
 }
