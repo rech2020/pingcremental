@@ -136,7 +136,7 @@ you have a lot of pts... why don't you go spend them over in </upgrade:136037740
     await interaction.update({
         content: 
 `${pingMessage}
-\`${playerProfile.score} pts\` (**\`+${score}\`** | ${addDisplay.join(', ')}${multDisplay.length !== 0 ? "," : ""} ${multDisplay.join(', ')})`,
+\`${playerProfile.score} pts\` (**\`+${score}\`**)\n-# ${addDisplay.join(', ')}${multDisplay.length !== 0 ? "," : ""} ${multDisplay.join(', ')}`,
         components: [row]
     });
 }
