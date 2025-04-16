@@ -41,8 +41,7 @@ async function ping(interaction, isSuper) {
         .setCustomId('ping:again')
         .setLabel('ping again!')
         .setStyle(ButtonStyle.Secondary);
-    const row = new ActionRowBuilder()
-        .addComponents(again);
+    const row = new ActionRowBuilder();
 
     if (ping === -1) {
         return await interaction.update({
@@ -60,6 +59,7 @@ async function ping(interaction, isSuper) {
     let currentEffects = {
         mults: [isSuper ? 15 : 1],
         blue: 0,
+        special: [],
         // more if needed
     }
     let addDisplay = [`<:ping:1361883358832885871> \`+${ping}\``];
@@ -86,6 +86,11 @@ async function ping(interaction, isSuper) {
             multDisplay.push(`${upgrades[upgradeId].getDetails().emoji} __\`x${formattedMultiplier}\`__`);
          }
         if (effect.blue) { currentEffects.blue += effect.blue; }
+        if (effect.special) { currentEffects.special.push(effect.special); }
+    }
+
+    if (!currentEffects.special.includes('budge')) {
+        row.addComponents(again);
     }
 
     if (Math.random() * 1000 < currentEffects.blue*10) {
@@ -95,6 +100,10 @@ async function ping(interaction, isSuper) {
             .setStyle(ButtonStyle.Primary);
         row.addComponents(superPing);
         pingMessage = pingMessages(ping, { user: interaction.user, score: playerProfile.score, clicks: playerProfile.clicks, spawnedSuper: true });
+    }
+
+    if (currentEffects.special.includes('budge')) {
+        row.addComponents(again);
     }
 
     for (const mult of currentEffects.mults) {
@@ -124,7 +133,9 @@ you have a lot of pts... why don't you go spend them over in </upgrade:136037740
     }
 
     await interaction.update({
-        content: `${pingMessage}\n\`${playerProfile.score} pts\` (**\`+${score}\`** | ${addDisplay.join(', ')}${multDisplay.length !== 0 ? "," : ""} ${multDisplay.join(', ')})`,
+        content: 
+`${pingMessage}
+\`${playerProfile.score} pts\` (**\`+${score}\`** | ${addDisplay.join(', ')}${multDisplay.length !== 0 ? "," : ""} ${multDisplay.join(', ')})`,
         components: [row]
     });
 }
