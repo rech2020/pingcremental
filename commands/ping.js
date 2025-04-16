@@ -44,6 +44,7 @@ async function ping(interaction, isSuper) {
     const row = new ActionRowBuilder();
 
     if (ping === -1) {
+        row.addComponents(again);
         return await interaction.update({
             content: `${pingMessages(ping, { user: interaction.user })}`,
             components: [row]

@@ -2,22 +2,22 @@ const UpgradeTypes = require('../helpers/upgradeEnums.js');
 
 module.exports = {
     getPrice(currentLevel) {
-        if (currentLevel >= 4) return null; // cap at +10%
+        if (currentLevel >= 4) return null; // cap at +20%
         return Math.round(3500 * ((3*currentLevel)**2 + 1));
     },
     getDetails() {
         return {
-            description: "__+2.5%__ chance to find a blue ping after a different blue ping",
+            description: "__+5%__ chance to find a blue ping after a different blue ping",
             name: "blue chain",
             emoji: "<:upgrade_chain:1361881337015046237>",
         }
     },
     getEffectString(level) {
-        return `+${(level * 2.5).toFixed(1)}%`
+        return `+${(level * 5)}%`
     },
     getEffect(level, context) {
         return {
-            blue: context.isSuper ? level * 2.5 : 0,
+            blue: context.isSuper ? level * 5 : 0,
         }
     },
     isBuyable(context) {
