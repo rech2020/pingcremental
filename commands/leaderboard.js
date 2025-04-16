@@ -25,7 +25,7 @@ module.exports = {
             const puser = await interaction.client.users.fetch(player.userId)
             description += 
 `
-${leaderboardEmojis[Math.max(leaderboardEmojis.length, player.position)]}**${puser.username}** - \`${score} pts\` total`
+${leaderboardEmojis[Math.min(leaderboardEmojis.length, player.position)]}**${puser.username}** - \`${score} pts\` total`
         }
 
         const embed = new EmbedBuilder()
