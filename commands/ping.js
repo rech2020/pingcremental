@@ -77,7 +77,13 @@ async function ping(interaction, isSuper) {
         }
         if (effect.multiply && effect.multiply !== 1) { 
             currentEffects.mults.push(effect.multiply);
-            multDisplay.push(`${upgrades[upgradeId].getDetails().emoji} __\`x${effect.multiply}\`__`);
+
+            // Handle floating-point errors by rounding to 2 decimal places if necessary
+            const formattedMultiplier = Math.abs(effect.multiply - Math.round(effect.multiply * 100) / 100) < 1e-10
+                ? effect.multiply.toFixed(2)
+                : effect.multiply;
+
+            multDisplay.push(`${upgrades[upgradeId].getDetails().emoji} __\`x${formattedMultiplier}\`__`);
          }
         if (effect.blue) { currentEffects.blue += effect.blue; }
     }
