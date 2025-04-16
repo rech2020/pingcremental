@@ -1,5 +1,6 @@
-const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, InteractionContextType } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, InteractionContextType } = require('discord.js');
 const database = require('./../helpers/database.js')
+const sequelize = require('sequelize')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -10,7 +11,7 @@ module.exports = {
         let description = "*leaderboard updates every minute*\n";
         const lbPlayers = await database.LeaderboardPlayer.findAll({
             order: [
-                sequelize.fn(sequelize.col('position'), "DESC")
+                ['position', 'ASC'],
             ]
         });
 
@@ -25,7 +26,7 @@ module.exports = {
             const puser = await interaction.client.users.fetch(player.userId)
             description += 
 `
-${leaderboardEmojis[Math.min(leaderboardEmojis.length, player.position)]}**${puser.username}** - \`${score} pts\` total`
+${leaderboardEmojis[Math.min(leaderboardEmojis.length, player.position)-1]}**${puser.username}** - \`${player.score} pts\` total`
         }
 
         const embed = new EmbedBuilder()

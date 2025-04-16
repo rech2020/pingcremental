@@ -1,6 +1,5 @@
 const { Events } = require('discord.js')
 const database = require('./../helpers/database.js');
-const sequelize = require('sequelize');
 
 module.exports = {
     name: Events.ClientReady,
@@ -13,11 +12,10 @@ module.exports = {
 }
 
 async function updateLeaderboard() {
-    await database.LeaderboardPlayer.drop();
+    await database.LeaderboardPlayer.destroy({ where: {}, truncate: true });
     const topPlayers = await database.Player.findAll({
-        order: [
-            sequelize.fn(sequelize.col('totalScore'), "DESC")
-        ],
+        order: [['totalScore', 'DESC']],
+        attributes: ['userId', 'totalScore'],
         limit: 10,
     })
 

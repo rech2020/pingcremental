@@ -1,9 +1,9 @@
 const { Sequelize, DataTypes, Model } = require('sequelize');
 
 module.exports = (sequelize) => {
-	class LeaderboardUser extends Model {}
+	class LeaderboardPlayer extends Model {}
 
-	LeaderboardUser.init({
+	LeaderboardPlayer.init({
 		userId: {
 			type: DataTypes.STRING,
 			primaryKey: true,
@@ -24,8 +24,8 @@ module.exports = (sequelize) => {
 	}, {
 		sequelize,
 		timestamps: true,
-		modelName: 'LeaderboardUser',
+		modelName: 'LeaderboardPlayer',
 	})
 
-	return LeaderboardUser;
+	return LeaderboardPlayer;
 };
