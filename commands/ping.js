@@ -118,7 +118,6 @@ async function ping(interaction, isSuper) {
         return await interaction.update({
             content: 
 `${pingMessage}
-\`${playerProfile.score} pts\`
 you have a lot of pts... why don't you go spend them over in </upgrade:1360377407109861648>?`, // TODO: change to dynamically use ID
             components: [disabledRow]
         })
