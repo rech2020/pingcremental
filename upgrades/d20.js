@@ -6,7 +6,7 @@ module.exports = {
     },
     getDetails() {
         return {
-            description: "gain x0.9 to x1.3 pts, or x0.75 to x1.5 if you roll a 1 or 20",
+            description: "gain x0.85 to x1.25 pts, or x0.7 to x1.5 if you roll a 1 or 20",
             name: "actually roll a d20",
             emoji: "🎲",
         }
@@ -16,9 +16,9 @@ module.exports = {
     },
     getEffect(level, context) {
         const roll = Math.floor(Math.random() * 20) + 1;
-        let mult = (roll/50) + 0.9;
+        let mult = (roll/50) + 0.85;
 
-        if (roll === 1) mult = 0.75;
+        if (roll === 1) mult = 0.7;
         if (roll === 20) mult = 1.5;
 
         return {
