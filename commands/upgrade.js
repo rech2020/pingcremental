@@ -23,6 +23,7 @@ module.exports = {
     dropdowns: {
         buy: (async interaction => {
             const upgradeId = interaction.values[0];
+            if (upgradeId === 'none') return await interaction.reply({ content: 'you already got everything!', ephemeral: true });
             const playerData = await database.Player.findByPk(`${interaction.user.id}`);
 
             const playerUpgradeLevel = playerData.upgrades[upgradeId] ?? 0;
@@ -118,6 +119,16 @@ ${upgrade.getEffectString(upgradeLevel)} -> ${upgrade.getEffectString(upgradeLev
                 .setValue(upgradeId)
         )
     }
+
+    if (select.options.length === 0) {
+        select.addOptions(
+            new StringSelectMenuOptionBuilder()
+                .setLabel('upgrades are maxed!')
+                .setValue('none')
+                .setDefault(true)
+        )
+    }
+
 
     embed.setDescription(description)
 
