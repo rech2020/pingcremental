@@ -16,8 +16,8 @@ module.exports = {
     },
     getEffect(level, context) {
         return {
-            special: context.blue ? "gainGlimmer" : null + context.glimmerClicks ? "glimmer" : null,
-            multiply: context.glimmerClicks ? 1.2 : 1,
+            special: (context.isSuper ? "gainGlimmer" : (context.glimmerClicks ? "glimmer" : null)),
+            multiply: context.glimmerClicks && !context.isSuper ? 1.2 : 1,
         }
     },
     isBuyable(context) {
