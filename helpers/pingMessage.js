@@ -127,7 +127,7 @@ function get(ping, context) {
         "let me find a ping message for you...",
         "hot tip: this is NOT a cold tip, you can feel the heat", // kind of a reference to phigros
         "this ping message reminds me of the last time i saw this ping message",
-        "this ping message is only found in v0.1!",
+        "this ping message is only found in v0.2!",
         "i don't think these ping messages are particularly useful. right?",
         `it's gonna say "(${ping}ms)" i just know it...`,
         "clicking the button gives you pts!",
@@ -229,13 +229,13 @@ function get(ping, context) {
         "you've got this! unless the ping says otherwise",
         "ping retrieved. it’s not the summit, but close enough",
         "i dashed right into the lag crystal, sorry",
-        "if this ping feels hard, just breathe. and try again.",
+        "if this ping feels hard, just breathe. and try again",
         "one ping at a time, like climbing a mountain",
         "did that ping just... launch me into space?",
-        "you're filled with determination, and "
-        "the ping understands you. it refuses to fight.",
+        "you're filled with determination, and ",
+        "the ping understands you. it refuses to fight",
         "* you feel your latency crawling on your back",
-        "i spared the ping. it didn't spare me.",
+        "i spared the ping. it didn't spare me",
         "* the ping is sparing you. mercy?",
         "SOUL not required, just milliseconds",
         "hornet would’ve dodged this ping",
@@ -274,16 +274,16 @@ function get(ping, context) {
             `points and pts are not the same, do NOT confuse them`,
             `you've got ${context.score} pts. now what?`,
             `at ${context.score} pts, you've officially out-clicked my expectations`,
-            `what if i gave you ${context.score * 2} pts? no, i won’t, but what if.`,
-            `you've accumulated ${context.score} pts, which is like, a lot. probably.`,
+            `what if i gave you ${context.score * 2} pts? no, i won’t, but what if`,
+            `you've accumulated ${context.score} pts, which is like, a lot. probably`,
             context.score >= 1e5 ? `you have entered Ultra Ping Territory™` : `keep going. Ultra Ping Territory™ starts at 100,000 pts`,
             context.score >= 250000 ? `you now qualify for our totally imaginary platinum tier` : `click more. platinum tier requires 250k pts`,
             `based on your current score of ${context.score}, i diagnose you with: terminal pinging`,
-            context.score >= 1e6 ? `thats like, more than a megapt..` : `keep going! you're only ${1e6 - context.score} away from a megapt.`,
-            context.clicks >= 500 ? `you've clicked ${context.clicks} times. is your mouse okay?` : `you've clicked ${context.clicks} times. that's like, medium pinger level.`,
-            context.score % 1000 === 0 ? `your score is a very satisfying multiple of 1000. good job.` : `your score isn’t divisible by 1000. i noticed.`,
-            `at this rate, you’ll hit ${context.score + 10000} in no time. probably.`,
-            `fun fact: you've earned ${context.score} pts and not a single one was a tax write-off.`,
+            context.score >= 1e6 ? `thats like, more than a megapt` : `keep going! you're only ${1e6 - context.score} away from a megapt`,
+            context.clicks >= 500 ? `you've clicked ${context.clicks} times. is your mouse okay?` : `you've clicked ${context.clicks} times. that's like, medium pinger level`,
+            context.score % 1000 === 0 ? `your score is a very satisfying multiple of 1000. good job` : `your score isn’t divisible by 1000. i noticed`,
+            `at this rate, you’ll hit ${context.score + 10000} in no time. probably`,
+            `fun fact: you've earned ${context.score} pts and not a single one was a tax write-off`,
         ]
     }
     
@@ -318,7 +318,7 @@ function get(ping, context) {
         "this ping could file its own taxes at this point",
         "you ever try to load a PNG file with this much ping?",
         "was that a timeout or just a nap?",
-        "ping powered by a potato. a raw one.",
+        "ping powered by a potato. a raw one",
         "ping is cooking. too bad it's burning",
         "warning: ping values approaching philosophical levels",
     ]
@@ -327,17 +327,6 @@ function get(ping, context) {
     if (Math.random()*100 <= 15) {
         messagesList = [
             "pong :3"
-        ]
-    }
-
-    if (Math.random()*1000 <= 1) {
-        messagesList = [
-            "this one is rare. like, really rare. like, 0.1% chance rare. feel proud of yourself",
-            "legend says only one in a thousand sees this message. congrats, chosen one",
-            "💫 this ping is ultra shiny, 1 in 1000! screenshot or it didn’t happen",
-            "you’ll never see this again. or maybe you will. RNG is weird",
-
-
         ]
     }
 
@@ -383,6 +372,15 @@ function get(ping, context) {
             "i don’t know what you did but it was awesome",
             "ping results: critical success",
             "beyond super. beyond pong. ultra",
+        ]
+    }
+
+    if (Math.random()*1000 <= 1) {
+        messagesList = [
+            "this one is rare. like, really rare. like, 0.1% chance rare. feel proud of yourself",
+            "legend says only 0.1% sees this message. congrats, chosen one",
+            "💫 this ping is ultra shiny, 0.1%! screenshot or it didn’t happen",
+            "you’ll never see this 0.1% message again. or maybe you will. RNG is weird",
         ]
     }
 

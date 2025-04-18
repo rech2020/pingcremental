@@ -96,7 +96,7 @@ async function ping(interaction, isSuper) {
 
     for (const [upgradeId, level] of Object.entries(playerProfile.upgrades)) {
         effect = upgrades[upgradeId].getEffect(level, 
-            { ping, blue: currentEffects.blue, clicks: playerProfile.clicks, rare: pingMessage.includes('0.1% chance'), isSuper: isSuper, slumberClicks: playerProfile.slumberClicks } // big long context
+            { ping, blue: currentEffects.blue, clicks: playerProfile.clicks, rare: pingMessage.includes('0.1%'), isSuper: isSuper, slumberClicks: playerProfile.slumberClicks } // big long context
         );
         if (effect.add && effect.add !== 0) { 
             score += effect.add;
