@@ -9,6 +9,7 @@ module.exports = {
         .setContexts(InteractionContextType.BotDM, InteractionContextType.Guild, InteractionContextType.PrivateChannel),
     async execute(interaction) {
         await interaction.reply(await getMessage(interaction));
+        await interaction.editReply({}); // add (edited) so it doesn't move after refresh
     },
     buttons: {
         refresh: (async interaction => {
