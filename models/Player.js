@@ -33,12 +33,20 @@ module.exports = (sequelize) => {
 			allowNull: false,
 		},
 
+		// slumber upgrade
 		lastPing: {
 			type: DataTypes.DATE,
 			defaultValue: Date.now(),
 			allowNull: false,
 		},
 		slumberClicks: {
+			type: DataTypes.NUMBER,
+			defaultValue: 0,
+			allowNull: false,
+		},
+
+		// glimmer upgrade
+		glimmerClicks: {
 			type: DataTypes.NUMBER,
 			defaultValue: 0,
 			allowNull: false,

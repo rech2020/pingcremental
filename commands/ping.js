@@ -96,7 +96,15 @@ async function ping(interaction, isSuper) {
 
     for (const [upgradeId, level] of Object.entries(playerProfile.upgrades)) {
         effect = upgrades[upgradeId].getEffect(level, 
-            { ping, blue: currentEffects.blue, clicks: playerProfile.clicks, rare: pingMessage.includes('0.1%'), isSuper: isSuper, slumberClicks: playerProfile.slumberClicks } // big long context
+            { // LONG EVIL CONTEXT (will kill you if it gets the chance)
+                ping, 
+                blue: currentEffects.blue, 
+                clicks: playerProfile.clicks, 
+                rare: pingMessage.includes('0.1%'), 
+                isSuper: isSuper, 
+                slumberClicks: playerProfile.slumberClicks, 
+                glimmerClicks: playerProfile.glimmerClicks 
+            }
         );
         if (effect.add && effect.add !== 0) { 
             score += effect.add;
@@ -118,6 +126,12 @@ async function ping(interaction, isSuper) {
 
     if (currentEffects.special.includes('slumber')) {
         playerProfile.slumberClicks--;
+    }
+    if (currentEffects.special.includes('gainGlimmer')) {
+        playerProfile.glimmerClicks += 5;
+    }
+    if (currentEffects.special.includes('glimmer')) {
+        playerProfile.glimmerClicks--;
     }
 
     if (!currentEffects.special.includes('budge')) {
