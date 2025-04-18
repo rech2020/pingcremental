@@ -78,7 +78,7 @@ async function ping(interaction, isSuper) {
     const [playerProfile, _created] = await database.Player.findOrCreate({ where: { userId: interaction.user.id } })
     
     if (Date.now() - playerProfile.lastPing >= 1000*60*20 && playerProfile.upgrades.slumber) {
-        playerProfile.slumberClicks = Math.floor(playerProfile.lastPing - Date.now() / 1000*60*20);
+        playerProfile.slumberClicks = Math.floor(Date.now() - playerProfile.lastPing / 1000*60*20);
         playerProfile.slumberClicks = Math.min(playerProfile.slumberClicks, 144); // max of 2 days of slumber clicks
         playerProfile.slumberClicks = Math.max(playerProfile.slumberClicks, 0); // no negative slumber clicks
     }
