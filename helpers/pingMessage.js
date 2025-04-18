@@ -1,3 +1,5 @@
+const { githubContributors } = require("./apiConstants.js")
+
 function get(ping, context) {
     let messagesList = [
         "ping! wait, no, that's not right",
@@ -284,6 +286,22 @@ function get(ping, context) {
             context.score % 1000 === 0 ? `your score is a very satisfying multiple of 1000. good job` : `your score isn’t divisible by 1000. i noticed`,
             `at this rate, you’ll hit ${context.score + 10000} in no time. probably`,
             `fun fact: you've earned ${context.score} pts and not a single one was a tax write-off`,
+        ]
+    }
+
+    if (Math.random() * 100 <= 2) {
+        const contribList = githubContributors.map((contributor) => {
+            return `${contributor.login}`
+        })
+        const contributor = contribList[Math.floor(Math.random() * contribList.length)];
+        
+        messagesList = [
+            `thanks, ${contributor}!`,
+            `this ping is brought to you by ${contributor}`,
+            `ping powered by ${contributor}`,
+            `ping made possible by ${contributor}`,
+            `ping made by ${contributor}`,
+            `ping made with love by ${contributor}`,
         ]
     }
     
