@@ -8,7 +8,7 @@ module.exports = {
         return {
             description: "after clicking a blue ping, the next 5 pings will give x1.2 pts",
             name: "glimmer",
-            emoji: "✨",
+            emoji: "<:upgrade_glimmer:1362633769491890378>",
         }
     },
     getEffectString(level) {

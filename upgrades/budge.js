@@ -9,7 +9,7 @@ module.exports = {
         return {
             description: "__15%__ chance the blue ping will spawn on the left",
             name: "budge",
-            emoji: "✨",
+            emoji: "<:upgrade_budge:1362633785350426634>",
         }
     },
     getEffectString(level) {

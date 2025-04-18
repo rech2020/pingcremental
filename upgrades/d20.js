@@ -8,7 +8,7 @@ module.exports = {
         return {
             description: "gain x0.85 to x1.25 pts, or x0.7 to x1.5 if you roll a 1 or 20",
             name: "actually roll a d20",
-            emoji: "🎲",
+            emoji: "<::upgrade_d20:1362633760415285358>",
         }
     },  
     getEffectString(level) {
