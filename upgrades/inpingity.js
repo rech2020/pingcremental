@@ -12,7 +12,7 @@ module.exports = {
         }
     },
     getEffectString(level) {
-        return `+${level*0.6} per ${350-level+1} clicks`
+        return `+${(level*0.6).toFixed(1)} per ${350-level+1} clicks`
     },
     getEffect(level, context) {
         return {
