@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, InteractionContextType } = require('discord.js');
+const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, InteractionContextType, MessageFlags } = require('discord.js');
 const pingMessages = require('./../helpers/pingMessage.js')
 const database = require('./../helpers/database.js')
 const upgrades = require('./../helpers/upgrades.js')
@@ -31,10 +31,31 @@ module.exports = {
         "super": (async interaction => {
             await ping(interaction,true)
         }),
+        "delete": (async interaction => {
+            await interaction.update(`(bye!)`);
+            await interaction.deleteReply(interaction.message);
+        }),
     }
 };  
 
 async function ping(interaction, isSuper) {
+    const developmentMode = process.argv.includes('--dev') || process.argv.includes('-d');
+    if (developmentMode && interaction.user.id !== '696806601771974707') {
+        return await interaction.update({
+            content: "there's some important dev stuff going on! pings are disabled for now, but will (hopefully) be back shortly.",
+            components: [new ActionRowBuilder().addComponents(
+                new ButtonBuilder()
+                    .setCustomId('ping:again')
+                    .setLabel('ping again!')
+                    .setStyle(ButtonStyle.Secondary)
+                    .setDisabled(true),
+                new ButtonBuilder()
+                    .setCustomId('ping:delete')
+                    .setLabel('dang!')
+                    .setStyle(ButtonStyle.Secondary))
+            ],
+        })
+    }
     let ping = interaction.client.ws.ping;
 
     const again = new ButtonBuilder()
@@ -56,6 +77,9 @@ async function ping(interaction, isSuper) {
     
     const [playerProfile, _created] = await database.Player.findOrCreate({ where: { userId: interaction.user.id } })
     
+    if (playerProfile.lastPing - Date.now() >= 1000*60*20) {
+        playerProfile.slumberClicks = Math.floor(playerProfile.lastPing - Date.now() / 1000*60*20);
+    }
     let pingMessage = pingMessages(ping, { user: interaction.user, score: playerProfile.score, clicks: playerProfile.clicks, isSuper: isSuper })
     let currentEffects = {
         mults: [isSuper ? 15 : 1],
@@ -70,7 +94,7 @@ async function ping(interaction, isSuper) {
 
     for (const [upgradeId, level] of Object.entries(playerProfile.upgrades)) {
         effect = upgrades[upgradeId].getEffect(level, 
-            { ping, blue: currentEffects.blue, clicks: playerProfile.clicks, rare: pingMessage.includes('0.1% chance'), isSuper: isSuper, } // big long context
+            { ping, blue: currentEffects.blue, clicks: playerProfile.clicks, rare: pingMessage.includes('0.1% chance'), isSuper: isSuper, slumberClicks: playerProfile.slumberClicks } // big long context
         );
         if (effect.add && effect.add !== 0) { 
             score += effect.add;
@@ -88,6 +112,10 @@ async function ping(interaction, isSuper) {
          }
         if (effect.blue) { currentEffects.blue += effect.blue; }
         if (effect.special) { currentEffects.special.push(effect.special); }
+    }
+
+    if (currentEffects.special.includes('slumber')) {
+        playerProfile.slumberClicks--;
     }
 
     if (!currentEffects.special.includes('budge')) {
@@ -115,6 +143,7 @@ async function ping(interaction, isSuper) {
     playerProfile.clicks += 1;
     playerProfile.score += score;
     playerProfile.totalScore += score;
+    playerProfile.lastPing = Date.now();
     await playerProfile.save();
 
     if (playerProfile.clicks === 150) {

@@ -33,6 +33,17 @@ module.exports = (sequelize) => {
 			allowNull: false,
 		},
 
+		lastPing: {
+			type: DataTypes.DATE,
+			defaultValue: Date.now(),
+			allowNull: false,
+		},
+		slumberClicks: {
+			type: DataTypes.NUMBER,
+			defaultValue: 0,
+			allowNull: false,
+		}
+
 	}, {
 		sequelize,
 		timestamps: true,
