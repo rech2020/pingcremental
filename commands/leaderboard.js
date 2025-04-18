@@ -8,8 +8,8 @@ module.exports = {
         .setDescription('check who\'s best')
         .setContexts(InteractionContextType.BotDM, InteractionContextType.Guild, InteractionContextType.PrivateChannel),
     async execute(interaction) {
-        await interaction.reply("one sec...");
-        await interaction.editReply({ embeds: [await getMessage(interaction)] }); // add (edited) so it doesn't move after refresh
+        await interaction.reply({ embeds: [ new EmbedBuilder().setDescription('one sec...') ] });
+        await interaction.editReply(await getMessage(interaction)); // add (edited) so it doesn't move after refresh
     },
     buttons: {
         refresh: (async interaction => {
@@ -51,6 +51,7 @@ ${leaderboardEmojis[Math.min(leaderboardEmojis.length, player.position)-1]}**${p
     const row = new ActionRowBuilder()
         .addComponents(button)
     return {
+        contents: "",
         embeds: [embed],
         components: [row]
     }
