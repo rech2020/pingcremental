@@ -2,7 +2,7 @@ const UpgradeTypes = require('../helpers/upgradeEnums.js');
 
 module.exports = {
     getPrice(currentLevel) {
-        return currentLevel === 0 ? 323232 : null; // 1-time but not in the category because blue takes priority
+        return currentLevel === 0 ? 43234 : null; // 1-time but not in the category because blue takes priority
     },
     getDetails() {
         return {
