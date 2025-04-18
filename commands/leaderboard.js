@@ -8,8 +8,8 @@ module.exports = {
         .setDescription('check who\'s best')
         .setContexts(InteractionContextType.BotDM, InteractionContextType.Guild, InteractionContextType.PrivateChannel),
     async execute(interaction) {
-        await interaction.reply(await getMessage(interaction));
-        await interaction.editReply({}); // add (edited) so it doesn't move after refresh
+        await interaction.reply("one sec...");
+        await interaction.editReply({ embeds: [await getMessage(interaction)] }); // add (edited) so it doesn't move after refresh
     },
     buttons: {
         refresh: (async interaction => {
