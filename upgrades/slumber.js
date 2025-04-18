@@ -7,7 +7,7 @@ module.exports = {
     },
     getDetails() {
         return {
-            description: "gain __x1.1__ pts for 1 ping, for every 20 minutes of non-pinging",
+            description: "gain __x1.1__ pts for 1 ping, for every 20 minutes of non-pinging (up to 144 pings, or 2d inactive)",
             name: "slumber",
             emoji: "💤",
         }

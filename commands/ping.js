@@ -79,6 +79,8 @@ async function ping(interaction, isSuper) {
     
     if (playerProfile.lastPing - Date.now() >= 1000*60*20) {
         playerProfile.slumberClicks = Math.floor(playerProfile.lastPing - Date.now() / 1000*60*20);
+        playerProfile.slumberClicks = Math.min(playerProfile.slumberClicks, 144); // max of 2 days of slumber clicks
+        playerProfile.slumberClicks = Math.max(playerProfile.slumberClicks, 0); // no negative slumber clicks
     }
     let pingMessage = pingMessages(ping, { user: interaction.user, score: playerProfile.score, clicks: playerProfile.clicks, isSuper: isSuper })
     let currentEffects = {
