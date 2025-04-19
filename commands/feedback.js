@@ -115,7 +115,7 @@ async function generateFeedbackResponse(interaction, category) {
         
     }
 
-    if (dropdown.options.length === 0) {
+    if (feedbacks.length === 0) {
         description = `__no feedback here.__`;
     }
 
