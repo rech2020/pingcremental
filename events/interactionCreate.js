@@ -58,6 +58,11 @@ module.exports = {
             }
 
             console.error(error)
+            console.log(`[INFO] extra info:
+caused by ${interaction.user.username} (${interaction.user.id}) in ${interaction.guild?.name} (${interaction.guild?.id})
+${error.requestBody.json.data ? JSON.stringify(error.requestBody.json.data) : "no request body available"}
+-----
+`)
             const reply = { 
                 embeds: [new EmbedBuilder().setTitle("An error occurred!").setDescription(`wuh oh, something broke\n\n${error}`).setColor("ff0000")],
                 flags: MessageFlags.Ephemeral
