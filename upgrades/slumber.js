@@ -13,7 +13,7 @@ module.exports = {
         }
     },
     getEffectString(level) {
-        return `x${(1+level*0.1).toFixed(1)}, every ${21-level}m, up to ${(2*24*60)/(21-level)} pings`;
+        return `x${(1+level*0.1).toFixed(1)}, every ${21-level}m, up to ${Math.round((2*24*60)/(21-level))} pings`;
     },
     getEffect(level, context) {
         return {

@@ -13,7 +13,7 @@ module.exports = {
         }
     },
     getEffectString(level) {
-        return `x${1+level*0.11.toFixed(2)}`
+        return `x${(1+level*0.11).toFixed(2)}`
     },
     getEffect(level, context) {
         const pString = `${context.ping}`
