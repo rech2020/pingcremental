@@ -185,10 +185,23 @@ you have a lot of pts... why don't you go spend them over in </upgrade:136037740
         })
     }
 
-    await interaction.update({
-        content: 
-`${pingMessage}
+    try {
+        await interaction.update({
+            content:
+                `${pingMessage}
 \`${playerProfile.score} pts\` (**\`+${score}\`**)\n-# ${addDisplay.join(', ')}${multDisplay.length !== 0 ? "," : ""} ${multDisplay.join(', ')}`,
-        components: [row]
-    });
+            components: [row]
+        });
+    } catch (error) {
+        if (error.code == 200000) {
+            await interaction.editReply({
+                content:
+                    `this ping message is non-offensive, and contains nothing that will anger AutoMod! (${ping}ms)
+\`${playerProfile.score} pts\` (**\`+${score}\`**)\n-# ${addDisplay.join(', ')}${multDisplay.length !== 0 ? "," : ""} ${multDisplay.join(', ')}`,
+                components: [row]
+            });
+        } else {
+            throw error; // rethrow if not automod 
+        }
+    }
 }
