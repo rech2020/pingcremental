@@ -37,7 +37,7 @@ async function getMessage(interaction) {
         const puser = await interaction.client.users.fetch(player.userId)
         description += 
 `
-${leaderboardEmojis[Math.min(leaderboardEmojis.length, player.position)-1]}**${puser.username}** - \`${player.score} pts\` total`
+${leaderboardEmojis[Math.min(leaderboardEmojis.length, player.position)-1]}**${puser.username.replaceAll("_","\\_")}** - \`${player.score} pts\` total`
     }
 
     const embed = new EmbedBuilder()
