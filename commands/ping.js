@@ -2,6 +2,7 @@ const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, Inter
 const pingMessages = require('./../helpers/pingMessage.js')
 const database = require('./../helpers/database.js')
 const upgrades = require('./../helpers/upgrades.js')
+const { ownerId } = require('./../config.json');
 const MAX_PING_OFFSET = 5
 
 module.exports = {
@@ -43,7 +44,7 @@ module.exports = {
 
 async function ping(interaction, isSuper) {
     const developmentMode = process.argv.includes('--dev') || process.argv.includes('-d');
-    if (developmentMode && interaction.user.id !== '696806601771974707') {
+    if (developmentMode && interaction.user.id !== ownerId) {
         return await interaction.update({
             content: "there's some important dev stuff going on! pings are disabled for now, but will (hopefully) be back shortly.",
             components: [new ActionRowBuilder().addComponents(

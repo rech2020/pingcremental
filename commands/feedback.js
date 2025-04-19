@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, InteractionContextType, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, MessageFlags } = require('discord.js');
 const database = require('./../helpers/database.js')
+const { ownerId } = require('./../config.json')
 const feedbackCategories = [
     'bug',
     'upgrade',
@@ -67,7 +68,7 @@ module.exports = {
             const feedback = await database.Feedback.findByPk(feedbackId);
 
             if (!feedback) return await interaction.reply({ content: 'this one doesn\'t even exist? how?', ephemeral: true });
-            if (feedback.userId !== interaction.user.id && interaction.user.id !== '696806601771974707') return await interaction.reply({ content: 'you don\'t have permission to delete this...', ephemeral: true });
+            if (feedback.userId !== interaction.user.id && interaction.user.id !== ownerId) return await interaction.reply({ content: 'you don\'t have permission to delete this...', ephemeral: true });
             
             await feedback.destroy();
             await interaction.update(await generateFeedbackResponse(interaction, feedback.type));
@@ -104,7 +105,7 @@ async function generateFeedbackResponse(interaction, category) {
     for (const feedback of feedbacks) {
         const user = await interaction.client.users.fetch(feedback.userId);
         description += `\n- __${user.username}__: ${feedback.text}`;
-        if (interaction.user.id === feedback.userId || interaction.user.id === '696806601771974707') {
+        if (interaction.user.id === feedback.userId || interaction.user.id === ownerId) {
             dropdown.addOptions(
                 new StringSelectMenuOptionBuilder()
                     .setLabel(feedback.text)
