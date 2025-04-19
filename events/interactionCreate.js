@@ -1,4 +1,4 @@
-const { Events, ButtonStyle, ButtonBuilder, ActionRowBuilder, EmbedBuilder, PermissionsBitField, Embed, MessageFlags } = require('discord.js');
+const { Events, ButtonStyle, ButtonBuilder, ActionRowBuilder, EmbedBuilder, PermissionsBitField, Embed, MessageFlags, DiscordAPIError } = require('discord.js');
 
 module.exports = {
     name: Events.InteractionCreate,
@@ -50,6 +50,10 @@ module.exports = {
                 }
             }
         } catch (error) {
+            if (error instanceof DiscordAPIError && error.code == 10062) {
+                return console.log(`[INFO] unknown interaction error; thanks, discord`)
+            }
+
             console.error(error)
             const reply = { 
                 embeds: [new EmbedBuilder().setTitle("An error occurred!").setDescription(`wuh oh, something broke\n\n${error}`).setColor("ff0000")],
