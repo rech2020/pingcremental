@@ -83,6 +83,7 @@ async function getEditMessage(interaction, category) {
 
     const buttonRow = new ActionRowBuilder();
     for (const [_key, cat] of Object.entries(UpgradeTypes)) {
+        if (cat === UpgradeTypes.PRESTIGE && !playerData.upgrades?.pingularity) continue; // prevent seing prestige tab before unlock
         const button = new ButtonBuilder()
             .setCustomId(`upgrade:category-${cat}`)
             .setLabel(cat)
