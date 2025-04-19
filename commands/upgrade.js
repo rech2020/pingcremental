@@ -13,7 +13,7 @@ module.exports = {
 	},
     buttons: {
         delete: (async interaction => {
-            await interaction.update(`(bye!)`);
+            await interaction.update({ content: "(bye!)", components: [] });
             await interaction.deleteReply(interaction.message);
         }),
         category: (async (interaction, newCategory) => {

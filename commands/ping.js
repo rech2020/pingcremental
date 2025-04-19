@@ -32,7 +32,7 @@ module.exports = {
             await ping(interaction,true)
         }),
         "delete": (async interaction => {
-            await interaction.update(`(bye!)`);
+            await interaction.update({ content: `(bye!)`, components: [] });
             await interaction.deleteReply(interaction.message);
         }),
     }
