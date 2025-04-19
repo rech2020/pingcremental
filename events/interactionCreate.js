@@ -53,6 +53,9 @@ module.exports = {
             if (error instanceof DiscordAPIError && error.code == 10062) {
                 return console.log(`[INFO] unknown interaction error; thanks, discord`)
             }
+            if (error instanceof DiscordAPIError && error.code == 10008) {
+                return console.log(`[INFO] unknown message error; thanks, discord`)
+            }
 
             console.error(error)
             const reply = { 
