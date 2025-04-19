@@ -35,6 +35,9 @@ module.exports = {
             await interaction.update({ content: `(bye!)`, components: [] });
             await interaction.deleteReply(interaction.message);
         }),
+        "unknown": (async interaction => {
+            await interaction.reply({ content: "unknown ping occurs when the bot just restarted. this likely means something changed, so maybe there's new upgrades? if you wait a few seconds, the ping will come back to normal.", flags: MessageFlags.Ephemeral })  
+        })
     }
 };  
 
@@ -65,7 +68,10 @@ async function ping(interaction, isSuper) {
     const row = new ActionRowBuilder();
 
     if (ping === -1) {
-        row.addComponents(again);
+        row.addComponents(again, new ButtonBuilder()
+            .setCustomId('ping:unknown')
+            .setLabel('unknown ms?')
+            .setStyle(ButtonStyle.Secondary));
         return await interaction.update({
             content: `${pingMessages(ping, { user: interaction.user })}`,
             components: [row]
