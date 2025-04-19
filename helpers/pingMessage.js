@@ -196,6 +196,7 @@ function get(ping, context) {
         "breaking news: local ping bot goes rogue, spams messages",
         "i tripped over the stack trace and spilled ping everywhere",
         "the ping is an illusion, lag is real",
+        "have any ideas? try </feedback submit:1363002827664003284>!",
 
         // these are all references
         "i would never give you up. what? what song?",
