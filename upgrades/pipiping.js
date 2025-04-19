@@ -2,7 +2,7 @@ const UpgradeTypes = require('../helpers/upgradeEnums.js');
 
 module.exports = {
     getPrice(currentLevel) {
-        if (currentLevel*0.5 >= 30) return null; // 10% max
+        if (currentLevel*0.5 >= 10) return null; // 10% max
         return 350 * (2**currentLevel)
     },
     getDetails() {
