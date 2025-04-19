@@ -77,11 +77,12 @@ async function ping(interaction, isSuper) {
     
     const [playerProfile, _created] = await database.Player.findOrCreate({ where: { userId: interaction.user.id } })
     
-    if (Date.now() - playerProfile.lastPing >= 1000*60*20 && playerProfile.upgrades.slumber) {
-        playerProfile.slumberClicks += Math.floor((Date.now() - playerProfile.lastPing) / (1000*60*20));
-        playerProfile.slumberClicks = Math.min(playerProfile.slumberClicks, 144); // max of 2 days of slumber clicks
+    if (playerProfile.upgrades.slumber && Date.now() - playerProfile.lastPing >= 1000*60*(21-playerProfile.upgrades.slumber)) {
+        playerProfile.slumberClicks += Math.floor((Date.now() - playerProfile.lastPing) / (1000*60*(21-playerProfile.upgrades.slumber)));
+        playerProfile.slumberClicks = Math.min(playerProfile.slumberClicks, (2*24*60)/(21-playerProfile.upgrades.slumber)); // max of 2 days of slumber clicks
         playerProfile.slumberClicks = Math.max(playerProfile.slumberClicks, 0); // no negative slumber clicks
     }
+    
     let pingMessage = pingMessages(ping, { user: interaction.user, score: playerProfile.score, clicks: playerProfile.clicks, isSuper: isSuper })
     let currentEffects = {
         mults: [isSuper ? 15 : 1],

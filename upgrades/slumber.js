@@ -7,13 +7,13 @@ module.exports = {
     },
     getDetails() {
         return {
-            description: "gain __x1.1__ pts for 1 ping, for every 20 minutes of non-pinging (up to 144 pings, or 2d inactive)",
+            description: "gain __x1.1__ pts for 1 ping, for every __20__ minutes of non-pinging (up to __144__ pings, or 2d inactive)",
             name: "slumber",
             emoji: "<:upgrade_slumber:1362634529545650296>",
         }
     },
     getEffectString(level) {
-        return `x${(1+level*0.1).toFixed(1)}`
+        return `x${(1+level*0.1).toFixed(1)}, every ${21-level}m, up to ${(2*24*60)/(21-level)} pings`;
     },
     getEffect(level, context) {
         return {
