@@ -33,6 +33,18 @@ module.exports = (sequelize) => {
 			allowNull: false,
 		},
 
+		// prestige data
+		bp: {
+			type: DataTypes.NUMBER,
+			defaultValue: 0,
+			allowNull: false,
+		},
+		prestigeUpgrades: {
+			type: DataTypes.JSON,
+			allowNull: false,
+			defaultValue: {},
+		},
+
 		// slumber upgrade
 		lastPing: {
 			type: DataTypes.DATE,

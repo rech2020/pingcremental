@@ -104,7 +104,7 @@ async function getEditMessage(interaction, category) {
     for (const [upgradeId, upgrade] of Object.entries(upgrades)) {
         const upgradeLevel = pUpgrades[upgradeId] ?? 0
         if (upgrade.type() != category) continue;
-        if (!upgrade.isBuyable({ upgrades: pUpgrades, clicks: playerData.clicks })) continue;
+        if (!upgrade.isBuyable({ upgrades: pUpgrades, clicks: playerData.clicks, bp: playerData.bp })) continue;
         if (upgrade.getPrice(upgradeLevel) === null) {
             description += `\n**${upgrade.getDetails().emoji} ${upgrade.getDetails().name} (MAX)**\n${upgrade.getDetails().description}\nCurrently ${upgrade.getEffectString(upgradeLevel)}` 
             continue;

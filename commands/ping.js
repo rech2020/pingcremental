@@ -95,10 +95,12 @@ async function ping(interaction, isSuper) {
         mults: [isSuper ? 15 : 1],
         blue: 0,
         special: [],
+        bp: 0,
         // more if needed
     }
     let addDisplay = [`<:ping:1361883358832885871> \`+${ping}\``];
     let multDisplay = [];
+    let extraDisplay = [];
     if (isSuper) multDisplay.push(`<:upgrade_blue:1361881310544527542> __\`x15\`__`);
     let effect;
 
@@ -130,6 +132,10 @@ async function ping(interaction, isSuper) {
          }
         if (effect.blue) { currentEffects.blue += effect.blue; }
         if (effect.special) { currentEffects.special.push(effect.special); }
+        if (effect.bp) { 
+            currentEffects.bp += effect.bp;
+            extraDisplay.push(`${upgrades[upgradeId].getDetails().emoji} \`+${effect.bp} bp\``);
+        }
     }
 
     if (currentEffects.special.includes('slumber')) {
@@ -164,9 +170,12 @@ async function ping(interaction, isSuper) {
     }
     score = Math.round(score);
 
+    const bpMax = ((playerProfile.upgrades.limit || 0) + 1) * 10000
+
     playerProfile.clicks += 1;
     playerProfile.score += score;
     playerProfile.totalScore += score;
+    playerProfile.bp = Math.min(currentEffects.bp + playerProfile.bp, bpMax);
     playerProfile.lastPing = Date.now();
     await playerProfile.save();
 
@@ -186,11 +195,16 @@ you have a lot of pts... why don't you go spend them over in </upgrade:136037740
         })
     }
 
+    let longPtDisplay = `\`${playerProfile.score} pts\` (**\`+${score}\`**)\n-# ${addDisplay.join(', ')}${multDisplay.length !== 0 ? "," : ""} ${multDisplay.join(', ')}`
+    if (currentEffects.bp > 0) {
+        longPtDisplay += `\n-# ${extraDisplay.join(', ')} | \`${playerProfile.bp}/${bpMax} bp\`${playerProfile.bp >= bpMax ? " **(FULL)**" : ""}`;
+    }
+
     try {
         await interaction.update({
             content:
                 `${pingMessage}
-\`${playerProfile.score} pts\` (**\`+${score}\`**)\n-# ${addDisplay.join(', ')}${multDisplay.length !== 0 ? "," : ""} ${multDisplay.join(', ')}`,
+${longPtDisplay}`,
             components: [row]
         });
     } catch (error) {
@@ -198,7 +212,7 @@ you have a lot of pts... why don't you go spend them over in </upgrade:136037740
             await interaction.editReply({
                 content:
                     `this ping message is non-offensive, and contains nothing that will anger AutoMod! (${ping}ms)
-\`${playerProfile.score} pts\` (**\`+${score}\`**)\n-# ${addDisplay.join(', ')}${multDisplay.length !== 0 ? "," : ""} ${multDisplay.join(', ')}`,
+${longPtDisplay}`,
                 components: [row]
             });
         } else {
