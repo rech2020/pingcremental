@@ -104,20 +104,17 @@ async function generateFeedbackResponse(interaction, category) {
     for (const feedback of feedbacks) {
         const user = await interaction.client.users.fetch(feedback.userId);
         description += `\n- __${user.username}__: ${feedback.text}`;
-        dropdown.addOptions(
-            new StringSelectMenuOptionBuilder()
-                .setLabel(feedback.text)
-                .setValue(`${feedback.dbId}`)
-        )
+        if (interaction.user.id === feedback.userId || interaction.user.id === '696806601771974707') {
+            dropdown.addOptions(
+                new StringSelectMenuOptionBuilder()
+                    .setLabel(feedback.text)
+                    .setValue(`${feedback.dbId}`)
+            )
+        }
+        
     }
 
     if (dropdown.options.length === 0) {
-        dropdown.addOptions(
-            new StringSelectMenuOptionBuilder()
-                .setLabel('no feedback here :(')
-                .setValue('none')
-                .setDefault(true)
-        )
         description = `__no feedback here.__`;
     }
 
@@ -126,8 +123,12 @@ async function generateFeedbackResponse(interaction, category) {
         .setColor('#997565')
         .setDescription(description)
 
+    const components = [row];
+    if (dropdown.options.length > 0) {
+        components.push(new ActionRowBuilder().addComponents(dropdown));
+    }
     return {
         embeds: [embed],
-        components: [row, new ActionRowBuilder().addComponents(dropdown)]
+        components: components
     }
 }
