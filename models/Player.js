@@ -44,6 +44,11 @@ module.exports = (sequelize) => {
 			allowNull: false,
 			defaultValue: {},
 		},
+		pip: { // short for Potential (for) Increased Pts
+			type: DataTypes.NUMBER,
+			defaultValue: 0,
+			allowNull: false,
+		},
 
 		// slumber upgrade
 		lastPing: {

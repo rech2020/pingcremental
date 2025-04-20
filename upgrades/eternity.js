@@ -7,7 +7,7 @@ module.exports = {
     getDetails() {
         return {
             description: "ping remains eternal.",
-            name: "eternity",
+            name: "Eternity",
             emoji: "✨",
         }
     },

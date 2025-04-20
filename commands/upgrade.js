@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, InteractionContextType } = require('discord.js');
+const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, InteractionContextType, MessageFlags } = require('discord.js');
 const upgrades = require('./../helpers/upgrades.js')
 const database = require('./../helpers/database.js');
 const UpgradeTypes = require('./../helpers/upgradeEnums.js');
@@ -18,6 +18,25 @@ module.exports = {
         }),
         category: (async (interaction, newCategory) => {
             await interaction.update(await getEditMessage(interaction, newCategory));
+        }),
+        eternity: (async interaction => {
+            const playerData = await database.Player.findByPk(`${interaction.user.id}`);
+            const firstEternity = playerData.pip === 0;
+            playerData.upgrades = {};
+            playerData.score = 0;
+            // TODO: reset upgrade data bits (e.g. slumber clicks)
+            playerData.pip += playerData.bp; // give points for eternity
+            playerData.bp = 0;
+            playerData.changed('upgrades', true) // this is a hacky way to set the upgrades field, but it works
+            await playerData.save();
+            await interaction.update({ content: `*it is done.*\n-# you now have __\`${playerData.pip} PIP\``, components: [] });
+            if (firstEternity) {
+                await interaction.followUp({ content: `
+*welcome to Eternity. congratulations on making it here.*
+*i suppose you're wondering why you want to be here.*
+*how about... </deliberate:[id]>? try it out.*
+*good luck, pinger.*`, flags: MessageFlags.Ephemeral });
+            }
         })
     },
     dropdowns: {
@@ -42,6 +61,29 @@ module.exports = {
                 return await interaction.followUp({
                     content: `you dont have enough \`pts\` to afford that! (missing \`${price-playerData.score} pts\`)`,
                     components: [new ActionRowBuilder().addComponents(button)]
+                })
+            }
+
+            if (upgradeId === 'eternity') {
+                await interaction.update(await getEditMessage(interaction, upgradeClass.type())); 
+                if (playerData.bp < 10000) { return await interaction.followUp({ content: `*you shouldn't be here, yet.*`, flags: MessageFlags.Ephemeral }) }
+                return await interaction.followUp({
+                    content: 
+`*Eternity calls for you, but you must make sure you're ready.*
+***are you?***
+-# this will **reset** your current upgrades and give you __\`${playerData.bp} PIP\`__`,
+                    components: [
+                        new ActionRowBuilder().addComponents(
+                            new ButtonBuilder()
+                                .setCustomId('upgrade:eternity')
+                                .setLabel('i\'m ready.')
+                                .setStyle(ButtonStyle.Success),
+                            new ButtonBuilder()
+                                .setCustomId('upgrade:delete')
+                                .setLabel('wait, no')
+                                .setStyle(ButtonStyle.Secondary)
+                        )
+                    ]
                 })
             }
 
