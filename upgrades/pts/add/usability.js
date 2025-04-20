@@ -1,4 +1,4 @@
-const UpgradeTypes = require('../helpers/upgradeEnums.js');
+const UpgradeTypes = require('../../../helpers/upgradeEnums.js');
 
 module.exports = {
     getPrice(currentLevel) {

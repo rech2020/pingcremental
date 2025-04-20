@@ -46,7 +46,7 @@ module.exports = {
             const playerData = await database.Player.findByPk(`${interaction.user.id}`);
 
             const playerUpgradeLevel = playerData.upgrades[upgradeId] ?? 0;
-            const upgradeClass = upgrades[upgradeId];
+            const upgradeClass = upgrades['pts'][upgradeId];
             const price = upgradeClass.getPrice(playerUpgradeLevel);
             
             if (price > playerData.score) {
@@ -143,7 +143,7 @@ async function getEditMessage(interaction, category) {
         .setTitle("upgrades")
         .setColor("#73c9ae")
 
-    for (const [upgradeId, upgrade] of Object.entries(upgrades)) {
+    for (const [upgradeId, upgrade] of Object.entries(upgrades['pts'])) {
         const upgradeLevel = pUpgrades[upgradeId] ?? 0
         if (upgrade.type() != category) continue;
         if (!upgrade.isBuyable({ upgrades: pUpgrades, clicks: playerData.clicks, bp: playerData.bp })) continue;
