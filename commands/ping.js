@@ -61,6 +61,9 @@ async function ping(interaction, isSuper) {
         })
     }
     let ping = interaction.client.ws.ping;
+    if (process.argv.includes('--dev') || process.argv.includes('-d')) {
+        ping = 6; // for testing purposes; prevents too much point gain & bypasses unknown ping
+    }
 
     const again = new ButtonBuilder()
         .setCustomId('ping:again')
