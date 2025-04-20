@@ -108,7 +108,7 @@ async function generateFeedbackResponse(interaction, category) {
         if (interaction.user.id === feedback.userId || interaction.user.id === ownerId) {
             dropdown.addOptions(
                 new StringSelectMenuOptionBuilder()
-                    .setLabel(feedback.text)
+                    .setLabel(feedback.text.length > 50 ? feedback.text.substring(0, 50) + '...' : feedback.text)
                     .setValue(`${feedback.dbId}`)
             )
         }
