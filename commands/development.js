@@ -29,7 +29,7 @@ module.exports = {
             const { exec } = require('child_process');
             exec('git pull', (error, stdout, stderr) => {
                 if (error) {
-                    console.error(`exec error: ${error}`);
+                    interaction.update(`exec error: ${error}`);
                     return;
                 }
                 console.log(`stdout: ${stdout}`);

@@ -1,4 +1,5 @@
 const { Events, ButtonStyle, ButtonBuilder, ActionRowBuilder, EmbedBuilder, PermissionsBitField, Embed, MessageFlags, DiscordAPIError } = require('discord.js');
+const log = require('./../helpers/log.js');
 
 module.exports = {
     name: Events.InteractionCreate,
@@ -25,7 +26,7 @@ module.exports = {
 
                 if (split[1]) {
                     if (!buttonCommand) {
-                        console.log(`[ERROR] No command for button ${buttonId} (command ${buttonCommand}) was found.`)
+                        await log(`No command for button ${buttonId} (command ${buttonCommand}) was found.`,interaction.client)
                         return;
                     } else { 
                         await buttonCommand.buttons[split[1].split('-')[0]](interaction, split[1].split('-')[1]); 
@@ -42,7 +43,7 @@ module.exports = {
 
                 if (split[1]) {
                     if (!buttonCommand) {
-                        console.log(`[ERROR] No command for dropdown ${dropdownId} (command ${buttonCommand}) was found.`)
+                        await log(`No command for dropdown ${dropdownId} (command ${buttonCommand}) was found.`,interaction.client)
                         return;
                     } else { 
                         await buttonCommand.dropdowns[split[1].split('-')[0]](interaction, split[1].split('-')[1]); 
@@ -57,16 +58,14 @@ module.exports = {
                 return console.log(`[INFO] unknown message error; thanks, discord`)
             }
 
-            console.error(error)
-            console.log(`[INFO] extra info:
-caused by ${interaction.user.username} (${interaction.user.id}) in ${interaction.guild?.name} (${interaction.guild?.id})
-${error.requestBody.json.data ? JSON.stringify(error.requestBody.json.data) : "no request body available"}
------
-`)
+            await log(error + `\nextra info:
+    caused by ${interaction.user.username} (${interaction.user.id}) in ${interaction.guild?.name} (${interaction.guild?.id})
+    ${error.requestBody.json.data ? JSON.stringify(error.requestBody.json.data) : "no request body available"}`,interaction.client);
+
             const reply = { 
                 embeds: [new EmbedBuilder().setTitle("An error occurred!").setDescription(`wuh oh, something broke\n\n${error}`).setColor("ff0000")],
                 flags: MessageFlags.Ephemeral
-             }
+            }
             try {
                 if (interaction.replied || interaction.deferred) {
                     await interaction.followUp(reply);
