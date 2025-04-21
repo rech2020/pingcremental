@@ -376,7 +376,7 @@ function get(ping, context) {
         ]
     }
 
-    if (Math.random()*1000 <= 1 && !context.isSuper) {
+    if (Math.random()*1000 <= 1 && !context.spawnedSuper) {
         messagesList = [
             "this one is rare. like, really rare. like, 0.1% chance rare. feel proud of yourself",
             "legend says only 0.1% sees this message. congrats, chosen one",
