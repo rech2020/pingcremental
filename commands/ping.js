@@ -155,7 +155,7 @@ async function ping(interaction, isSuper) {
             .setLabel('blue ping!')
             .setStyle(ButtonStyle.Primary);
         row.addComponents(superPing);
-        pingMessage = pingMessages(ping, { user: interaction.user, score: playerProfile.score, clicks: playerProfile.clicks, spawnedSuper: true });
+	if (!pingMessage.includes('0.1%')) pingMessage = pingMessages(ping, { user: interaction.user, score: playerProfile.score, clicks: playerProfile.clicks, spawnedSuper: true });
     }
 
     if (currentEffects.special.includes('budge')) {
