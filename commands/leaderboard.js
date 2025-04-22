@@ -41,9 +41,19 @@ async function getMessage(interaction) {
 
     for (player of lbPlayers) {
         const puser = await interaction.client.users.fetch(player.userId) // find the user for username display
+        let userDisplay = puser.username.replaceAll("_", "\\_")
+        if (player.userId == interaction.user.id) {
+            userDisplay = `__${userDisplay}__` // highlight the user's own score
+        }
+
         description +=
             `
-${leaderboardEmojis[Math.min(leaderboardEmojis.length, player.position) - 1]} **${puser.username.replaceAll("_", "\\_")}** - \`${formatNumber(player.score)} pts\` total`
+${leaderboardEmojis[Math.min(leaderboardEmojis.length, player.position) - 1]} **${userDisplay}** - \`${formatNumber(player.score)} pts\` total`
+    }
+
+    // if the user is not in the leaderboard, add them to the end of the list
+    if (lbPlayers.find(player => player.userId == interaction.user.id) == null) {
+        description += `\n...\n**##** __**${interaction.user.username.replaceAll("_", "\\_")}**__ - \`${formatNumber((await database.Player.findByPk(interaction.user.id)).score)} pts\` total`
     }
 
     const embed = new EmbedBuilder()
