@@ -19,7 +19,7 @@ module.exports = {
         return {
             multiply: context.slumberClicks ? 1 + (level * 0.1) : 1,
             special: context.slumberClicks ? "slumber" : null,
-            message: context.slumberClicks ? `(${context.slumberClicks-1} left)` : null,
+            message: context.slumberClicks ? `(${context.slumberClicks} left)` : null,
         }
     },
     isBuyable(context) {
