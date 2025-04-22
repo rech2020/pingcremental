@@ -183,10 +183,24 @@ async function ping(interaction, isSuper = false) {
     }
     // check if blue ping should trigger
     if (Math.random() * 1000 < currentEffects.blue * 10) {
+        let combo = false;
+        if (isSuper) {
+            combo = 1;
+            for (const messageButton of interaction.message.components[0].components) { // check every button in the first row
+                if (messageButton.data.custom_id === 'ping:super') {
+                    combo = (parseInt(messageButton.data.label.split('x')[1]) || 1) + 1; // get the current combo
+                }
+            }
+        }
+
+        if (combo && combo > playerProfile.highestBlueStreak) {
+            playerProfile.highestBlueStreak = combo;
+        }
+        
         playerProfile.bluePings += 1;
         const superPing = new ButtonBuilder()
             .setCustomId('ping:super')
-            .setLabel('blue ping!')
+            .setLabel(`blue ping!${isSuper ? ` x${combo}` : ''}`)
             .setStyle(ButtonStyle.Primary);
         rowComponents.push(superPing);
 
