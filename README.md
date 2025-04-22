@@ -15,10 +15,10 @@ actually pretty simple; there's not a lot you need to do.
 2. select your method of choice.
 3. after setting up, ensure you have the following packages installed from NPM:
 
-    a. `discord.js`
-    b. `sequelize`
-    c. `sqlite3`
-    d. alternatively, try just `npm install` to maybe get everything automagically
+    1. `discord.js`
+    2. `sequelize`
+    3. `sqlite3`
+    4. alternatively, try just `npm install` to maybe get everything automagically
 
 ### config
 
