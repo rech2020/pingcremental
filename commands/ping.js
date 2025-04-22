@@ -6,43 +6,44 @@ const { ownerId } = require('./../config.json');
 const MAX_PING_OFFSET = 5
 
 module.exports = {
-	data: new SlashCommandBuilder()
-		.setName('ping')
-		.setDescription('ping!')
+    data: new SlashCommandBuilder()
+        .setName('ping')
+        .setDescription('ping!')
         .setContexts(InteractionContextType.BotDM, InteractionContextType.Guild, InteractionContextType.PrivateChannel),
-	async execute(interaction) {
-		const again = new ButtonBuilder()
-			.setCustomId('ping:again')
-			.setLabel('ping again!')
-			.setStyle(ButtonStyle.Secondary);
-		const row = new ActionRowBuilder()
-			.addComponents(again);
+    async execute(interaction) {
+        const again = new ButtonBuilder()
+            .setCustomId('ping:again')
+            .setLabel('ping again!')
+            .setStyle(ButtonStyle.Secondary);
+        const row = new ActionRowBuilder()
+            .addComponents(again);
 
-		let pingmessage = pingMessages(interaction.client.ws.ping, { user: interaction.user })
+        let pingmessage = pingMessages(interaction.client.ws.ping, { user: interaction.user })
 
-		await interaction.reply({
-			content: `${pingmessage}`,
-			components: [row]
-		});
-	},
+        await interaction.reply({
+            content: `${pingmessage}`,
+            components: [row]
+        });
+    },
     buttons: {
         "again": (async (interaction) => {
-            await ping(interaction,false)
+            await ping(interaction, false)
         }),
         "super": (async (interaction) => {
-            await ping(interaction,true)
+            await ping(interaction, true)
         }),
         "delete": (async interaction => {
             await interaction.update({ content: `(bye!)`, components: [] });
             await interaction.deleteReply(interaction.message);
         }),
         "unknown": (async interaction => {
-            await interaction.reply({ content: "unknown ping occurs when the bot just restarted. this likely means something changed, so maybe there's new upgrades? if you wait a few seconds, the ping will come back to normal.", flags: MessageFlags.Ephemeral })  
+            await interaction.reply({ content: "unknown ping occurs when the bot just restarted. this likely means something changed, so maybe there's new upgrades? if you wait a few seconds, the ping will come back to normal.", flags: MessageFlags.Ephemeral })
         })
     }
-};  
+};
 
 async function ping(interaction, isSuper = false) {
+    // prevent pinging during dev mode
     const developmentMode = process.argv.includes('--dev') || process.argv.includes('-d');
     if (developmentMode && interaction.user.id !== ownerId) {
         return await interaction.update({
@@ -61,11 +62,6 @@ async function ping(interaction, isSuper = false) {
         })
     }
 
-    let ping = interaction.client.ws.ping;
-    if (process.argv.includes('--dev') || process.argv.includes('-d')) {
-        ping = 6; // for testing purposes; prevents too much point gain & bypasses unknown ping
-    }
-
     let againId = 'ping:again';
     const again = new ButtonBuilder()
         .setCustomId(againId)
@@ -73,34 +69,47 @@ async function ping(interaction, isSuper = false) {
         .setStyle(ButtonStyle.Secondary);
     const row = new ActionRowBuilder();
 
-    if (ping === -1) {
+    if (interaction.client.ws.ping === -1 && !developmentMode) { // bot just restarted
         row.addComponents(again, new ButtonBuilder()
             .setCustomId('ping:unknown')
             .setLabel('unknown ms?')
             .setStyle(ButtonStyle.Secondary));
-        return await interaction.update({
+        return await interaction.update({ // return early 
             content: `${pingMessages(ping, { user: interaction.user })}`,
             components: [row]
         })
     }
-    
-    ping += Math.round(Math.random()*MAX_PING_OFFSET*2) - MAX_PING_OFFSET;
-    let score = ping;
-    
+
+    let ping = interaction.client.ws.ping;
+    if (developmentMode) {
+        ping = 6; // for testing purposes; prevents too much point gain & bypasses unknown ping
+    }
+    ping += Math.round(Math.random() * MAX_PING_OFFSET * 2) - MAX_PING_OFFSET; // randomize a bit since it only updates occasionally
+
     const [playerProfile, _created] = await database.Player.findOrCreate({ where: { userId: interaction.user.id } })
-    
-    if (playerProfile.upgrades.slumber && Date.now() - playerProfile.lastPing >= 1000*60*(21-playerProfile.upgrades.slumber)) {
-        playerProfile.slumberClicks += Math.floor((Date.now() - playerProfile.lastPing) / (1000*60*(21-playerProfile.upgrades.slumber)));
-        playerProfile.slumberClicks = Math.min(playerProfile.slumberClicks, Math.round((2*24*60)/(21-playerProfile.upgrades.slumber))); // max of 2 days of slumber clicks
+
+    let pingMessage = pingMessages(ping, 
+        { // context for message uniqueness
+            user: interaction.user, 
+            score: playerProfile.score, 
+            clicks: playerProfile.clicks, 
+            isSuper: isSuper 
+        }
+    );
+
+    // add slumber clicks if offline for long enough
+    if (playerProfile.upgrades.slumber && Date.now() - playerProfile.lastPing >= 1000 * 60 * (21 - playerProfile.upgrades.slumber)) {
+        playerProfile.slumberClicks += Math.floor((Date.now() - playerProfile.lastPing) / (1000 * 60 * (21 - playerProfile.upgrades.slumber)));
+        playerProfile.slumberClicks = Math.min(playerProfile.slumberClicks, Math.round((2 * 24 * 60) / (21 - playerProfile.upgrades.slumber))); // max of 2 days of slumber clicks
         playerProfile.slumberClicks = Math.max(playerProfile.slumberClicks, 0); // no negative slumber clicks
     }
 
-    let pingMessage = pingMessages(ping, { user: interaction.user, score: playerProfile.score, clicks: playerProfile.clicks, isSuper: isSuper })
+    // prep a bunch of variables for the effects
     let currentEffects = {
         mults: [isSuper ? 15 : 1],
         blue: 0,
         special: [],
-        // more if needed
+        // add more if needed
     }
     let addDisplay = [`<:ping:1361883358832885871> \`+${ping}\``];
     let multDisplay = [];
@@ -109,38 +118,40 @@ async function ping(interaction, isSuper = false) {
     let effect;
 
     for (const [upgradeId, level] of Object.entries(playerProfile.upgrades)) {
-        effect = upgrades[upgradeId].getEffect(level, 
+        effect = upgrades[upgradeId].getEffect(level,
             { // LONG EVIL CONTEXT (will kill you if it gets the chance)
-                ping, 
-                blue: currentEffects.blue, 
-                clicks: playerProfile.clicks, 
-                rare: pingMessage.includes('0.1%'), 
-                isSuper: isSuper, 
-                slumberClicks: playerProfile.slumberClicks, 
+                ping,
+                blue: currentEffects.blue,
+                clicks: playerProfile.clicks,
+                rare: pingMessage.includes('0.1%'),
+                isSuper: isSuper,
+                slumberClicks: playerProfile.slumberClicks,
                 glimmerClicks: playerProfile.glimmerClicks,
             }
         );
 
         let effectString = upgrades[upgradeId].getDetails().emoji;
 
-        if (effect.add && effect.add !== 0) { 
+        // apply effects where appropriate
+        if (effect.add && effect.add !== 0) {
             score += effect.add;
             effectString += ` \`+${effect.add}\``
         }
-        if (effect.multiply && effect.multiply !== 1) { 
+
+        if (effect.multiply && effect.multiply !== 1) {
             currentEffects.mults.push(effect.multiply);
 
-            // Handle floating-point errors by rounding to 2 decimal places if necessary
-            const formattedMultiplier = Math.abs(effect.multiply - Math.round(effect.multiply * 100) / 100) < 1e-10
-                ? effect.multiply.toFixed(2)
-                : effect.multiply;
+            // prevent floating point jank
+            const formattedMultiplier = effect.multiply.toFixed(2)
 
             effectString += ` __\`x${formattedMultiplier}\`__`
         }
+
         if (effect.blue) { currentEffects.blue += effect.blue; }
         if (effect.special) { currentEffects.special.push(effect.special); }
-        if (effect.message) {effectString += ` ${effect.message}`; }
+        if (effect.message) { effectString += ` ${effect.message}`; }
 
+        // add to display
         if (effectString !== upgrades[upgradeId].getDetails().emoji) {
             if (effect.add) {
                 addDisplay.push(effectString);
@@ -152,6 +163,7 @@ async function ping(interaction, isSuper = false) {
         }
     }
 
+    // some special effects are applied here
     if (currentEffects.special.includes('slumber')) {
         playerProfile.slumberClicks--;
     }
@@ -162,34 +174,39 @@ async function ping(interaction, isSuper = false) {
         playerProfile.glimmerClicks--;
     }
 
+    // blue ping handling
     if (!currentEffects.special.includes('budge')) {
         row.addComponents(again);
     }
-
-    if (Math.random() * 1000 < currentEffects.blue*10) {
+    // check if blue ping should trigger
+    if (Math.random() * 1000 < currentEffects.blue * 10) {
         const superPing = new ButtonBuilder()
             .setCustomId('ping:super')
             .setLabel('blue ping!')
             .setStyle(ButtonStyle.Primary);
         row.addComponents(superPing);
-	if (!pingMessage.includes('0.1%')) pingMessage = pingMessages(ping, { user: interaction.user, score: playerProfile.score, clicks: playerProfile.clicks, spawnedSuper: true });
-    }
 
+        // if not rare, refresh the message because context is different
+        if (!pingMessage.includes('0.1%')) pingMessage = pingMessages(ping, { user: interaction.user, score: playerProfile.score, clicks: playerProfile.clicks, spawnedSuper: true });
+    }
     if (currentEffects.special.includes('budge')) {
         row.addComponents(again);
     }
 
+    // add mults at the end so they're actually effective
     for (const mult of currentEffects.mults) {
         score *= mult;
     }
     score = Math.round(score);
 
+    // apply stats and save
     playerProfile.clicks += 1;
     playerProfile.score += score;
     playerProfile.totalScore += score;
     playerProfile.lastPing = Date.now();
     await playerProfile.save();
 
+    // show upgrade popup after 150 clicks
     if (playerProfile.clicks === 150) {
         const button = new ButtonBuilder()
             .setLabel('that looks important...')
@@ -199,14 +216,16 @@ async function ping(interaction, isSuper = false) {
         const disabledRow = new ActionRowBuilder().addComponents(button);
 
         return await interaction.update({
-            content: 
-`${pingMessage}
+            content:
+                `${pingMessage}
 you have a lot of pts... why don't you go spend them over in </upgrade:1360377407109861648>?`, // TODO: change to dynamically use ID
             components: [disabledRow]
         })
     }
 
+
     try {
+        // update ping
         await interaction.update({
             content:
                 `${pingMessage}
@@ -214,6 +233,7 @@ you have a lot of pts... why don't you go spend them over in </upgrade:136037740
             components: [row]
         });
     } catch (error) {
+        // automod error, since it doesn't like some messages
         if (error.code == 200000) {
             await interaction.update({
                 content:

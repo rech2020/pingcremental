@@ -1,4 +1,5 @@
 function get(ping, context) {
+    // base messages
     let messagesList = [
         "ping! wait, no, that's not right",
         "you'd think i'd be faster than",
@@ -36,7 +37,7 @@ function get(ping, context) {
         ":cat:",
         "insert elevator music",
         "please hold",
-        `what if i told you my ping was actually ${ping+1}ms? would you still trust me?`,
+        `what if i told you my ping was actually ${ping + 1}ms? would you still trust me?`,
         `you know, they say that a watched ping never boils. or was it water? i forget`,
         "if you could bottle this ping, would you drink it? actually, on second thought, don't do that",
         "you know, for a bot, i sure do have a lot of existential crises about my ping",
@@ -148,9 +149,9 @@ function get(ping, context) {
         "happy birthday!",
         "was that fast? i blinked and missed it",
         "do bots dream of electric pings?",
-        "i’d apologize for the delay, but i don’t feel guilt. i’m a bot",
+        "i'd apologize for the delay, but i don't feel guilt. i'm a bot",
         "you ever just... ping?",
-        "if this were a race, i wouldn’t be winning",
+        "if this were a race, i wouldn't be winning",
         "fun fact: this message contains exactly one ping",
         "this is your sign to /ping again",
         "have you considered that maybe the ping is trying its best?",
@@ -173,7 +174,7 @@ function get(ping, context) {
         "brb reinventing the concept of latency",
         "was the ping good? define 'good'",
         "this ping was handcrafted with 100% organic code",
-        "it’s not lag, it’s dramatic effect",
+        "it's not lag, it's dramatic effect",
         "ping processed. i hope you're happy",
         "one ping closer to... something? i forgot",
         "ping: it's what's for dinner. no wait—",
@@ -228,7 +229,7 @@ function get(ping, context) {
         "ping-spin triple",
         "this ping died 48 times on the way here",
         "you've got this! unless the ping says otherwise",
-        "ping retrieved. it’s not the summit, but close enough",
+        "ping retrieved. it's not the summit, but close enough",
         "i dashed right into the lag crystal, sorry",
         "if this ping feels hard, just breathe. and try again",
         "one ping at a time, like climbing a mountain",
@@ -239,7 +240,7 @@ function get(ping, context) {
         "i spared the ping. it didn't spare me",
         "* the ping is sparing you. mercy?",
         "SOUL not required, just milliseconds",
-        "hornet would’ve dodged this ping",
+        "hornet would've dodged this ping",
         "this lag is a test of resolve, little bug",
         "ping is resting at a bench",
         "the ping is a lie",
@@ -250,8 +251,9 @@ function get(ping, context) {
         "Susie tried to block the ping, but it slipped past",
     ]
 
+    // only if player was clicking (can't appear with /ping, only on button press)
     if (context.score) {
-        if (Math.random()*100 <= 7) messagesList = [
+        if (Math.random() * 100 <= 7) messagesList = [
             `what if you had ${context.score + 182} pts? or ${context.score + 31415}? no, that's unreasonable`,
             `i don't know if i made this clicking too addictive. sorry in advance`,
             `number go up!`,
@@ -283,12 +285,13 @@ function get(ping, context) {
             context.score >= 1e6 ? `thats like, more than a megapt` : `keep going! you're only ${1e6 - context.score} away from a megapt`,
             context.clicks >= 500 ? `you've clicked ${context.clicks} times. is your mouse okay?` : `you've clicked ${context.clicks} times. that's like, medium pinger level`,
             context.score % 1000 === 0 ? `your score is a very satisfying multiple of 1000. good job` : `your score isn’t divisible by 1000. i noticed`,
-            `at this rate, you’ll hit ${context.score + 10000} in no time. probably`,
+            `at this rate, you'll hit ${context.score + 10000} in no time. probably`,
             `fun fact: you've earned ${context.score} pts and not a single one was a tax write-off`,
         ]
     }
-    
-    if (ping >= 150 && Math.random()*100 <= 75) messagesList = [
+
+    // high ping, almost always shows
+    if (ping >= 150 && Math.random() * 100 <= 75) messagesList = [
         `wuh oh`,
         `yikes`,
         `big number warning!`,
@@ -298,7 +301,7 @@ function get(ping, context) {
         `OH NO MY PING`,
         `thi-  lag i-  rea-        -ful`,
         `someone save me from`,
-        `[Server/WARN] Can't keep up! Is the server overloaded? Running ${Math.round(ping/20)} ticks behind, or`,
+        `[Server/WARN] Can't keep up! Is the server overloaded? Running ${Math.round(ping / 20)} ticks behind, or`,
         `four hours later...`,
         `it hurts it hurts it hurts`,
         `uguuuu`,
@@ -325,12 +328,13 @@ function get(ping, context) {
     ]
 
     // 15% chance to get a regular flavored ping message, so it's not super uncommon
-    if (Math.random()*100 <= 15) {
+    if (Math.random() * 100 <= 15) {
         messagesList = [
             "pong :3"
         ]
     }
 
+    // blue ping just spawned
     if (context.spawnedSuper) {
         messagesList = [
             `hey, look at that!`,
@@ -357,6 +361,7 @@ function get(ping, context) {
         ]
     }
 
+    // blue ping just clicked
     if (context.isSuper) {
         messagesList = [
             `that's a lot of \`pts\`!`,
@@ -369,22 +374,24 @@ function get(ping, context) {
             "RNGesus is smiling upon you",
             "that ping was juiced",
             "you clicked the blue ping. the ping clicked back",
-            "you’ve achieved ping greatness",
-            "i don’t know what you did but it was awesome",
+            "you've achieved ping greatness",
+            "i don't know what you did but it was awesome",
             "ping results: critical success",
             "beyond super. beyond pong. ultra",
         ]
     }
 
-    if (Math.random()*1000 <= 1 && !context.spawnedSuper) {
+    // rare messages (0.1% chance)
+    if (Math.random() * 1000 <= 1 && !context.spawnedSuper) {
         messagesList = [
             "this one is rare. like, really rare. like, 0.1% chance rare. feel proud of yourself",
             "legend says only 0.1% sees this message. congrats, chosen one",
-            "💫 this ping is ultra shiny, 0.1%! screenshot or it didn’t happen",
-            "you’ll never see this 0.1% message again. or maybe you will. RNG is weird",
+            "💫 this ping is ultra shiny, 0.1%! screenshot or it didn't happen",
+            "you'll never see this 0.1% message again. or maybe you will. RNG is weird",
         ]
     }
 
+    // bot just restarted
     if (ping === -1) {
         ping = "unknown "
         messagesList = [
@@ -404,7 +411,7 @@ function get(ping, context) {
             "who needs time when you have mystery?",
             "404: ping is a philosophical construct now",
             "ping entered the quantum realm",
-            "bot’s back from the void. sorry for the infinite lag",
+            "bot's back from the void. sorry for the infinite lag",
             "ping is currently on a spiritual journey",
             "reboot complete. ping is currently searching for itself",
             "millisecond value not found. please insert quarter",
@@ -413,12 +420,12 @@ function get(ping, context) {
             "this ping defied the laws of time",
             "restart detected. where am i? who are you?",
             "ping momentarily ascended to a higher plane",
-            "milliseconds? buddy, we’re talking *eternities*",
+            "milliseconds? buddy, we're talking *eternities*",
         ]
     }
 
-    let message = messagesList[Math.floor(Math.random() * messagesList.length)];
-    
+    let message = messagesList[Math.floor(Math.random() * messagesList.length)]; // pick a random one and return it
+
     return `${message} (${ping}ms)`
 }
 

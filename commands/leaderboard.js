@@ -8,7 +8,7 @@ module.exports = {
         .setDescription('check who\'s best')
         .setContexts(InteractionContextType.BotDM, InteractionContextType.Guild, InteractionContextType.PrivateChannel),
     async execute(interaction) {
-        await interaction.reply({ embeds: [ new EmbedBuilder().setDescription('one sec...') ] });
+        await interaction.reply({ embeds: [new EmbedBuilder().setDescription('one sec...')] });
         await interaction.editReply(await getMessage(interaction)); // add (edited) so it doesn't move after refresh
     },
     buttons: {
@@ -22,7 +22,7 @@ async function getMessage(interaction) {
     let description = "*leaderboard updates every minute*\n";
     const lbPlayers = await database.LeaderboardPlayer.findAll({
         order: [
-            ['position', 'ASC'],
+            ['position', 'ASC'], // highest first
         ]
     });
 
@@ -38,12 +38,12 @@ async function getMessage(interaction) {
         "<:rank_9:1363227190942241040>",
         "<:rank_10:1363227198080942220>",
     ]
-    
+
     for (player of lbPlayers) {
-        const puser = await interaction.client.users.fetch(player.userId)
-        description += 
-`
-${leaderboardEmojis[Math.min(leaderboardEmojis.length, player.position)-1]} **${puser.username.replaceAll("_","\\_")}** - \`${player.score} pts\` total`
+        const puser = await interaction.client.users.fetch(player.userId) // find the user for username display
+        description +=
+            `
+${leaderboardEmojis[Math.min(leaderboardEmojis.length, player.position) - 1]} **${puser.username.replaceAll("_", "\\_")}** - \`${player.score} pts\` total`
     }
 
     const embed = new EmbedBuilder()
@@ -56,6 +56,7 @@ ${leaderboardEmojis[Math.min(leaderboardEmojis.length, player.position)-1]} **${
         .setStyle(ButtonStyle.Secondary)
     const row = new ActionRowBuilder()
         .addComponents(button)
+    
     return {
         contents: "",
         embeds: [embed],

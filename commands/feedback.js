@@ -51,7 +51,7 @@ module.exports = {
 
             await database.Feedback.create({ userId, type: feedbackType, text: feedbackText });
             await interaction.reply({ content: `success! thanks for the feedback.`, flags: MessageFlags.Ephemeral });
-        } 
+        }
         else if (interaction.options.getSubcommand() === 'view') {
             await interaction.reply(await generateFeedbackResponse(interaction, feedbackCategories[0]));
         }
@@ -69,7 +69,7 @@ module.exports = {
 
             if (!feedback) return await interaction.reply({ content: 'this one doesn\'t even exist? how?', ephemeral: true });
             if (feedback.userId !== interaction.user.id && interaction.user.id !== ownerId) return await interaction.reply({ content: 'you don\'t have permission to delete this...', ephemeral: true });
-            
+
             await feedback.destroy();
             await interaction.update(await generateFeedbackResponse(interaction, feedback.type));
             await interaction.followUp({ content: `deleted successfully.`, flags: MessageFlags.Ephemeral });
@@ -78,19 +78,21 @@ module.exports = {
 }
 
 async function generateFeedbackResponse(interaction, category) {
+    // get all feedback for the category
     const feedbacks = await database.Feedback.findAll({
         where: { type: category },
-        order: [['createdAt', 'DESC']]
+        order: [['createdAt', 'DESC']] // newest first
     });
 
     const buttons = [];
+    // prep buttons
     for (const cat of feedbackCategories) {
         buttons.push(
             new ButtonBuilder()
                 .setCustomId(`feedback:category-${cat}`)
                 .setLabel(`${cat} (${await database.Feedback.count({ where: { type: cat } })})`)
                 .setStyle(ButtonStyle.Secondary)
-                .setDisabled(cat === category)
+                .setDisabled(cat === category) // disable the current category button
         )
     }
 
@@ -103,16 +105,16 @@ async function generateFeedbackResponse(interaction, category) {
     let description = `__${feedbacks.length}__ for category __${category}__\n`;
 
     for (const feedback of feedbacks) {
-        const user = await interaction.client.users.fetch(feedback.userId);
+        const user = await interaction.client.users.fetch(feedback.userId); // find the user for username display
         description += `\n- __${user.username}__: ${feedback.text}`;
-        if (interaction.user.id === feedback.userId || interaction.user.id === ownerId) {
+        if (interaction.user.id === feedback.userId || interaction.user.id === ownerId) { // if the user is the owner or the feedback author, add the feedback to the dropdown
             dropdown.addOptions(
                 new StringSelectMenuOptionBuilder()
                     .setLabel(feedback.text.length > 50 ? feedback.text.substring(0, 50) + '...' : feedback.text)
                     .setValue(`${feedback.dbId}`)
             )
         }
-        
+
     }
 
     if (feedbacks.length === 0) {
@@ -125,7 +127,7 @@ async function generateFeedbackResponse(interaction, category) {
         .setDescription(description)
 
     const components = [row];
-    if (dropdown.options.length > 0) {
+    if (dropdown.options.length > 0) { // only add dropdown if there are options
         components.push(new ActionRowBuilder().addComponents(dropdown));
     }
     return {

@@ -13,7 +13,7 @@ module.exports = {
                     return;
                 }
 
-                
+
                 await command.execute(interaction);
             } else if (interaction.isButton()) {
                 if (interaction.message.interaction && interaction.user.id != interaction.message.interaction.user.id) {
@@ -26,10 +26,10 @@ module.exports = {
 
                 if (split[1]) {
                     if (!buttonCommand) {
-                        await log(`No command for button ${buttonId} (command ${buttonCommand}) was found.`,interaction.client)
+                        await log(`No command for button ${buttonId} (command ${buttonCommand}) was found.`, interaction.client)
                         return;
-                    } else { 
-                        await buttonCommand.buttons[split[1].split('-')[0]](interaction, split[1].split('-')[1]); 
+                    } else {
+                        await buttonCommand.buttons[split[1].split('-')[0]](interaction, split[1].split('-')[1]);
                     }
                 }
             } else if (interaction.isStringSelectMenu()) {
@@ -43,10 +43,10 @@ module.exports = {
 
                 if (split[1]) {
                     if (!buttonCommand) {
-                        await log(`No command for dropdown ${dropdownId} (command ${buttonCommand}) was found.`,interaction.client)
+                        await log(`No command for dropdown ${dropdownId} (command ${buttonCommand}) was found.`, interaction.client)
                         return;
-                    } else { 
-                        await buttonCommand.dropdowns[split[1].split('-')[0]](interaction, split[1].split('-')[1]); 
+                    } else {
+                        await buttonCommand.dropdowns[split[1].split('-')[0]](interaction, split[1].split('-')[1]);
                     }
                 }
             }
@@ -60,9 +60,9 @@ module.exports = {
 
             await log(error + `\nextra info:
     caused by ${interaction.user.username} (${interaction.user.id}) in ${interaction.guild?.name} (${interaction.guild?.id})
-    ${error.requestBody.json.data ? JSON.stringify(error.requestBody.json.data) : "no request body available"}`,interaction.client);
+    ${error.requestBody.json.data ? JSON.stringify(error.requestBody.json.data) : "no request body available"}`, interaction.client);
 
-            const reply = { 
+            const reply = {
                 embeds: [new EmbedBuilder().setTitle("An error occurred!").setDescription(`wuh oh, something broke\n\n${error}`).setColor("ff0000")],
                 flags: MessageFlags.Ephemeral
             }

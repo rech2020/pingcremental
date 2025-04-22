@@ -1,7 +1,7 @@
 const { Sequelize, DataTypes, Model } = require('sequelize');
 
 module.exports = (sequelize) => {
-    class Feedback extends Model {}
+    class Feedback extends Model { }
 
     Feedback.init({
         dbId: {
@@ -23,7 +23,7 @@ module.exports = (sequelize) => {
         userId: {
             type: DataTypes.STRING,
             allowNull: false,
-        },        
+        },
     }, {
         sequelize,
         timestamps: true,
