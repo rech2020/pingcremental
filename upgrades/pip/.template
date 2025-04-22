@@ -1,4 +1,4 @@
-const { UpgradeTypes } = require('../../helpers/upgradeEnums.js');
+const { PipUpgradeTypes } = require('../../../helpers/upgradeEnums.js');
 
 module.exports = {
     getPrice(currentLevel) {
@@ -9,6 +9,7 @@ module.exports = {
             description: "",
             name: "",
             emoji: "✨",
+            flavor: "",
         }
     },
     getEffectString(level) {
@@ -20,9 +21,9 @@ module.exports = {
             multiply: 1,
         }
     },
-    isBuyable(context) {
-        return true;
+    upgradeRequirements() {
+        return { upgrade: 1 };
     },
     sortOrder() { return 1000 },
-    type() { return UpgradeTypes.GENERIC }
+    type() { return PipUpgradeTypes.MISC }
 }
