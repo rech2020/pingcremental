@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder, InteractionContextType, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
 const database = require('./../helpers/database.js')
-const sequelize = require('sequelize')
+const formatNumber = require('./../helpers/formatNumber.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -43,7 +43,7 @@ async function getMessage(interaction) {
         const puser = await interaction.client.users.fetch(player.userId) // find the user for username display
         description +=
             `
-${leaderboardEmojis[Math.min(leaderboardEmojis.length, player.position) - 1]} **${puser.username.replaceAll("_", "\\_")}** - \`${player.score} pts\` total`
+${leaderboardEmojis[Math.min(leaderboardEmojis.length, player.position) - 1]} **${puser.username.replaceAll("_", "\\_")}** - \`${formatNumber(player.score)} pts\` total`
     }
 
     const embed = new EmbedBuilder()

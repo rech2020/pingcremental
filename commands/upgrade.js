@@ -2,6 +2,7 @@ const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, Strin
 const upgrades = require('./../helpers/upgrades.js')
 const database = require('./../helpers/database.js');
 const UpgradeTypes = require('./../helpers/upgradeEnums.js');
+const formatNumber = require('./../helpers/formatNumber.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -41,7 +42,7 @@ module.exports = {
 
                 await interaction.update(await getEditMessage(interaction, upgradeClass.type())); // fix dropdown remaining after failed upgrade
                 return await interaction.followUp({
-                    content: `you dont have enough \`pts\` to afford that! (missing \`${price - playerData.score} pts\`)`,
+                    content: `you dont have enough \`pts\` to afford that! (missing \`${formatNumber(price - playerData.score)} pts\`)`,
                     components: [new ActionRowBuilder().addComponents(button)]
                 })
             }
@@ -62,7 +63,7 @@ module.exports = {
             await interaction.update(await getEditMessage(interaction, upgradeClass.type()));
 
             return await interaction.followUp({
-                content: `upgraded **${upgradeClass.getDetails().name}** to level ${playerUpgradeLevel + 1}! you've \`${playerData.score} pts\` left.`,
+                content: `upgraded **${upgradeClass.getDetails().name}** to level ${playerUpgradeLevel + 1}! you've \`${formatNumber(playerData.score)} pts\` left.`,
                 components: [new ActionRowBuilder().addComponents(button)]
             })
         })
@@ -99,7 +100,7 @@ async function getEditMessage(interaction, category) {
     const select = new StringSelectMenuBuilder()
         .setCustomId('upgrade:buy')
         .setPlaceholder('pick an upgrade')
-    let description = `you have **__\`${playerData.score} pts\`__** to spend...`
+    let description = `you have **__\`${formatNumber(playerData.score)} pts\`__** to spend...`
     const embed = new EmbedBuilder()
         .setTitle("upgrades")
         .setColor("#73c9ae")
@@ -116,11 +117,11 @@ async function getEditMessage(interaction, category) {
 
         description += `\n**${upgrade.getDetails().emoji} ${upgrade.getDetails().name} (Lv${upgradeLevel})**
 ${upgrade.getDetails().description}
-${upgrade.getEffectString(upgradeLevel)} -> ${upgrade.getEffectString(upgradeLevel + 1)} for \`${upgrade.getPrice(upgradeLevel)} pts\``
+${upgrade.getEffectString(upgradeLevel)} -> ${upgrade.getEffectString(upgradeLevel + 1)} for \`${formatNumber(upgrade.getPrice(upgradeLevel), true)} pts\``
 
         select.addOptions(
             new StringSelectMenuOptionBuilder()
-                .setLabel(`${upgrade.getDetails().name} | ${upgrade.getPrice(upgradeLevel)} pts`)
+                .setLabel(`${upgrade.getDetails().name} | ${formatNumber(upgrade.getPrice(upgradeLevel), true)} pts`)
                 .setValue(upgradeId)
         )
     }

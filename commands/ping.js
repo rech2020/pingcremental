@@ -3,6 +3,7 @@ const pingMessages = require('./../helpers/pingMessage.js')
 const database = require('./../helpers/database.js')
 const upgrades = require('./../helpers/upgrades.js')
 const { ownerId } = require('./../config.json');
+const formatNumber = require('./../helpers/formatNumber.js')
 const MAX_PING_OFFSET = 5
 
 module.exports = {
@@ -257,7 +258,7 @@ you have a lot of pts... why don't you go spend them over in </upgrade:136037740
         await interaction.update({
             content:
                 `${pingMessage}
-\`${playerProfile.score} pts\` (**\`+${score}\`**)\n-# ${addDisplay.join(', ')}${multDisplay.length !== 0 ? "," : ""} ${multDisplay.join(', ')}`,
+\`${playerProfile.score} pts\` (**\`+${formatNumber(score)}\`**)\n-# ${addDisplay.join(', ')}${multDisplay.length !== 0 ? "," : ""} ${multDisplay.join(', ')}`,
             components: [row]
         });
     } catch (error) {
@@ -266,7 +267,7 @@ you have a lot of pts... why don't you go spend them over in </upgrade:136037740
             await interaction.update({
                 content:
                     `this ping message is non-offensive, and contains nothing that will anger AutoMod! (${ping}ms)
-\`${playerProfile.score} pts\` (**\`+${score}\`**)\n-# ${addDisplay.join(', ')}${multDisplay.length !== 0 ? "," : ""} ${multDisplay.join(', ')}`,
+\`${playerProfile.score} pts\` (**\`+${formatNumber(score)}\`**)\n-# ${addDisplay.join(', ')}${multDisplay.length !== 0 ? "," : ""} ${multDisplay.join(', ')}`,
                 components: [row]
             });
         } else {
