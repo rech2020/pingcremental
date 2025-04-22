@@ -26,10 +26,10 @@ module.exports = {
 		});
 	},
     buttons: {
-        "again": (async interaction => {
+        "again": (async (interaction) => {
             await ping(interaction,false)
         }),
-        "super": (async interaction => {
+        "super": (async (interaction) => {
             await ping(interaction,true)
         }),
         "delete": (async interaction => {
@@ -42,7 +42,7 @@ module.exports = {
     }
 };  
 
-async function ping(interaction, isSuper) {
+async function ping(interaction, isSuper = false) {
     const developmentMode = process.argv.includes('--dev') || process.argv.includes('-d');
     if (developmentMode && interaction.user.id !== ownerId) {
         return await interaction.update({
@@ -60,13 +60,15 @@ async function ping(interaction, isSuper) {
             ],
         })
     }
+
     let ping = interaction.client.ws.ping;
     if (process.argv.includes('--dev') || process.argv.includes('-d')) {
         ping = 6; // for testing purposes; prevents too much point gain & bypasses unknown ping
     }
 
+    let againId = 'ping:again';
     const again = new ButtonBuilder()
-        .setCustomId('ping:again')
+        .setCustomId(againId)
         .setLabel('ping again!')
         .setStyle(ButtonStyle.Secondary);
     const row = new ActionRowBuilder();
@@ -102,6 +104,7 @@ async function ping(interaction, isSuper) {
     }
     let addDisplay = [`<:ping:1361883358832885871> \`+${ping}\``];
     let multDisplay = [];
+    let extraDisplay = [];
     if (isSuper) multDisplay.push(`<:upgrade_blue:1361881310544527542> __\`x15\`__`);
     let effect;
 
@@ -114,12 +117,15 @@ async function ping(interaction, isSuper) {
                 rare: pingMessage.includes('0.1%'), 
                 isSuper: isSuper, 
                 slumberClicks: playerProfile.slumberClicks, 
-                glimmerClicks: playerProfile.glimmerClicks 
+                glimmerClicks: playerProfile.glimmerClicks,
             }
         );
+
+        let effectString = upgrades[upgradeId].getDetails().emoji;
+
         if (effect.add && effect.add !== 0) { 
             score += effect.add;
-            addDisplay.push(`${upgrades[upgradeId].getDetails().emoji} \`+${effect.add}\``);
+            effectString += ` \`+${effect.add}\``
         }
         if (effect.multiply && effect.multiply !== 1) { 
             currentEffects.mults.push(effect.multiply);
@@ -129,10 +135,21 @@ async function ping(interaction, isSuper) {
                 ? effect.multiply.toFixed(2)
                 : effect.multiply;
 
-            multDisplay.push(`${upgrades[upgradeId].getDetails().emoji} __\`x${formattedMultiplier}\`__`);
-         }
+            effectString += ` __\`x${formattedMultiplier}\`__`
+        }
         if (effect.blue) { currentEffects.blue += effect.blue; }
         if (effect.special) { currentEffects.special.push(effect.special); }
+        if (effect.message) {effectString += ` ${effect.message}`; }
+
+        if (effectString !== upgrades[upgradeId].getDetails().emoji) {
+            if (effect.add) {
+                addDisplay.push(effectString);
+            } else if (effect.multiply) {
+                multDisplay.push(effectString);
+            } else {
+                extraDisplay.push(effectString);
+            }
+        }
     }
 
     if (currentEffects.special.includes('slumber')) {

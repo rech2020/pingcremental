@@ -17,6 +17,7 @@ module.exports = {
     getEffect(level, context) {
         return {
             multiply: context.rare ? 100 : 1,
+            message: context.rare ? "WHOA!" : null,
         }
     },
     isBuyable(context) {

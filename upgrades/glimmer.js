@@ -18,6 +18,7 @@ module.exports = {
         return {
             special: (context.isSuper ? "gainGlimmer" : (context.glimmerClicks ? "glimmer" : null)),
             multiply: context.glimmerClicks && !context.isSuper ? 1.2 : 1,
+            message: context.glimmerClicks ? `(${context.glimmerClicks-1} left)` : null,
         }
     },
     isBuyable(context) {
