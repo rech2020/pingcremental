@@ -49,11 +49,6 @@ module.exports = (sequelize) => {
 			defaultValue: 0,
 			allowNull: false,
 		},
-		highScore: {
-			type: DataTypes.NUMBER,
-			defaultValue: 0,
-			allowNull: false,
-		},
 		
 
 		// slumber upgrade

@@ -37,7 +37,6 @@ ${player.totalScore} total pts
 ${player.bluePings} blue ping${player.bluePings == 1 ? '' : 's'}
 ${player.bluePingsMissed} missed blue ping${player.bluePingsMissed == 1 ? '' : 's'} (${Math.round(player.bluePingsMissed / (player.bluePings + player.bluePingsMissed) * 100)}%)
 ${player.luckyPings} lucky ping${player.luckyPings == 1 ? '' : 's'}
-${player.highScore} pts in highest ping
 `, components: [
             new ActionRowBuilder()
                 .addComponents(

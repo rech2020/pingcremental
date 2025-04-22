@@ -206,7 +206,6 @@ async function ping(interaction, isSuper = false) {
     playerProfile.clicks += 1;
     playerProfile.score += score;
     playerProfile.totalScore += score;
-    playerProfile.highScore = Math.max(playerProfile.score, playerProfile.highScore);
     if (pingMessage.includes('0.1%')) playerProfile.luckyPings += 1;
     playerProfile.lastPing = Date.now();
 
