@@ -53,7 +53,7 @@ ${leaderboardEmojis[Math.min(leaderboardEmojis.length, player.position) - 1]} **
 
     // if the user is not in the leaderboard, add them to the end of the list
     if (lbPlayers.find(player => player.userId == interaction.user.id) == null) {
-        description += `\n...\n**##** __**${interaction.user.username.replaceAll("_", "\\_")}**__ - \`${formatNumber((await database.Player.findByPk(interaction.user.id)).score)} pts\` total`
+        description += `\n...\n**##** __**${interaction.user.username.replaceAll("_", "\\_")}**__ - \`${formatNumber((await database.Player.findByPk(interaction.user.id)).totalScore)} pts\` total`
     }
 
     const embed = new EmbedBuilder()
