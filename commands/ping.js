@@ -194,9 +194,9 @@ async function ping(interaction, isSuper = false) {
         }
 
         if (combo && combo > playerProfile.highestBlueStreak) {
-            playerProfile.highestBlueStreak = combo;
+            playerProfile.highestBlueStreak = combo-1;
         }
-        
+
         playerProfile.bluePings += 1;
         const superPing = new ButtonBuilder()
             .setCustomId('ping:super')
