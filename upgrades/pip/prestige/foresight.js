@@ -2,7 +2,8 @@ const { PipUpgradeTypes } = require('../../../helpers/upgradeEnums.js');
 
 module.exports = {
     getPrice(currentLevel) {
-
+        if (currentLevel >= 3) return null;
+        return 8.5**(currentLevel+1) * 325;
     },
     getDetails() {
         return {
