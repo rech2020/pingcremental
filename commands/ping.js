@@ -67,7 +67,7 @@ async function ping(interaction, isSuper = false) {
         .setCustomId(againId)
         .setLabel('ping again!')
         .setStyle(ButtonStyle.Secondary);
-    const row = new ActionRowBuilder();
+    let row = new ActionRowBuilder();
 
     if (interaction.client.ws.ping === -1 && !developmentMode) { // bot just restarted
         row.addComponents(again, new ButtonBuilder()
@@ -75,7 +75,7 @@ async function ping(interaction, isSuper = false) {
             .setLabel('unknown ms?')
             .setStyle(ButtonStyle.Secondary));
         return await interaction.update({ // return early 
-            content: `${pingMessages(ping, { user: interaction.user })}`,
+            content: `${pingMessages(interaction.client.ws.ping, { user: interaction.user })}`,
             components: [row]
         })
     }
@@ -116,6 +116,7 @@ async function ping(interaction, isSuper = false) {
     let extraDisplay = [];
     if (isSuper) multDisplay.push(`<:upgrade_blue:1361881310544527542> __\`x15\`__`);
     let effect;
+    let score = 0;
 
     for (const [upgradeId, level] of Object.entries(playerProfile.upgrades)) {
         effect = upgrades[upgradeId].getEffect(level,
@@ -174,9 +175,10 @@ async function ping(interaction, isSuper = false) {
         playerProfile.glimmerClicks--;
     }
 
+    const rowComponents = [];
     // blue ping handling
     if (!currentEffects.special.includes('budge')) {
-        row.addComponents(again);
+        rowComponents.push(again);
     }
     // check if blue ping should trigger
     if (Math.random() * 1000 < currentEffects.blue * 10) {
@@ -184,13 +186,13 @@ async function ping(interaction, isSuper = false) {
             .setCustomId('ping:super')
             .setLabel('blue ping!')
             .setStyle(ButtonStyle.Primary);
-        row.addComponents(superPing);
+        rowComponents.push(superPing);
 
         // if not rare, refresh the message because context is different
         if (!pingMessage.includes('0.1%')) pingMessage = pingMessages(ping, { user: interaction.user, score: playerProfile.score, clicks: playerProfile.clicks, spawnedSuper: true });
     }
     if (currentEffects.special.includes('budge')) {
-        row.addComponents(again);
+        rowComponents.push(again);
     }
 
     // add mults at the end so they're actually effective
@@ -223,6 +225,18 @@ you have a lot of pts... why don't you go spend them over in </upgrade:136037740
         })
     }
 
+    if (pingMessage.includes('0.1%')) {
+        row = new ActionRowBuilder()
+            .addComponents(new ButtonBuilder()
+                .setCustomId('ping:again')
+                .setLabel('whoa!')
+                .setStyle(ButtonStyle.Success)
+                .setDisabled(true),
+            );
+    } else {
+        row = new ActionRowBuilder()
+            .addComponents(rowComponents);
+    }
 
     try {
         // update ping
@@ -244,5 +258,12 @@ you have a lot of pts... why don't you go spend them over in </upgrade:136037740
         } else {
             throw error; // rethrow if not automod 
         }
+    }
+
+    if (pingMessage.includes('0.1%')) {
+        await (new Promise(resolve => setTimeout(resolve, 2000))); // wait a bit
+        await interaction.editReply({
+            components: [new ActionRowBuilder().addComponents(rowComponents)], // refresh buttons
+        })
     }
 }
