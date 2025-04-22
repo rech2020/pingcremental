@@ -60,8 +60,23 @@ module.exports = {
             await interaction.update(await getEditMessage(interaction, upgradeClass.type()));
 
             let unlockMessage = "";
-            for (const [upgradeId, upgrade] of Object.entries(upgrades['pip'])) {
+            for (const [checkedUpgradeId, checkedUpgrade] of Object.entries(upgrades['pip'])) {
                 // i apparently cannot brain right now so have this add upgrades if they just became unlocked
+                if (checkedUpgradeId === upgradeId) continue;
+                if (playerData.prestigeUpgrades[checkedUpgradeId] !== 0) continue; // already unlocked
+                if (!checkedUpgrade.upgradeRequirements()[upgradeId]) continue; // doesn't require newly unlocked upgrade
+                if (checkedUpgrade.upgradeRequirements()[upgradeId] > playerUpgradeLevel) continue; // not yet
+
+                let newlyUnlocked = true;
+                for (const [requiredUpgrade, requiredLevel] of Object.entries(checkedUpgrade.upgradeRequirements())) {
+                    if (playerData.prestigeUpgrades[requiredUpgrade] < requiredLevel) {
+                        newlyUnlocked = false;
+                        break;
+                    };
+                }
+                if (!newlyUnlocked) continue;
+
+                unlockMessage += `\n**${upgrade.getDetails().emoji} ${upgrade.getDetails().name}**\n${upgrade.getDetails().description}`
             }
             if (unlockMessage !== "") {
                 unlockMessage = "\nYou also unlocked:\n" + unlockMessage;
