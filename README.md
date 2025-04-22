@@ -7,13 +7,14 @@ if you'd like to play yourself without self-hosting, [add the bot to your user](
 
 ## self-host setup
 
-actually pretty simple; not a lot you need to do
+actually pretty simple; there's not a lot you need to do.
 
 ### downloading
 
 1. click the green Code button on the repository's main page.
 2. select your method of choice.
 3. after setting up, ensure you have the following packages installed from NPM:
+
     a. `discord.js`
     b. `sequelize`
     c. `sqlite3`
@@ -38,6 +39,7 @@ there are two ways to do this.
 #### 1. automatic
 
 just run `run.bat`! it's that simple. it'll set everything up for you (commands, database, and the bot itself).
+
 the bot will restart on its own upon encountering an error, or when using `/development restart`.
 
 #### 2. manual
@@ -48,18 +50,23 @@ there are two things that need to be initialized before running the bot:
 2. the commands
 
 to initalize the database, run `dbInit.js`. it'll sync the database, and create the file if necessary.
+
 similarly, run `deploy.js` to send all your commands to discord.
 
 to run the bot, simply run the `index.js` file. there are some flags for running:
 
 1. `-d` or `--dev`
+
     this prevents the usage of /ping unless you are the owner.
+
 2. `-v` or `--verbose` (UPCOMING)
+
     this logs a lot of actions that occur, used for debugging.
 
 ### go wild
 
 now that you have the bot set up, do whatever you want!
+
 it's worth noting that your bot's data **will not** sync with the global bots'.
 this means you can cheat in pts and things to your heart's content!
 happy developing.
