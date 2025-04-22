@@ -198,6 +198,84 @@ function get(ping, context) {
         "i tripped over the stack trace and spilled ping everywhere",
         "the ping is an illusion, lag is real",
         "have any ideas? try </feedback submit:1363002827664003284>!",
+        "did you know? this is my current ping:",
+        "ping pong? more like... more like ping wrong",
+        "just another friendly neighborhood ping",
+        "thanks for waiting! or... not waiting. either way",
+        "this ping may contain small parts. not for children under 3",
+        "hello? yes, this is ping. pong is busy right now",
+        "did you know: pings can jump up to 3 feet in the wild (source: trust me bro)",
+        "you pinged me... now what?",
+        "certified fresh ping™",
+        "this ping is running on hopes and dreams",
+        "lag? never heard of her",
+        "you summoned a ping, but at what cost?",
+        "bot moment achieved",
+        "who needs meaning when you have milliseconds",
+        "ping pong bing bong",
+        "this is one of the pings of all time",
+        "i ping, therefore i am",
+        "behold: one (1) ping",
+        "one of them ()",
+        `every click brings you closer to enlightenment. or carpal tunnel. it's a toss-up.`,
+        `thats a few pings!`,
+        "pingn't. wait, nope",
+        'you just pinged. pung?',
+        "shoutout to gay foxgirls!", //idk if you want to make that gay foxgirls but
+        "hey, its not a 404.",
+        "this ping message was brought to you by... uh, me. hi.",
+        "just a humble ping doing its best.",
+        "this ping was not sponsored.",
+        "beep boop im a ping",
+        "bot buffering",
+        "what if we're all just living in a pingulation- i mean, a simulation?",
+        "congrats! you've gotten this ping message.",
+        "my first instinct on what to write here is just \"mrrow\"",
+        "mrrow", //:gladeline:
+        "this ping is grumpy. don't ask how i know that.",
+        "hi, its me, im the bot",
+        "this message was written by a fox desperately trying to be funny.",
+        "ping provided by 100% genuine bot energy.",
+        "bot-generated, user-approved (hopefully).",
+        "the ping factory is working overtime.",
+        "this response brought to you by the same bot who sends all the other ones.",
+        "warning: this ping message may contain self-awareness.",
+        "this is technically content.",
+        "fun fact: i thought about making this message cooler, but i didn't",
+        `this message was handcrafted by my ${ping} braincells`,
+        "i put this message together at the last second. nailed it",
+        "no one asked for this ping message, but here it is",
+        "boop",
+        "back already? here's another ping",
+        "you should check out our </ping:1360377407109861647> command at some point",
+
+        //ok, these next ones are kinda weird but they're fun, so here
+        ping < 30 ? "whoa, that's fast! zoom zoom!" : 
+        ping < 50 ? "solid ping. not bad, not bad." : 
+        ping < 80 ? "acceptable ping levels achieved." : 
+        "could be worse, honestly.",
+
+        "good vibe pings only.",
+        "ping has arrived safely.",
+        "ugh, another ping? fine.",
+        "this better be important.",
+        "ping sent. don't expect enthusiasm every time.",
+        "i was taking a nap, but sure, here's your ping.",
+        "again? really? okay, okay… ping.",
+        "you just had to ping me, didn't you?",
+        "here's your precious ping. now leave me alone.",
+        "fine. ping. happy now?",
+        "this is my 'sending ping but sighing deeply' message.",
+        "ping delivered with mild resentment.",
+        "pong :3", //i think its funny to sometimes be given this one and not know if it was the 15% chance or one random one
+        "this ping was sent! i think.",
+        "what does the fox say?",
+        "*happy cat noises\\*",
+        "boo! (yes im scary)",
+        "rhfahfkfhffhfkakjd",
+        "guh",
+        "this is a ping message (i think)",
+
 
         // these are all references
         "i would never give you up. what? what song?",
@@ -287,6 +365,8 @@ function get(ping, context) {
             context.score % 1000 === 0 ? `your score is a very satisfying multiple of 1000. good job` : `your score isn’t divisible by 1000. i noticed`,
             `at this rate, you'll hit ${context.score + 10000} in no time. probably`,
             `fun fact: you've earned ${context.score} pts and not a single one was a tax write-off`,
+            context.score >= 2e6 ? `two megapts? ok, now you're just showing off` : (context.score >=1e6? `approaching the legendary double megapt threshold...`:`you're approaching one megapt (probably)`),
+            `click count: ${context.clicks}. you should probably stretch your fingers`,
         ]
     }
 
@@ -325,6 +405,22 @@ function get(ping, context) {
         "ping powered by a potato. a raw one",
         "ping is cooking. too bad it's burning",
         "warning: ping values approaching philosophical levels",
+        `this ping got stuck in traffic`,
+        `ping so slow, it's writing an apology letter`,
+        `it's not a ping, it's a waiting game`,
+        `someone call tech support. oh wait, that's me`,
+        `lag is just unintentional suspense`,
+        `this ping was handcrafted by a sloth`,
+        `ping powered by dial-up nostalgia`,
+        `the data packet took the scenic route`,
+        `ping is still buffering... please wait`,
+        `are you sure you're not on potato wifi?`,
+        `this latency is measured in geological time now`,
+        `ping is out for lunch. back soon?`,
+        `by the time this ping finishes, Stardew crops will have regrown`,
+        `warning: ping is thinking about life choices`,
+        ping>=300?`ping is moving at glacial speeds, but it got here`:`okay, so like, its trying its best`,
+        
     ]
 
     // 15% chance to get a regular flavored ping message, so it's not super uncommon
@@ -358,6 +454,18 @@ function get(ping, context) {
             "ping anomaly in sector 4!",
             "shiny ping! catch it!",
             "this one's got main character energy",
+            "✨ behold, the rare and elusive blue ping",
+            "blue ping sighted. everyone stay calm!",
+            "you found the shiny one! quick, click before it vanishes",
+            "it's blue, it's cool, it's limited time only (maybe)",
+            "whoa! rare ping drop detected",
+            "this ping rolled a natural 20 on sparkle",
+            "super ping sighted — don't miss your chance!",
+            "one blue ping appears. what will you do?",
+            "super ping alert! this is not a drill!",
+            "catch it quick before it despawns like your hopes and dreams",
+            "ping anomaly confirmed. shiny variant detected.",
+            "this ping radiates 'main character energy'",
         ]
     }
 
@@ -378,6 +486,17 @@ function get(ping, context) {
             "i don't know what you did but it was awesome",
             "ping results: critical success",
             "beyond super. beyond pong. ultra",
+            "super effective! 15x points hit!",
+            "critical ping! multiplier activated!",
+            "blue ping clicked. dopamine received.",
+            "nice shot! jackpot ping confirmed",
+            "super ping: deleted. points: multiplied.",
+            "that click was legendary",
+            "RNG gods smiled upon you this time",
+            "15x multiplier? you're living the dream",
+            "you just dealt 15x damage to the button. nice.",
+            "your click was a direct hit!",
+            "i didn't expect you to actually get it. but here we are.",
         ]
     }
 
@@ -421,6 +540,19 @@ function get(ping, context) {
             "restart detected. where am i? who are you?",
             "ping momentarily ascended to a higher plane",
             "milliseconds? buddy, we're talking *eternities*",
+            "reboot complete. reality questionable.",
+            "ping lost in the reboot void",
+            "bot restarted. ping still recalculating existence",
+            "the bot has returned from the abyss. hello again.",
+            "ping undefined. consciousness achieved.",
+            "after a brief existential crisis, i'm back, kinda",
+            "ping is searching for purpose after restart",
+            "just woke up from maintenance mode. what year is it?",
+            "restart successful. ping still unknown.",
+            "the ping is confused and so am i",
+            "the ping wandered off during the reboot. typical.",
+            "rebooted, refreshed, still laggy",
+            "ping momentarily became one with the universe",
         ]
     }
 
