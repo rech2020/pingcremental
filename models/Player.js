@@ -33,6 +33,29 @@ module.exports = (sequelize) => {
 			allowNull: false,
 		},
 
+		// misc stats (move to separate table?)
+		bluePings: {
+			type: DataTypes.NUMBER,
+			defaultValue: 0,
+			allowNull: false,
+		},
+		bluePingsMissed: {
+			type: DataTypes.NUMBER,
+			defaultValue: 0,
+			allowNull: false,
+		},
+		luckyPings: {
+			type: DataTypes.NUMBER,
+			defaultValue: 0,
+			allowNull: false,
+		},
+		highScore: {
+			type: DataTypes.NUMBER,
+			defaultValue: 0,
+			allowNull: false,
+		},
+		
+
 		// slumber upgrade
 		lastPing: {
 			type: DataTypes.DATE,

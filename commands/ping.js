@@ -182,6 +182,7 @@ async function ping(interaction, isSuper = false) {
     }
     // check if blue ping should trigger
     if (Math.random() * 1000 < currentEffects.blue * 10) {
+        playerProfile.bluePings += 1;
         const superPing = new ButtonBuilder()
             .setCustomId('ping:super')
             .setLabel('blue ping!')
@@ -205,7 +206,21 @@ async function ping(interaction, isSuper = false) {
     playerProfile.clicks += 1;
     playerProfile.score += score;
     playerProfile.totalScore += score;
+    playerProfile.highScore = Math.max(playerProfile.score, playerProfile.highScore);
+    if (pingMessage.includes('0.1%')) playerProfile.luckyPings += 1;
     playerProfile.lastPing = Date.now();
+
+    if (!isSuper) {
+        let missed = false;
+        for (const messageButton of interaction.message.components[0].components) { // check every button in the first row
+            if (messageButton.data.custom_id === 'ping:super') {
+                missed = true;
+                break;
+            }
+        }
+        if (missed) playerProfile.bluePingsMissed += 1; // if the button is still there, it means they didn't click it
+    }
+
     await playerProfile.save();
 
     // show upgrade popup after 150 clicks
