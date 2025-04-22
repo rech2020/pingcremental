@@ -258,7 +258,7 @@ you have a lot of pts... why don't you go spend them over in </upgrade:136037740
         await interaction.update({
             content:
                 `${pingMessage}
-\`${playerProfile.score} pts\` (**\`+${formatNumber(score)}\`**)\n-# ${addDisplay.join(', ')}${multDisplay.length !== 0 ? "," : ""} ${multDisplay.join(', ')}`,
+\`${formatNumber(playerProfile.score)} pts\` (**\`+${formatNumber(score)}\`**)\n-# ${addDisplay.join(', ')}${multDisplay.length !== 0 ? "," : ""} ${multDisplay.join(', ')}`,
             components: [row]
         });
     } catch (error) {
@@ -267,7 +267,7 @@ you have a lot of pts... why don't you go spend them over in </upgrade:136037740
             await interaction.update({
                 content:
                     `this ping message is non-offensive, and contains nothing that will anger AutoMod! (${ping}ms)
-\`${playerProfile.score} pts\` (**\`+${formatNumber(score)}\`**)\n-# ${addDisplay.join(', ')}${multDisplay.length !== 0 ? "," : ""} ${multDisplay.join(', ')}`,
+\`${formatNumber(playerProfile.score)} pts\` (**\`+${formatNumber(score)}\`**)\n-# ${addDisplay.join(', ')}${multDisplay.length !== 0 ? "," : ""} ${multDisplay.join(', ')}`,
                 components: [row]
             });
         } else {
