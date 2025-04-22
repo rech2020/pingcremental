@@ -117,7 +117,7 @@ async function ping(interaction, isSuper = false) {
     let extraDisplay = [];
     if (isSuper) multDisplay.push(`<:upgrade_blue:1361881310544527542> __\`x15\`__`);
     let effect;
-    let score = 0;
+    let score = ping; // base score is ping
 
     for (const [upgradeId, level] of Object.entries(playerProfile.upgrades)) {
         effect = upgrades[upgradeId].getEffect(level,
