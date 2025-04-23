@@ -19,7 +19,7 @@ module.exports = {
     },
     buttons: {
         refresh: (async (interaction, userId) => {
-            await interaction.update(await getMessage(userId));
+            await interaction.update(await getMessage(userId || interaction.user.id));
         })
     },
 }
