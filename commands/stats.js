@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, InteractionContextType } = require('discord.js');
+const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, InteractionContextType, MessageFlags } = require('discord.js');
 const database = require('./../helpers/database.js');
 const formatNumber = require('./../helpers/formatNumber.js');
 
@@ -6,20 +6,26 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('stats')
         .setDescription('numbers and stuff')
-        .setContexts(InteractionContextType.BotDM, InteractionContextType.Guild, InteractionContextType.PrivateChannel),
+        .setContexts(InteractionContextType.BotDM, InteractionContextType.Guild, InteractionContextType.PrivateChannel)
+        .addUserOption(option =>
+            option.setName('user')
+                .setDescription('the user to get stats for')
+                .setRequired(false)   
+        ),
     async execute(interaction) {
-        const response = await getMessage(interaction);
+        const user = interaction.options.getUser('user') || interaction.user;
+        const response = await getMessage(user.id);
         await interaction.reply(response);
     },
     buttons: {
-        refresh: (async interaction => {
-            await interaction.update(await getMessage(interaction));
+        refresh: (async (interaction, userId) => {
+            await interaction.update(await getMessage(userId));
         })
     },
 }
 
-async function getMessage(interaction) {
-    const player = await database.Player.findByPk(interaction.user.id);
+async function getMessage(userId) {
+    const player = await database.Player.findByPk(userId);
     return {
         content: `
 __**global**__
@@ -31,7 +37,7 @@ ${formatNumber(await database.Player.sum('bluePings'))} blue pings have been cli
 ${formatNumber(await database.Player.sum('bluePingsMissed'))} blue pings have been missed
 ${formatNumber(await database.Player.sum('luckyPings'))} lucky pings have been found
 
-__**personal**__
+**<@${userId}>__'s personal__**
 ${formatNumber(player.clicks)} total ping${player.clicks == 1 ? '' : 's'}
 ${formatNumber(player.totalScore)} total pts
 ${formatNumber(player.bluePings)} blue ping${player.bluePings == 1 ? '' : 's'} clicked
@@ -42,10 +48,11 @@ ${formatNumber(player.highestBlueStreak)} highest blue ping streak
             new ActionRowBuilder()
                 .addComponents(
                     new ButtonBuilder()
-                        .setCustomId('stats:refresh')
+                        .setCustomId(`stats:refresh-${userId}`)
                         .setLabel('refresh')
                         .setStyle(ButtonStyle.Secondary)
                 )
-        ]
+        ],
+        allowedMentions: { parse: [] }, // don't ping the user when refreshing
     };
 }
