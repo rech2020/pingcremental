@@ -26,6 +26,8 @@ module.exports = {
 
 async function getMessage(userId) {
     const player = await database.Player.findByPk(userId);
+    if (!player) return { content: `<@${userId}> hasn't pinged yet.`, allowedMentions: { parse: [] }, flags: MessageFlags.Ephemeral };
+    
     return {
         content: `
 __**global**__
