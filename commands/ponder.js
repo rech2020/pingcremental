@@ -26,7 +26,7 @@ module.exports = {
             if (upgradeId === 'none') return await interaction.reply({ content: 'you already got everything.', ephemeral: true });
             const playerData = await database.Player.findByPk(`${interaction.user.id}`);
 
-            const playerUpgradeLevel = playerData.prestigeUpgrades[upgradeId] ?? 0;
+            let playerUpgradeLevel = playerData.prestigeUpgrades[upgradeId] ?? 0;
             const upgradeClass = upgrades['pip'][upgradeId];
             const price = upgradeClass.getPrice(playerUpgradeLevel);
             
@@ -45,8 +45,9 @@ module.exports = {
                 })
             }
 
+            playerUpgradeLevel += 1;
             playerData.pip -= price;
-            playerData.prestigeUpgrades[upgradeId] = playerUpgradeLevel + 1;
+            playerData.prestigeUpgrades[upgradeId] = playerUpgradeLevel;
             playerData.changed('prestigeUpgrades', true) // this is a hacky way to set the upgrades field, but it works
             await playerData.save();
 
@@ -61,29 +62,29 @@ module.exports = {
 
             let unlockMessage = "";
             for (const [checkedUpgradeId, checkedUpgrade] of Object.entries(upgrades['pip'])) {
-                // i apparently cannot brain right now so have this add upgrades if they just became unlocked
-                if (checkedUpgradeId === upgradeId) continue;
-                if (playerData.prestigeUpgrades[checkedUpgradeId] !== 0) continue; // already unlocked
-                if (!checkedUpgrade.upgradeRequirements()[upgradeId]) continue; // doesn't require newly unlocked upgrade
-                if (checkedUpgrade.upgradeRequirements()[upgradeId] > playerUpgradeLevel) continue; // not yet
+                const req = checkedUpgrade.upgradeRequirements();
+
+                if (playerData.prestigeUpgrades[checkedUpgradeId]) continue; // already unlocked
+                if (!req[upgradeId]) continue; // doesn't require newly unlocked upgrade
+                if (req[upgradeId] > playerUpgradeLevel) continue; // not yet
 
                 let newlyUnlocked = true;
-                for (const [requiredUpgrade, requiredLevel] of Object.entries(checkedUpgrade.upgradeRequirements())) {
-                    if (playerData.prestigeUpgrades[requiredUpgrade] < requiredLevel) {
+                for (const [requiredUpgrade, requiredLevel] of Object.entries(req)) {
+                    if (requiredLevel < (playerData.prestigeUpgrades[requiredUpgrade] ?? 0)) {
                         newlyUnlocked = false;
                         break;
                     };
                 }
                 if (!newlyUnlocked) continue;
 
-                unlockMessage += `\n**${upgrade.getDetails().emoji} ${upgrade.getDetails().name}**\n${upgrade.getDetails().description}`
+                unlockMessage += `\n**${checkedUpgrade.getDetails().emoji} ${checkedUpgrade.getDetails().name}**\n${checkedUpgrade.getDetails().description}`
             }
             if (unlockMessage !== "") {
                 unlockMessage = "\nYou also unlocked:\n" + unlockMessage;
             }
 
             return await interaction.followUp({
-                content: `**${upgradeClass.getDetails().name}** is now level ${playerUpgradeLevel+1}. (\`${playerData.pip} PIP\` left)${unlockMessage}`,
+                content: `**${upgradeClass.getDetails().name}** is now level ${playerUpgradeLevel}. (\`${playerData.pip} PIP\` left)${unlockMessage}`,
                 components: [new ActionRowBuilder().addComponents(button)]
             })
         })
@@ -129,7 +130,7 @@ async function getEditMessage(interaction, category) {
 
         let canBuy = true;
         for (const [requiredUpgrade, requiredLevel] of Object.entries(upgrade.upgradeRequirements())) {
-            if (pUpgrades[requiredUpgrade] < requiredLevel) canBuy = false;
+            canBuy = !(pUpgrades[requiredUpgrade] === undefined || pUpgrades[requiredUpgrade] < requiredLevel) && canBuy; // check if upgrade is unlocked
         }
         if (!canBuy) continue;
 

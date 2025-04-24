@@ -121,7 +121,7 @@ async function ping(interaction, isSuper = false) {
 
 
     for (const [upgradeId, level] of Object.entries(playerProfile.upgrades)) {
-        effect = upgrades[upgradeId].getEffect(level, context);
+        effect = upgrades['pts'][upgradeId].getEffect(level, context);
         if (effect.special) {
             if (Array.isArray(effect.special)) { // allow returning multiple specials
                 for (const special of effect.special) {
@@ -144,9 +144,10 @@ async function ping(interaction, isSuper = false) {
 
     
     for (const [upgradeId, level] of Object.entries(playerProfile.upgrades)) {
-        effect = upgrades[upgradeId].getEffect(level,context);
+        const upgradeClass = upgrades['pts'][upgradeId];
+        effect = upgradeClass.getEffect(level,context);
 
-        let effectString = upgrades[upgradeId].getDetails().emoji;
+        let effectString = upgradeClass.getDetails().emoji;
 
         // apply effects where appropriate
         if (effect.add && effect.add !== 0) {
@@ -172,7 +173,7 @@ async function ping(interaction, isSuper = false) {
         if (effect.message) { effectString += ` ${effect.message}`; }
 
         // add to display
-        if (effectString !== upgrades[upgradeId].getDetails().emoji) {
+        if (effectString !== upgradeClass.getDetails().emoji) {
             if (effect.add) {
                 displays.add.push(effectString);
             } else if (effect.multiply) {
@@ -305,6 +306,10 @@ you have a lot of pts... why don't you go spend them over in </upgrade:136037740
         displayDisplay += ", " + display.join(', ') 
     }
     displayDisplay = displayDisplay.substring(2); // remove first comma and space
+    
+    if (currentEffects.bp) {
+        displayDisplay += `\n-# \`${formatNumber(playerProfile.bp)}/${formatNumber(bpMax)} bp\`${playerProfile.bp >= bpMax ? " **(MAX)**" : ""}`
+    }
 
     try {
         // update ping

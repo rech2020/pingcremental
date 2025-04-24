@@ -30,7 +30,7 @@ module.exports = {
             playerData.bp = 0;
             playerData.changed('upgrades', true) // this is a hacky way to set the upgrades field, but it works
             await playerData.save();
-            await interaction.update({ content: `*it is done.*\n-# you now have __\`${playerData.pip} PIP\``, components: [] });
+            await interaction.update({ content: `*it is done.*\n-# you now have __\`${playerData.pip} PIP\`__`, components: [] });
             if (firstEternity) {
                 await interaction.followUp({ content: `
 *welcome to Eternity. congratulations on making it here.*
