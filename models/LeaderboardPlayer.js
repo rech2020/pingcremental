@@ -1,7 +1,7 @@
 const { Sequelize, DataTypes, Model } = require('sequelize');
 
 module.exports = (sequelize) => {
-	class LeaderboardPlayer extends Model {}
+	class LeaderboardPlayer extends Model { }
 
 	LeaderboardPlayer.init({
 		userId: {

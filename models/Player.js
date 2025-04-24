@@ -1,7 +1,7 @@
 const { Sequelize, DataTypes, Model } = require('sequelize');
 
 module.exports = (sequelize) => {
-	class User extends Model {}
+	class User extends Model { }
 
 	User.init({
 		userId: {
@@ -20,7 +20,7 @@ module.exports = (sequelize) => {
 			defaultValue: 0,
 			allowNull: false,
 		},
-		
+
 		upgrades: {
 			type: DataTypes.JSON,
 			allowNull: false,
@@ -32,6 +32,29 @@ module.exports = (sequelize) => {
 			defaultValue: 0,
 			allowNull: false,
 		},
+
+		// misc stats (move to separate table?)
+		bluePings: {
+			type: DataTypes.NUMBER,
+			defaultValue: 0,
+			allowNull: false,
+		},
+		bluePingsMissed: {
+			type: DataTypes.NUMBER,
+			defaultValue: 0,
+			allowNull: false,
+		},
+		luckyPings: {
+			type: DataTypes.NUMBER,
+			defaultValue: 0,
+			allowNull: false,
+		},
+		highestBlueStreak: {
+			type: DataTypes.NUMBER,
+			defaultValue: 0,
+			allowNull: false,
+		},
+		
 
 		// prestige data
 		bp: {

@@ -6,17 +6,17 @@ module.exports = {
     async execute(client) {
         console.log("goood morning!")
         updateLeaderboard()
-        setInterval(updateLeaderboard, 60 * 1000)
+        setInterval(updateLeaderboard, 60 * 1000) // update leaderboard every minute
     },
     once: true,
 }
 
 async function updateLeaderboard() {
-    await database.LeaderboardPlayer.destroy({ where: {}, truncate: true });
+    await database.LeaderboardPlayer.destroy({ where: {}, truncate: true }); // clear old leaderboard data
     const topPlayers = await database.Player.findAll({
-        order: [['totalScore', 'DESC']],
-        attributes: ['userId', 'totalScore'],
-        limit: 10,
+        order: [['totalScore', 'DESC']], // highest first
+        attributes: ['userId', 'totalScore'], // only get userId and totalScore
+        limit: 10, // top 10 only
     })
 
     let pos = 0;
