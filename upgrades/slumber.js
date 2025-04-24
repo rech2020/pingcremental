@@ -18,7 +18,7 @@ module.exports = {
     getEffect(level, context) {
         return {
             multiply: context.slumberClicks ? 1 + (level * 0.1) : 1,
-            special: context.slumberClicks ? "slumber" : null,
+            special: context.slumberClicks ? ["slumber", "canGainSlumber"] : "canGainSlumber",
             message: context.slumberClicks ? `(${context.slumberClicks} left)` : null,
         }
     },

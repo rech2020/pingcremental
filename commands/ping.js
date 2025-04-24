@@ -88,49 +88,62 @@ async function ping(interaction, isSuper = false) {
     ping += Math.round(Math.random() * MAX_PING_OFFSET * 2) - MAX_PING_OFFSET; // randomize a bit since it only updates occasionally
 
     const [playerProfile, _created] = await database.Player.findOrCreate({ where: { userId: interaction.user.id } })
-
-    let pingMessage = pingMessages(ping, 
-        { // context for message uniqueness
-            user: interaction.user, 
-            score: playerProfile.score, 
-            clicks: playerProfile.clicks, 
-            isSuper: isSuper 
-        }
-    );
-
-    // add slumber clicks if offline for long enough
-    if (playerProfile.upgrades.slumber && Date.now() - playerProfile.lastPing >= 1000 * 60 * (21 - playerProfile.upgrades.slumber)) {
-        playerProfile.slumberClicks += Math.floor((Date.now() - playerProfile.lastPing) / (1000 * 60 * (21 - playerProfile.upgrades.slumber)));
-        playerProfile.slumberClicks = Math.min(playerProfile.slumberClicks, Math.round((2 * 24 * 60) / (21 - playerProfile.upgrades.slumber))); // max of 2 days of slumber clicks
-        playerProfile.slumberClicks = Math.max(playerProfile.slumberClicks, 0); // no negative slumber clicks
+    let context = { // BIG LONG EVIL CONTEXT (will kill you if it gets the chance)
+        user: interaction.user,
+        score: playerProfile.score,
+        clicks: playerProfile.clicks,
+        isSuper: isSuper,
+        rare: Math.random() * 1000 < 1, // 0.1% chance to be rare
+        slumberClicks: playerProfile.slumberClicks,
+        glimmerClicks: playerProfile.glimmerClicks,
     }
+
+
+    /* PRE-PTS CALCULATION */
+    
 
     // prep a bunch of variables for the effects
     let currentEffects = {
         mults: [isSuper ? 15 : 1],
         blue: 0,
-        special: [],
+        specials: [],
         // add more if needed
     }
-    let addDisplay = [`<:ping:1361883358832885871> \`+${ping}\``];
-    let multDisplay = [];
-    let extraDisplay = [];
-    if (isSuper) multDisplay.push(`<:upgrade_blue:1361881310544527542> __\`x15\`__`);
+    let displays = {
+        add: [`<:ping:1361883358832885871> \`+${ping}\``],
+        mult: [],
+        extra: [],
+    }
+    if (isSuper) displays.mult.push(`<:upgrade_blue:1361881310544527542> __\`x15\`__`);
     let effect;
     let score = ping; // base score is ping
 
+
     for (const [upgradeId, level] of Object.entries(playerProfile.upgrades)) {
-        effect = upgrades[upgradeId].getEffect(level,
-            { // LONG EVIL CONTEXT (will kill you if it gets the chance)
-                ping,
-                blue: currentEffects.blue,
-                clicks: playerProfile.clicks,
-                rare: pingMessage.includes('0.1%'),
-                isSuper: isSuper,
-                slumberClicks: playerProfile.slumberClicks,
-                glimmerClicks: playerProfile.glimmerClicks,
-            }
-        );
+        effect = upgrades[upgradeId].getEffect(level, context);
+        if (effect.special) {
+            if (Array.isArray(effect.special)) { // allow returning multiple specials
+                for (const special of effect.special) {
+                    currentEffects.specials.push(special);
+                }
+            } else currentEffects.specials.push(effect.special);
+        }
+    }   
+
+    // add slumber clicks if offline for long enough
+    if (currentEffects.specials.includes('canGainSlumber') && Date.now() - playerProfile.lastPing >= 1000 * 60 * (21 - playerProfile.upgrades.slumber)) {
+        playerProfile.slumberClicks += Math.floor((Date.now() - playerProfile.lastPing) / (1000 * 60 * (21 - playerProfile.upgrades.slumber)));
+        playerProfile.slumberClicks = Math.min(playerProfile.slumberClicks, Math.round((2 * 24 * 60) / (21 - playerProfile.upgrades.slumber))); // max of 2 days of slumber clicks
+        playerProfile.slumberClicks = Math.max(playerProfile.slumberClicks, 0); // no negative slumber clicks
+        context.slumberClicks = playerProfile.slumberClicks; // update context for later effects
+    }
+
+    
+    /* PTS CALCULATION */
+
+    
+    for (const [upgradeId, level] of Object.entries(playerProfile.upgrades)) {
+        effect = upgrades[upgradeId].getEffect(level,context);
 
         let effectString = upgrades[upgradeId].getDetails().emoji;
 
@@ -150,35 +163,39 @@ async function ping(interaction, isSuper = false) {
         }
 
         if (effect.blue) { currentEffects.blue += effect.blue; }
-        if (effect.special) { currentEffects.special.push(effect.special); }
+        if (effect.special) { currentEffects.specials.push(effect.special); }
         if (effect.message) { effectString += ` ${effect.message}`; }
 
         // add to display
         if (effectString !== upgrades[upgradeId].getDetails().emoji) {
             if (effect.add) {
-                addDisplay.push(effectString);
+                displays.add.push(effectString);
             } else if (effect.multiply) {
-                multDisplay.push(effectString);
+                displays.mult.push(effectString);
             } else {
-                extraDisplay.push(effectString);
+                displays.extra.push(effectString);
             }
         }
     }
 
-    // some special effects are applied here
-    if (currentEffects.special.includes('slumber')) {
+
+
+    /* SPECIALS */
+
+
+    if (currentEffects.specials.includes('slumber')) {
         playerProfile.slumberClicks--;
     }
-    if (currentEffects.special.includes('gainGlimmer')) {
+    if (currentEffects.specials.includes('gainGlimmer')) {
         playerProfile.glimmerClicks += 5;
     }
-    if (currentEffects.special.includes('glimmer')) {
+    if (currentEffects.specials.includes('glimmer')) {
         playerProfile.glimmerClicks--;
     }
 
     const rowComponents = [];
     // blue ping handling
-    if (!currentEffects.special.includes('budge')) {
+    if (!currentEffects.specials.includes('budge')) {
         rowComponents.push(again);
     }
     // check if blue ping should trigger
@@ -204,10 +221,10 @@ async function ping(interaction, isSuper = false) {
             .setStyle(ButtonStyle.Primary);
         rowComponents.push(superPing);
 
-        // if not rare, refresh the message because context is different
-        if (!pingMessage.includes('0.1%')) pingMessage = pingMessages(ping, { user: interaction.user, score: playerProfile.score, clicks: playerProfile.clicks, spawnedSuper: true });
+        context.spawnedSuper = true; // set context for additonal things
+        context.blueCombo = combo;
     }
-    if (currentEffects.special.includes('budge')) {
+    if (currentEffects.specials.includes('budge')) {
         rowComponents.push(again);
     }
 
@@ -217,11 +234,17 @@ async function ping(interaction, isSuper = false) {
     }
     score = Math.round(score);
 
+
+    /* SAVE STATS */
+
+    context.score += score; // update context for later effects
+    const pingMessage = pingMessages(ping, context); // get the ping message
+
     // apply stats and save
     playerProfile.clicks += 1;
     playerProfile.score += score;
     playerProfile.totalScore += score;
-    if (pingMessage.includes('0.1%')) playerProfile.luckyPings += 1;
+    if (context.rare) playerProfile.luckyPings += 1;
     playerProfile.lastPing = Date.now();
 
     if (!isSuper) {
@@ -254,7 +277,7 @@ you have a lot of pts... why don't you go spend them over in </upgrade:136037740
         })
     }
 
-    if (pingMessage.includes('0.1%')) {
+    if (context.rare) {
         row = new ActionRowBuilder()
             .addComponents(new ButtonBuilder()
                 .setCustomId('ping:again')
@@ -267,12 +290,19 @@ you have a lot of pts... why don't you go spend them over in </upgrade:136037740
             .addComponents(rowComponents);
     }
 
+    let displayDisplay = ""
+    for (const display of Object.values(displays)) {
+        if (display.length === 0) continue; // skip empty displays
+        displayDisplay += ", " + display.join(', ') 
+    }
+    displayDisplay = displayDisplay.substring(2); // remove first comma and space
+
     try {
         // update ping
         await interaction.update({
             content:
                 `${pingMessage}
-\`${formatNumber(playerProfile.score)} pts\` (**\`+${formatNumber(score)}\`**)\n-# ${addDisplay.join(', ')}${multDisplay.length !== 0 ? "," : ""} ${multDisplay.join(', ')}`,
+\`${formatNumber(playerProfile.score)} pts\` (**\`+${formatNumber(score)}\`**)\n-# ${displayDisplay}`,
             components: [row]
         });
     } catch (error) {
@@ -281,7 +311,7 @@ you have a lot of pts... why don't you go spend them over in </upgrade:136037740
             await interaction.update({
                 content:
                     `this ping message is non-offensive, and contains nothing that will anger AutoMod! (${ping}ms)
-\`${formatNumber(playerProfile.score)} pts\` (**\`+${formatNumber(score)}\`**)\n-# ${addDisplay.join(', ')}${multDisplay.length !== 0 ? "," : ""} ${multDisplay.join(', ')}`,
+\`${formatNumber(playerProfile.score)} pts\` (**\`+${formatNumber(score)}\`**)\n-# ${displayDisplay}`,
                 components: [row]
             });
         } else {
@@ -289,7 +319,7 @@ you have a lot of pts... why don't you go spend them over in </upgrade:136037740
         }
     }
 
-    if (pingMessage.includes('0.1%')) {
+    if (context.rare) {
         await (new Promise(resolve => setTimeout(resolve, 2000))); // wait a bit
         await interaction.editReply({
             components: [new ActionRowBuilder().addComponents(rowComponents)], // refresh buttons
