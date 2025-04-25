@@ -152,7 +152,7 @@ async function ping(interaction, isSuper = false) {
         // apply effects where appropriate
         if (effect.add && effect.add !== 0) {
             score += effect.add;
-            effectString += ` \`+${effect.add}\``
+            effectString += ` \`+${formatNumber(effect.add)}\``
         }
 
         if (effect.multiply && effect.multiply !== 1) {
@@ -309,7 +309,7 @@ you have a lot of pts... why don't you go spend them over in </upgrade:136037740
         await interaction.update({
             content:
                 `${pingMessage}
-\`${formatNumber(playerProfile.score)} pts\` (**\`+${formatNumber(score)}\`**)\n-# ${displayDisplay}`,
+\`${formatNumber(playerProfile.score, true, 4)} pts\` (**\`+${formatNumber(score, true, 3)}\`**)\n-# ${displayDisplay}`,
             components: [row]
         });
     } catch (error) {
@@ -318,7 +318,7 @@ you have a lot of pts... why don't you go spend them over in </upgrade:136037740
             await interaction.update({
                 content:
                     `this ping message is non-offensive, and contains nothing that will anger AutoMod! (${ping}ms)
-\`${formatNumber(playerProfile.score)} pts\` (**\`+${formatNumber(score)}\`**)\n-# ${displayDisplay}`,
+\`${formatNumber(playerProfile.score, true, 4)} pts\` (**\`+${formatNumber(score, true, 3)}\`**)\n-# ${displayDisplay}`,
                 components: [row]
             });
         } else {

@@ -1,4 +1,4 @@
-function formatNumber(num, shortHand = false) {
+function formatNumber(num, shortHand = false, decimalPlaces = 2) {
     if (num === null || num === undefined) return '0'; // handle null or undefined values
 
     const numStr = num.toString();
@@ -10,7 +10,7 @@ function formatNumber(num, shortHand = false) {
         const magnitude = Math.floor(Math.log10(num));
         const suffixIndex = Math.floor(magnitude / 3);
 
-        const baseNum = (num / Math.pow(10, suffixIndex * 3)).toFixed(2);
+        const baseNum = (num / Math.pow(10, suffixIndex * 3)).toFixed(decimalPlaces);
         return baseNum + (suffixes[suffixIndex] || '');
     }
 
@@ -22,7 +22,7 @@ function formatNumber(num, shortHand = false) {
 
     const suffixIndex = Math.floor((numStr.length - 1) / 3); 
 
-    const baseNum = (Math.ceil((num * 1000 / Math.pow(10, suffixIndex * 3))) / 1000).toFixed(2); 
+    const baseNum = (Math.ceil((num * (10**(decimalPlaces+1)) / Math.pow(10, suffixIndex * 3))) / (10**(decimalPlaces+1))).toFixed(decimalPlaces); 
 
     return baseNum + suffixes[suffixIndex]; 
 }
