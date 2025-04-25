@@ -15,10 +15,17 @@ module.exports = {
         return level === 1 ? `x1.2` : `x1`;
     },
     getEffect(level, context) {
-        return {
-            special: (context.isSuper ? "gainGlimmer" : (context.glimmerClicks ? "glimmer" : null)),
-            multiply: context.glimmerClicks && !context.isSuper ? 1.2 : 1,
-            message: context.glimmerClicks || context.isSuper ? `(${context.glimmerClicks}${context.isSuper ? "**+5**" : ""} left)` : null,
+        if (context.isSuper) {
+            return {
+                special: { "glimmer": +5 },
+                message: `(${context.glimmerClicks}**+5** left)`,
+            }
+        } else if (context.glimmerClicks) {
+            return {
+                special: { "glimmer": -1 },
+                multiply: 1.2,
+                message: `(${context.glimmerClicks} left)`,
+            }
         }
     },
     isBuyable(context) {

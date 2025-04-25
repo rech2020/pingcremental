@@ -16,10 +16,17 @@ module.exports = {
         return `x${(1+level*0.1).toFixed(1)}, every ${21-level}m, up to ${Math.round((2*24*60)/(21-level))} pings`;
     },
     getEffect(level, context) {
-        return {
-            multiply: context.slumberClicks ? 1 + (level * 0.1) : 1,
-            special: context.slumberClicks ? ["slumber", "canGainSlumber"] : "canGainSlumber",
-            message: context.slumberClicks ? `(${context.slumberClicks} left)` : null,
+        if (context.slumberClicks) {
+            return {
+                multiply: 1 + (level * 0.1),
+                special: { "slumber": -1, "canGainSlumber": true },
+                message: `(${context.slumberClicks} left)`,
+            }
+        }
+        else {
+            return {
+                special: { "canGainSlumber": true },
+            }
         }
     },
     isBuyable(context) {

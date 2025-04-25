@@ -17,7 +17,7 @@ module.exports = {
     },
     getEffect(level, context) {
         return {
-            special: "blueping"
+            special: { "blueping" : true },
         };
     },
     isBuyable(context) {

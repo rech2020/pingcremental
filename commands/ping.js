@@ -98,6 +98,7 @@ async function ping(interaction, isSuper = false) {
         slumberClicks: playerProfile.slumberClicks,
         glimmerClicks: playerProfile.glimmerClicks,
         blue: 0,
+        specials: {},
     }
 
 
@@ -108,7 +109,7 @@ async function ping(interaction, isSuper = false) {
     let currentEffects = {
         mults: [isSuper ? 15 : 1],
         blue: 0,
-        specials: [],
+        specials: {},
         bp: 0,
         // add more if needed
     }
@@ -125,16 +126,15 @@ async function ping(interaction, isSuper = false) {
     for (const [upgradeId, level] of Object.entries(playerProfile.upgrades)) {
         effect = upgrades['pts'][upgradeId].getEffect(level, context);
         if (effect.special) {
-            if (Array.isArray(effect.special)) { // allow returning multiple specials
-                for (const special of effect.special) {
-                    currentEffects.specials.push(special);
-                }
-            } else currentEffects.specials.push(effect.special);
+            for (const [special, value] of Object.entries(effect.special)) {
+                currentEffects.specials[special] = value;
+            }
         }
-    }   
+    }
+    context.specials = currentEffects.specials; // update context for later effects
 
     // add slumber clicks if offline for long enough
-    if (currentEffects.specials.includes('canGainSlumber') && Date.now() - playerProfile.lastPing >= 1000 * 60 * (21 - playerProfile.upgrades.slumber)) {
+    if (currentEffects.specials.canGainSlumber && Date.now() - playerProfile.lastPing >= 1000 * 60 * (21 - playerProfile.upgrades.slumber)) {
         playerProfile.slumberClicks += Math.floor((Date.now() - playerProfile.lastPing) / (1000 * 60 * (21 - playerProfile.upgrades.slumber)));
         playerProfile.slumberClicks = Math.min(playerProfile.slumberClicks, Math.round((2 * 24 * 60) / (21 - playerProfile.upgrades.slumber))); // max of 2 days of slumber clicks
         playerProfile.slumberClicks = Math.max(playerProfile.slumberClicks, 0); // no negative slumber clicks
@@ -194,23 +194,20 @@ async function ping(interaction, isSuper = false) {
     /* SPECIALS */
 
 
-    if (currentEffects.specials.includes('slumber')) {
-        playerProfile.slumberClicks--;
+    if (currentEffects.specials.slumber) {
+        playerProfile.slumberClicks += currentEffects.specials.slumber;
     }
-    if (currentEffects.specials.includes('gainGlimmer')) {
-        playerProfile.glimmerClicks += 5;
-    }
-    if (currentEffects.specials.includes('glimmer')) {
-        playerProfile.glimmerClicks--;
+    if (currentEffects.specials.glimmer) {
+        playerProfile.glimmerClicks += currentEffects.specials.glimmer;
     }
 
     const rowComponents = [];
     // blue ping handling
-    if (!currentEffects.specials.includes('budge')) {
+    if (!currentEffects.specials.budge) {
         rowComponents.push(again);
     }
     // check if blue ping should trigger
-    if (Math.random() * 1000 < currentEffects.blue * 10) {
+    if (Math.random() * 1000 < currentEffects.blue * 10 && currentEffects.specials.blueping) {
         let combo = false;
         if (isSuper) {
             combo = 1;
@@ -235,7 +232,7 @@ async function ping(interaction, isSuper = false) {
         context.spawnedSuper = true; // set context for additonal things
         context.blueCombo = combo;
     }
-    if (currentEffects.specials.includes('budge')) {
+    if (currentEffects.specials.budge) {
         rowComponents.push(again);
     }
 

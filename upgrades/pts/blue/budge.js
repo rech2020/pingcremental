@@ -16,8 +16,10 @@ module.exports = {
         return `${level*15}%`
     },
     getEffect(level, context) {
-        return {
-            special: Math.random()*100 <= level*15 ? "budge" : undefined
+        if (Math.random()*100 <= level*15) {
+            return {
+                special: { "budge": true },
+            };
         }
     },
     isBuyable(context) {
