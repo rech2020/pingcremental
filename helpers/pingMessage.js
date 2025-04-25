@@ -370,6 +370,35 @@ function get(ping, context) {
         ]
     }
 
+    if (context.slumberClicks && Math.random() * 100 <= 12) {
+        messagesList = [
+            `good morning! how was your nap?`,
+            `i hope you had a good nap!`,
+            `sleep pays off; you have a multiplier now!`,
+            `yawn... oh, you're back?`,
+            `you've been gone for a while, did you take a nap?`,
+            `welcome back from your well-deserved break`,
+            `the return of the king... or monarch, or whatever you are`, // discord.js doesn't have pronoun support :(
+            `hey, if you're allowed to sleep, i am too`
+        ]
+    } 
+
+    if (context.glimmerClicks && Math.random() * 100 <= 7) {
+        messagesList = [
+            `it's still sparkly from last time`,
+            `i hope you like sparkles`,
+            `it's not blue but it's as close as it gets`,
+            `rrRRrr, shiny`,
+            `the blue isn't here but the sparkles are`,
+            `i'm seeing stars, and not because i've been punched in the face`,
+            `the blue ping is gone, but the sparkles remain`,
+            `i wonder if the sparkles form a constellation`,
+            `i actually ran out of glitter so this is glitter *glue*`,
+            `i'm out of blue pings, but i have sparkles`,
+            `i'm not sure if this is glitter or just dust`,
+        ]
+    }
+
     // high ping, almost always shows
     if (ping >= 150 && Math.random() * 100 <= 75) messagesList = [
         `wuh oh`,
@@ -504,9 +533,14 @@ function get(ping, context) {
     if (context.rare) {
         messagesList = [
             "this one is rare. like, really rare. like, 0.1% chance rare. feel proud of yourself",
-            "legend says only 0.1% sees this message. congrats, chosen one",
-            "💫 this ping is ultra shiny, 0.1%! screenshot or it didn't happen",
-            "you'll never see this 0.1% message again. or maybe you will. RNG is weird",
+            "legend says only 0.1% of people see this message. congrats, chosen one",
+            "💫 this ping is ultra shiny! screenshot or it didn't happen",
+            "you'll never see this message again. or maybe you will. RNG is weird",
+            "x100.00 WHOA!",
+            "this ping is so rare, it might as well be a unicorn",
+            "congratulations! you've unlocked the rarest ping message",
+            "this ping is rarer than a shiny Pokémon", // actually i don't think it is but whatever
+            "this ping message is actually preserved in a museum somewhere because it's so rare",
         ]
     }
 
