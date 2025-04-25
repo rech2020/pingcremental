@@ -16,7 +16,9 @@ module.exports = {
         return level === 0 ? `inactive` : "active";
     },
     getEffect(level, context) {
-        return {}
+        if (context.spawnedSuper) return {
+            message: `<@${context.user.id}>`
+        }
     },
     upgradeRequirements() {
         return { beginning: 1 };

@@ -15,7 +15,14 @@ module.exports = {
         return level === 1 ? "d20" : "d0"
     },
     getEffect(level, context) {
-        const roll = Math.floor(Math.random() * 20) + 1;
+        const rollCount = context.specials.extraDice + 1;
+
+        let roll = 0
+        for (let i = 0; i < rollCount; i++) {
+            roll = Math.max(Math.floor(Math.random() * 20) + 1, roll);
+            if (roll === 20) break;
+        }
+
         let mult = (roll/50) + 0.85;
 
         if (roll === 1) mult = 0.7;

@@ -16,7 +16,9 @@ module.exports = {
         return level === 0 ? "move" : "delete"
     },
     getEffect(level, context) {
-        return {}
+        return {
+            special: { "bully": true },
+        }
     },
     upgradeRequirements() {
         return { sense: 1 };

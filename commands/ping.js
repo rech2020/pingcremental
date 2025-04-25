@@ -89,14 +89,21 @@ async function ping(interaction, isSuper = false) {
 
     const [playerProfile, _created] = await database.Player.findOrCreate({ where: { userId: interaction.user.id } })
     let context = { // BIG LONG EVIL CONTEXT (will kill you if it gets the chance)
+        // actual context
         user: interaction.user,
         ping: ping,
         score: playerProfile.score,
         clicks: playerProfile.clicks,
         isSuper: isSuper,
-        rare: (Math.random() * 1000 < 1), // 0.1% chance to be rare
+        pip: playerProfile.pip,
+
+        // per-upgrade vars
         slumberClicks: playerProfile.slumberClicks,
         glimmerClicks: playerProfile.glimmerClicks,
+        
+        // updated vars
+        spawnedSuper: false,
+        rare: false,
         blue: 0,
         specials: {},
     }
@@ -107,7 +114,8 @@ async function ping(interaction, isSuper = false) {
 
     // prep a bunch of variables for the effects
     let currentEffects = {
-        mults: [isSuper ? 15 : 1],
+        mults: [],
+        exponents: [],
         blue: 0,
         specials: {},
         bp: 0,
@@ -116,6 +124,7 @@ async function ping(interaction, isSuper = false) {
     let displays = {
         add: [`<:ping:1361883358832885871> \`+${ping}\``],
         mult: [],
+        exponents: [],
         extra: [],
     }
     if (isSuper) displays.mult.push(`<:upgrade_blue:1361881310544527542> __\`x15\`__`);
@@ -130,7 +139,22 @@ async function ping(interaction, isSuper = false) {
                 currentEffects.specials[special] = value;
             }
         }
+        if (effect.blue) { 
+            currentEffects.blue += effect.blue; 
+            context.blue = currentEffects.blue; 
+        }
     }
+
+    if (context.isSuper) {
+        mults.push(15 * (currentEffects.specials.blueStrength || 1));
+    }
+    if (Math.random() * 1000 < currentEffects.blue * 10 && currentEffects.specials.blueping) {
+        context.spawnedBlue = true;
+    }
+    if ((Math.random() * 1000 < 1 * (currentEffects.specials.RNGmult || 1))) {
+        context.rare = true;
+    }
+    
     context.specials = currentEffects.specials; // update context for later effects
 
     // add slumber clicks if offline for long enough
@@ -166,11 +190,16 @@ async function ping(interaction, isSuper = false) {
             effectString += ` __\`x${formattedMultiplier}\`__`
         }
 
-        if (effect.blue) { 
-            currentEffects.blue += effect.blue; 
-            context.blue = currentEffects.blue; 
+        if (effect.exponent && effect.exponent !== 1) {
+            currentEffects.exponents.push(effect.exponent);
+            effectString += ` **__\`^${effect.exponent}\`__**`
         }
-        if (effect.special) { currentEffects.specials.push(effect.special); }
+
+        if (effect.special) { 
+            for (const [special, value] of Object.entries(effect.special)) {
+                if (!currentEffects.specials[special]) currentEffects.specials[special] = value;
+            }
+        }
         if (effect.bp) { 
             currentEffects.bp += effect.bp;
             effectString += `\`+${effect.bp} bp\``
@@ -183,6 +212,8 @@ async function ping(interaction, isSuper = false) {
                 displays.add.push(effectString);
             } else if (effect.multiply) {
                 displays.mult.push(effectString);
+            } else if (effect.exponent) {
+                displays.exponents.push(effectString);
             } else {
                 displays.extra.push(effectString);
             }
@@ -207,7 +238,7 @@ async function ping(interaction, isSuper = false) {
         rowComponents.push(again);
     }
     // check if blue ping should trigger
-    if (Math.random() * 1000 < currentEffects.blue * 10 && currentEffects.specials.blueping) {
+    if (context.spawnedSuper) {
         let combo = false;
         if (isSuper) {
             combo = 1;
@@ -229,10 +260,9 @@ async function ping(interaction, isSuper = false) {
             .setStyle(ButtonStyle.Primary);
         rowComponents.push(superPing);
 
-        context.spawnedSuper = true; // set context for additonal things
         context.blueCombo = combo;
     }
-    if (currentEffects.specials.budge) {
+    if (currentEffects.specials.budge && !currentEffects.specials.bully) {
         rowComponents.push(again);
     }
 

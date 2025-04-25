@@ -16,7 +16,11 @@ module.exports = {
         return `x${((level*0.5)+1).toFixed(1)}`
     },
     getEffect(level, context) {
-        return {}
+        return {
+            special: {
+                "RNGmult": (level*0.5)+1,
+            }
+        }
     },
     upgradeRequirements() {
         return { rigged: 1 };

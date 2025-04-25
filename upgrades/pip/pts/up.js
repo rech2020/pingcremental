@@ -17,8 +17,7 @@ module.exports = {
     },
     getEffect(level, context) {
         return {
-            add: 0,
-            multiply: 1,
+            exponent: (level*0.05) + 1,
         }
     },
     upgradeRequirements() {

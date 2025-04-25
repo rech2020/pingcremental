@@ -16,7 +16,11 @@ module.exports = {
         return `+${level} d20`;
     },
     getEffect(level, context) {
-        return {}
+        return {
+            special: {
+                "extraDice": level,
+            }
+        }
     },
     upgradeRequirements() {
         return { beginning: 1 };
