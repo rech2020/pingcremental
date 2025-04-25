@@ -21,7 +21,7 @@ function formatNumber(num, shortHand = false, decimalPlaces = 2) {
     }
 
     const suffixIndex = Math.floor((numStr.length - 1) / 3); 
-    decimalPlaces = Math.max(suffixIndex*3, decimalPlaces)
+    decimalPlaces = Math.min(suffixIndex*3, decimalPlaces)
 
     const baseNum = (Math.ceil((num * (10**(decimalPlaces+1)) / Math.pow(10, suffixIndex * 3))) / (10**(decimalPlaces+1))).toFixed(decimalPlaces); 
 
