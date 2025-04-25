@@ -54,9 +54,9 @@ async function getMessage(userId) {
 
     const embed = new EmbedBuilder()
         .setTitle(`Ping Stats`)
-        .setColor(0x5865F2) // Discord blurple color
+        .setColor('#bd6fb8') // Discord blurple color
         .addFields(
-            { name: '__Global Stats__', value: 
+            { name: '__global__', value: 
                 `${formatNumber(count)} people have pinged at least once\n` +
                 `${formatNumber(totalScore)} total pts gained\n` +
                 `${formatNumber(ownedScore)} pts currently owned\n` +
@@ -65,7 +65,8 @@ async function getMessage(userId) {
                 `${formatNumber(blueMissed)} blue pings missed\n` +
                 `${formatNumber(luckyFound)} lucky pings found`
             },
-            { name: `__Personal Stats__`, value: 
+            { name: `__personal__`, value: 
+                `*viewing stats for <@${userId}>*\n` +
                 `${formatNumber(player.clicks)} total ping${player.clicks === 1 ? '' : 's'}\n` +
                 `${formatNumber(player.totalScore)} total pts\n` +
                 `${formatNumber(player.bluePings)} blue ping${player.bluePings === 1 ? '' : 's'} clicked\n` +
@@ -73,8 +74,8 @@ async function getMessage(userId) {
                 `${formatNumber(player.luckyPings)} lucky ping${player.luckyPings === 1 ? '' : 's'}\n` +
                 `${formatNumber(player.highestBlueStreak)} highest blue ping streak`
             },
-            { name: `__Silly Stats__`, value:
-                `Blue ping chance: **${upgrades.bluePingChance<0?`0%`:`${(bluePingChance*100).toFixed(1)}%`}**`
+            { name: `__extra__`, value:
+                `${upgrades.bluePingChance < 0 ? `0%` : `${(bluePingChance*100).toFixed(1)}%`} blue ping chance`
             }
         )
         .setTimestamp();
@@ -89,6 +90,5 @@ async function getMessage(userId) {
                         .setStyle(ButtonStyle.Secondary)
                 )
         ],
-        allowedMentions: { parse: [] },
     };
 }
