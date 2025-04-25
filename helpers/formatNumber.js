@@ -2,6 +2,7 @@ function formatNumber(num, shortHand = false, decimalPlaces = 2) {
     if (num === null || num === undefined) return '0'; // handle null or undefined values
 
     const numStr = num.toString();
+    decimalPlaces = Math.min(numStr.length,decimalPlaces);
 
     const suffixes = ['', 'K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc', 'Ud', 'Dd', 'Td', 'Qd', 'Qn', 'Vg', 'Tg', 'Qvg', 'Qtg', 'Pnt', 'Sxt', 'Spt', 'Oct', 'Nnt', 'Dct']; //no one will get to these but better save than sorry :3  
 
