@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, InteractionContextType, MessageFlags } = require('discord.js');
+const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, InteractionContextType, MessageFlags, EmbedBuilder } = require('discord.js');
 const database = require('./../helpers/database.js');
 const formatNumber = require('./../helpers/formatNumber.js');
 
@@ -27,26 +27,60 @@ module.exports = {
 async function getMessage(userId) {
     const player = await database.Player.findByPk(userId);
     if (!player) return { content: `<@${userId}> hasn't pinged yet.`, allowedMentions: { parse: [] }, flags: MessageFlags.Ephemeral };
-    
-    return {
-        content: `
-__**global**__
-${formatNumber(await database.Player.count())} people have pinged at least once
-${formatNumber(await database.Player.sum('totalScore'))} total pts have been gained
-${formatNumber(await database.Player.sum('score'))} pts are currently owned
-${formatNumber(await database.Player.sum('clicks'))} pings have been dealt with
-${formatNumber(await database.Player.sum('bluePings'))} blue pings have been clicked
-${formatNumber(await database.Player.sum('bluePingsMissed'))} blue pings have been missed
-${formatNumber(await database.Player.sum('luckyPings'))} lucky pings have been found
 
-**<@${userId}>__'s personal__**
-${formatNumber(player.clicks)} total ping${player.clicks == 1 ? '' : 's'}
-${formatNumber(player.totalScore)} total pts
-${formatNumber(player.bluePings)} blue ping${player.bluePings == 1 ? '' : 's'} clicked
-${formatNumber(player.bluePingsMissed)} missed blue ping${player.bluePingsMissed == 1 ? '' : 's'} (${Math.round(player.bluePingsMissed / (player.bluePings + player.bluePingsMissed) * 100)}% miss rate)
-${formatNumber(player.luckyPings)} lucky ping${player.luckyPings == 1 ? '' : 's'}
-${formatNumber(player.highestBlueStreak)} highest blue ping streak
-`, components: [
+    const globalPings = await Promise.all([
+        database.Player.count(),
+        database.Player.sum('totalScore'),
+        database.Player.sum('score'),
+        database.Player.sum('clicks'),
+        database.Player.sum('bluePings'),
+        database.Player.sum('bluePingsMissed'),
+        database.Player.sum('luckyPings'),
+    ]);
+
+    const [count, totalScore, ownedScore, totalClicks, blueClicked, blueMissed, luckyFound] = globalPings;
+    const upgrades = player.upgrades;
+
+    const missRate = player.bluePings + player.bluePingsMissed > 0
+        ? Math.round(player.bluePingsMissed / (player.bluePings + player.bluePingsMissed) * 100)
+        : 0;
+
+    let bluePingChance = upgrades.blue === 1 ? (0.01 + (upgrades.blueshift || 0) * 0.006 - (upgrades.redshift || 0) * 0.004) : 0;
+
+    if ((upgrades.greenshift || 0) > 0) {
+        bluePingChance = bluePingChance * (1 + 0.15 * upgrades.greenshift);
+    }
+
+
+    const embed = new EmbedBuilder()
+        .setTitle(`Ping Stats`)
+        .setColor(0x5865F2) // Discord blurple color
+        .addFields(
+            { name: '__Global Stats__', value: 
+                `${formatNumber(count)} people have pinged at least once\n` +
+                `${formatNumber(totalScore)} total pts gained\n` +
+                `${formatNumber(ownedScore)} pts currently owned\n` +
+                `${formatNumber(totalClicks)} pings dealt with\n` +
+                `${formatNumber(blueClicked)} blue pings clicked\n` +
+                `${formatNumber(blueMissed)} blue pings missed\n` +
+                `${formatNumber(luckyFound)} lucky pings found`
+            },
+            { name: `__Personal Stats__`, value: 
+                `${formatNumber(player.clicks)} total ping${player.clicks === 1 ? '' : 's'}\n` +
+                `${formatNumber(player.totalScore)} total pts\n` +
+                `${formatNumber(player.bluePings)} blue ping${player.bluePings === 1 ? '' : 's'} clicked\n` +
+                `${formatNumber(player.bluePingsMissed)} missed blue ping${player.bluePingsMissed === 1 ? '' : 's'} (${missRate}% miss rate)\n` +
+                `${formatNumber(player.luckyPings)} lucky ping${player.luckyPings === 1 ? '' : 's'}\n` +
+                `${formatNumber(player.highestBlueStreak)} highest blue ping streak`
+            },
+            { name: `__Silly Stats__`, value:
+                `Blue ping chance: **${upgrades.bluePingChance<0?`0%`:`${(bluePingChance*100).toFixed(1)}%`}**`
+            }
+        )
+        .setTimestamp();
+    return {
+        embeds: [embed],
+        components: [
             new ActionRowBuilder()
                 .addComponents(
                     new ButtonBuilder()
@@ -55,6 +89,6 @@ ${formatNumber(player.highestBlueStreak)} highest blue ping streak
                         .setStyle(ButtonStyle.Secondary)
                 )
         ],
-        allowedMentions: { parse: [] }, // don't ping the user when refreshing
+        allowedMentions: { parse: [] },
     };
 }
