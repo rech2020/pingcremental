@@ -90,12 +90,14 @@ async function ping(interaction, isSuper = false) {
     const [playerProfile, _created] = await database.Player.findOrCreate({ where: { userId: interaction.user.id } })
     let context = { // BIG LONG EVIL CONTEXT (will kill you if it gets the chance)
         user: interaction.user,
+        ping: ping,
         score: playerProfile.score,
         clicks: playerProfile.clicks,
         isSuper: isSuper,
-        rare: Math.random() * 1000 < 1, // 0.1% chance to be rare
+        rare: (Math.random() * 1000 < 1), // 0.1% chance to be rare
         slumberClicks: playerProfile.slumberClicks,
         glimmerClicks: playerProfile.glimmerClicks,
+        blue: 0,
     }
 
 
@@ -162,7 +164,10 @@ async function ping(interaction, isSuper = false) {
             effectString += ` __\`x${formattedMultiplier}\`__`
         }
 
-        if (effect.blue) { currentEffects.blue += effect.blue; }
+        if (effect.blue) { 
+            currentEffects.blue += effect.blue; 
+            context.blue = currentEffects.blue; 
+        }
         if (effect.special) { currentEffects.specials.push(effect.special); }
         if (effect.message) { effectString += ` ${effect.message}`; }
 
@@ -228,12 +233,14 @@ async function ping(interaction, isSuper = false) {
         rowComponents.push(again);
     }
 
+    score = Math.max(score, 1); // prevent negative scores
+
     // add mults at the end so they're actually effective
     for (const mult of currentEffects.mults) {
         score *= mult;
     }
     score = Math.round(score);
-
+    context.score = score; // update context for later effects
 
     /* SAVE STATS */
 
