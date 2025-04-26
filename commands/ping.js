@@ -109,6 +109,7 @@ async function ping(interaction, isSuper = false) {
         spawnedSuper: false,
         rare: false,
         blue: 0,
+        blueStrength: 1,
         specials: {},
     }
 
@@ -127,6 +128,7 @@ async function ping(interaction, isSuper = false) {
         mults: [],
         exponents: [],
         blue: 0,
+        blueStrength: 1,
         specials: {},
         bp: 0,
         // add more if needed
@@ -137,7 +139,6 @@ async function ping(interaction, isSuper = false) {
         exponents: [],
         extra: [],
     }
-    if (isSuper) displays.mult.push(`<:upgrade_blue:1361881310544527542> __\`x15\`__`);
     let effect;
     let score = ping; // base score is ping
 
@@ -146,21 +147,23 @@ async function ping(interaction, isSuper = false) {
         effect = rawUpgrades[upgradeId].getEffect(level, context);
         if (effect.special) {
             for (const [special, value] of Object.entries(effect.special)) {
-                if (typeof value === 'number') {
-                    currentEffects.specials[special] = (currentEffects.specials[special] || 0) + value;
-                } else {
-                    currentEffects.specials[special] = value;
-                }
+                currentEffects.specials[special] = value;
             }
         }
         if (effect.blue) { 
             currentEffects.blue += effect.blue; 
             context.blue = currentEffects.blue; 
         }
+        if (effect.blueStrength) { 
+            currentEffects.blueStrength += effect.blueStrength; 
+            context.blueStrength = currentEffects.blueStrength; 
+        }
     }
 
     if (isSuper) {
-        mults.push(15 + ((currentEffects.specials.blueStrength || 1) * 15));
+        let blueStrength = (currentEffects.blueStrength) * 15;
+        currentEffects.mults.push(blueStrength);
+        displays.mult.push(`<:upgrade_blue:1361881310544527542> __\`x${blueStrength}\`__`)
     }
     if (Math.random() * 1000 < (currentEffects.blue * 10 * currentEffects.specials.RNGmult) && currentEffects.specials.blueping) {
         context.spawnedSuper = true;

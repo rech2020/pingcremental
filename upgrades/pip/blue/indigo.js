@@ -17,9 +17,7 @@ module.exports = {
     },
     getEffect(level, context) {
         return {
-            specials: {
-                "blueStrength": (level*0.2),
-            }
+            blueStrength: (level*0.2),
         }
     },
     upgradeRequirements() {

@@ -471,7 +471,7 @@ function get(ping, context) {
 
     // blue ping just clicked
     if (context.isSuper) {
-        const mult = 15 * (context.blueStrength || 1)
+        const mult = 15 * (context.blueStrength)
         messagesList = [
             `that's a lot of \`pts\`!`,
             "whoa",
