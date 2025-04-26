@@ -49,9 +49,24 @@ module.exports = {
             playerData.pip -= price;
             playerData.prestigeUpgrades[upgradeId] = playerUpgradeLevel;
             playerData.changed('prestigeUpgrades', true) // this is a hacky way to set the upgrades field, but it works
+
+            // memory-type upgrades give immediate effects so that they apply to the current prestige
+            if (upgradeClass.type() === PipUpgradeTypes.MEMORY) {
+                if (upgradeId === 'memory') {
+                    playerData.score += upgradeClass.getEffect(playerUpgradeLevel).special.startPts;
+                }
+                if (upgradeId === 'remnants') {
+                    for (const ptUpgrade of upgradeClass.getEffect(playerUpgradeLevel).special.upgrades) {
+                        playerData.upgrades[ptUpgrade] = (playerData.upgrades[ptUpgrade] ?? 0) + 1;
+                    }
+                    playerData.changed('upgrades', true) // hacky, you know the drill
+                }
+            }
+
+
             await playerData.save();
 
-            const msg = ['alright.'];
+            const msg = ['alright', 'sure', 'okay', 'uh-huh', 'sure thing'];
 
             const button = new ButtonBuilder()
                 .setCustomId('ponder:delete')

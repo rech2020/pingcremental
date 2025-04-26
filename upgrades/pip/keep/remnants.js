@@ -16,7 +16,11 @@ module.exports = {
         return `lv${level}`
     },
     getEffect(level, context) {
-        return {}
+        return {
+            special: {
+                upgrades: ['slow','usability','multiplier','blueshift','pipiping',]
+            }
+        }
     },
     upgradeRequirements() {
         return { memory: 2 };

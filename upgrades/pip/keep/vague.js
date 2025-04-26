@@ -6,7 +6,7 @@ module.exports = {
     },
     getDetails() {
         return {
-            description: "gain __+0.3%__ pts for every upgrade removed",
+            description: "gain __+0.3%__ pts for every upgrade level removed",
             name: "Vague Memories",
             emoji: "✨",
             flavor: "sometimes all you can remember is that it happened.",
@@ -17,7 +17,7 @@ module.exports = {
     },
     getEffect(level, context) {
         return {
-            multiply: 1,
+            multiply: (level*0.003*context.removedUpgrades) + 1,
         }
     },
     upgradeRequirements() {

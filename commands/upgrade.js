@@ -23,19 +23,37 @@ module.exports = {
         eternity: (async interaction => {
             const playerData = await database.Player.findByPk(`${interaction.user.id}`);
             const firstEternity = playerData.pip === 0;
+
+            // add removed upgrade levels, for "vague" upgrade
+            for (const [_upgrade, level] of Object.entries(playerData.upgrades)) {
+                playerData.removedUpgrades += level;
+            }
+
             playerData.upgrades = {};
             playerData.score = 0;
             // TODO: reset upgrade data bits (e.g. slumber clicks)
-            playerData.pip += playerData.bp; // give points for eternity
+            playerData.pip += playerData.bp; // give pip for eternity
             playerData.bp = 0;
+
+            // memory effects
+            if (playerData.prestigeUpgrades.memory) {
+                playerData.score += (10000 * playerData.prestigeUpgrades.memory);
+            }
+            if (playerData.prestigeUpgrades.remnants) {
+                for (const ptUpgrade of upgrades['pip']['remnants'].getEffect(playerData.prestigeUpgrades.remnants).special.upgrades) {
+                    playerData.upgrades[ptUpgrade] = playerData.prestigeUpgrades.remnants;
+                }
+            }
+            
             playerData.changed('upgrades', true) // this is a hacky way to set the upgrades field, but it works
+
             await playerData.save();
             await interaction.update({ content: `*it is done.*\n-# you now have __\`${playerData.pip} PIP\`__`, components: [] });
             if (firstEternity) {
                 await interaction.followUp({ content: `
 *welcome to Eternity. congratulations on making it here.*
 *i suppose you're wondering why you want to be here.*
-*how about... </ponder:[id]>? try it out.*
+*how about... </ponder:1364808067618836491>? try it out.*
 *good luck, pinger.*`, flags: MessageFlags.Ephemeral });
             }
         })

@@ -16,7 +16,11 @@ module.exports = {
         return `${level*10}K pts`
     },
     getEffect(level, context) {
-        return {}
+        return {
+            special: {
+                startPts: 10000,
+            },
+        }
     },
     upgradeRequirements() {
         return { beginning: 1 };

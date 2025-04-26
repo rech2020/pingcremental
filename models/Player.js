@@ -54,6 +54,12 @@ module.exports = (sequelize) => {
 			defaultValue: 0,
 			allowNull: false,
 		},
+
+		removedUpgrades: {
+			type: DataTypes.NUMBER,
+			defaultValue: 0,
+			allowNull: false,
+		},
 		
 
 		// prestige data

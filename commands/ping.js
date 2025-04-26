@@ -96,6 +96,7 @@ async function ping(interaction, isSuper = false) {
         clicks: playerProfile.clicks,
         isSuper: isSuper,
         pip: playerProfile.pip,
+        removedUpgrades: playerProfile.removedUpgrades,
 
         // per-upgrade vars
         slumberClicks: playerProfile.slumberClicks,
