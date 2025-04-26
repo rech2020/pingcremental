@@ -16,7 +16,11 @@ module.exports = {
         return `x${(level*0.25) + 1}`
     },
     getEffect(level, context) {
-        return {}
+        return {
+            specials: {
+                "pip": ((level ? level : 0)*0.25) + 1,
+            },
+        }
     },
     upgradeRequirements() {
         return { storage: 2 };

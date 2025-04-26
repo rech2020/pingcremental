@@ -92,11 +92,14 @@ async function ping(interaction, isSuper = false) {
         // actual context
         user: interaction.user,
         ping: ping,
+        isSuper: isSuper,
+
+        // player profile bits
         score: playerProfile.score,
         clicks: playerProfile.clicks,
-        isSuper: isSuper,
         pip: playerProfile.pip,
         removedUpgrades: playerProfile.removedUpgrades,
+        missedBluePings: playerProfile.bluePingsMissed,
 
         // per-upgrade vars
         slumberClicks: playerProfile.slumberClicks,
@@ -108,6 +111,7 @@ async function ping(interaction, isSuper = false) {
         blue: 0,
         specials: {},
     }
+
     let iterateUpgrades = {}
     for (const upgradeTypeList of [playerProfile.upgrades, playerProfile.prestigeUpgrades]) {
         if (!upgradeTypeList) continue;
@@ -142,7 +146,11 @@ async function ping(interaction, isSuper = false) {
         effect = rawUpgrades[upgradeId].getEffect(level, context);
         if (effect.special) {
             for (const [special, value] of Object.entries(effect.special)) {
-                currentEffects.specials[special] = value;
+                if (typeof value === 'number') {
+                    currentEffects.specials[special] = (currentEffects.specials[special] || 0) + value;
+                } else {
+                    currentEffects.specials[special] = value;
+                }
             }
         }
         if (effect.blue) { 
@@ -151,11 +159,27 @@ async function ping(interaction, isSuper = false) {
         }
     }
 
-    if (context.isSuper) {
-        mults.push(15 * (currentEffects.specials.blueStrength || 1));
+    if (isSuper) {
+        mults.push(15 + ((currentEffects.specials.blueStrength || 1) * 15));
     }
     if (Math.random() * 1000 < (currentEffects.blue * 10 * currentEffects.specials.RNGmult) && currentEffects.specials.blueping) {
-        context.spawnedBlue = true;
+        context.spawnedSuper = true;
+        
+        let combo = false;
+        if (isSuper) {
+            combo = 1;
+            for (const messageButton of interaction.message.components[0].components) { // check every button in the first row
+                if (messageButton.data.custom_id === 'ping:super') {
+                    combo = (parseInt(messageButton.data.label.split('x')[1]) || 1) + 1; // get the current combo
+                }
+            }
+        }
+
+        if (combo && combo > playerProfile.highestBlueStreak) {
+            playerProfile.highestBlueStreak = combo-1;
+        }
+        
+        context.blueCombo = combo;
     }
     if ((Math.random() * 1000 < 1 * (currentEffects.specials.RNGmult || 1))) {
         context.rare = true;
@@ -245,28 +269,12 @@ async function ping(interaction, isSuper = false) {
     }
     // check if blue ping should trigger
     if (context.spawnedSuper) {
-        let combo = false;
-        if (isSuper) {
-            combo = 1;
-            for (const messageButton of interaction.message.components[0].components) { // check every button in the first row
-                if (messageButton.data.custom_id === 'ping:super') {
-                    combo = (parseInt(messageButton.data.label.split('x')[1]) || 1) + 1; // get the current combo
-                }
-            }
-        }
-
-        if (combo && combo > playerProfile.highestBlueStreak) {
-            playerProfile.highestBlueStreak = combo-1;
-        }
-
         playerProfile.bluePings += 1;
         const superPing = new ButtonBuilder()
             .setCustomId('ping:super')
-            .setLabel(`blue ping!${isSuper ? ` x${combo}` : ''}`)
+            .setLabel(`blue ping!${isSuper ? ` x${context.blueCombo}` : ''}`)
             .setStyle(ButtonStyle.Primary);
         rowComponents.push(superPing);
-
-        context.blueCombo = combo;
     }
     if (currentEffects.specials.budge && !currentEffects.specials.bully) {
         rowComponents.push(again);

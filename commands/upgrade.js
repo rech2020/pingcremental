@@ -29,10 +29,12 @@ module.exports = {
                 playerData.removedUpgrades += level;
             }
 
+            const mult = upgrades['pip']['telepathy'].getEffect(playerData.prestigeUpgrades.telepathy).special.pip;
+
             playerData.upgrades = {};
             playerData.score = 0;
             // TODO: reset upgrade data bits (e.g. slumber clicks)
-            playerData.pip += playerData.bp; // give pip for eternity
+            playerData.pip += Math.floor(playerData.bp * mult); // give pip for eternity
             playerData.bp = 0;
 
             // memory effects
@@ -87,11 +89,12 @@ module.exports = {
             if (upgradeId === 'eternity') {
                 await interaction.update(await getEditMessage(interaction, upgradeClass.type())); 
                 if (playerData.bp < 10000) { return await interaction.followUp({ content: `*you shouldn't be here, yet.*`, flags: MessageFlags.Ephemeral }) }
+                const mult = upgrades['pip']['telepathy'].getEffect(playerData.prestigeUpgrades.telepathy).special.pip;
                 return await interaction.followUp({
                     content: 
 `*Eternity calls for you, but you must make sure you're ready.*
 ***are you?***
--# this will **reset** your current upgrades and give you __\`${playerData.bp} PIP\`__`,
+-# this will **reset** your current upgrades and give you __\`${Math.floor(playerData.bp*mult)} PIP\`__`,
                     components: [
                         new ActionRowBuilder().addComponents(
                             new ButtonBuilder()

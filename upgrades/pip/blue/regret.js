@@ -2,29 +2,29 @@ const { PipUpgradeTypes } = require('../../../helpers/upgradeEnums.js');
 
 module.exports = {
     getPrice(currentLevel) {
-        return Math.round(100 * (currentLevel + 1)**3.5) + 1111;
+        return Math.round(100 * (currentLevel + 1)**4.5) + 2322;
     },
     getDetails() {
         return {
-            description: "blue pings are __20%__ stronger",
-            name: "Indigo Vision",
+            description: "blue pings are __0.25%__ stronger for every blue ping missed",
+            name: "Regret",
             emoji: "✨",
-            flavor: "seeing an almost alternate reality.",
+            flavor: "sometimes the past is painful. but it is also a part of you.",
         }
     },
     getEffectString(level) {
-        return `+${level*20}%`
+        return `${level*0.25}%`
     },
     getEffect(level, context) {
         return {
             specials: {
-                "blueStrength": (level*0.2),
+                "blueStrength": (level*0.0025)*context.missedBluePings,
             }
         }
     },
     upgradeRequirements() {
-        return { beginning: 1 };
+        return { indigo: 3 };
     },
-    sortOrder() { return 102 },
+    sortOrder() { return 104 },
     type() { return PipUpgradeTypes.BLUE_PING }
 }
