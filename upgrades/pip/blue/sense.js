@@ -19,6 +19,7 @@ module.exports = {
         if (context.spawnedSuper) return {
             message: `<@${context.user.id}>`
         }
+        return {}
     },
     upgradeRequirements() {
         return { beginning: 1 };

@@ -154,7 +154,7 @@ async function ping(interaction, isSuper = false) {
     if (context.isSuper) {
         mults.push(15 * (currentEffects.specials.blueStrength || 1));
     }
-    if (Math.random() * 1000 < currentEffects.blue * 10 && currentEffects.specials.blueping) {
+    if (Math.random() * 1000 < (currentEffects.blue * 10 * currentEffects.specials.RNGmult) && currentEffects.specials.blueping) {
         context.spawnedBlue = true;
     }
     if ((Math.random() * 1000 < 1 * (currentEffects.specials.RNGmult || 1))) {
@@ -184,7 +184,7 @@ async function ping(interaction, isSuper = false) {
         // apply effects where appropriate
         if (effect.add && effect.add !== 0) {
             score += effect.add;
-            effectString += ` \`+${effect.add}\``
+            effectString += ` \`${effect.add >= 0 ? "+" : ""}${effect.add}\``
         }
 
         if (effect.multiply && effect.multiply !== 1) {
