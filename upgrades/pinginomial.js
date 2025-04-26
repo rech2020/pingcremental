@@ -2,7 +2,7 @@ const UpgradeTypes = require('../helpers/upgradeEnums.js');
 
 module.exports = {
     getPrice(currentLevel) {
-        return Math.round(100*((3+(currentLevel*0.1))**currentLevel))
+        return Math.round( 100 * (( 1.5 + ( currentLevel * 0.2 )) ** currentLevel))
     },
     getDetails() {
         return {
