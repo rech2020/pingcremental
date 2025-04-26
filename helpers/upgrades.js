@@ -33,4 +33,11 @@ for (const folder of Object.keys(list)) {
         }, {});
 }
 
-module.exports = sortedList;
+var rawUpgrades = {}; // raw list of all upgrades
+for (const folder of Object.keys(list)) {
+    for (const upgrade of Object.keys(list[folder])) {
+        rawUpgrades[upgrade] = list[folder][upgrade];
+    }
+}
+
+module.exports = { upgrades: sortedList, rawUpgrades: rawUpgrades };

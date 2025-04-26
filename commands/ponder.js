@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, InteractionContextType, MessageFlags } = require('discord.js');
-const upgrades = require('./../helpers/upgrades.js')
+const { upgrades } = require('./../helpers/upgrades.js')
 const database = require('./../helpers/database.js');
 const { PipUpgradeTypes } = require('./../helpers/upgradeEnums.js');
 

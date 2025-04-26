@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, InteractionContextType, MessageFlags } = require('discord.js');
 const pingMessages = require('./../helpers/pingMessage.js')
 const database = require('./../helpers/database.js')
-const upgrades = require('./../helpers/upgrades.js')
+const { upgrades, rawUpgrades } = require('./../helpers/upgrades.js')
 const { ownerId } = require('./../config.json');
 const formatNumber = require('./../helpers/formatNumber.js')
 const MAX_PING_OFFSET = 5
@@ -108,6 +108,11 @@ async function ping(interaction, isSuper = false) {
         blue: 0,
         specials: {},
     }
+    let iterateUpgrades = {}
+    for (const upgradeTypeList of [playerProfile.upgrades, playerProfile.prestigeUpgrades]) {
+        if (!upgradeTypeList) continue;
+        for (const [upg, lv] of Object.entries(upgradeTypeList)) iterateUpgrades[upg] = lv;
+    }
 
 
     /* PRE-PTS CALCULATION */
@@ -133,8 +138,8 @@ async function ping(interaction, isSuper = false) {
     let score = ping; // base score is ping
 
 
-    for (const [upgradeId, level] of Object.entries(playerProfile.upgrades)) {
-        effect = upgrades['pts'][upgradeId].getEffect(level, context);
+    for (const [upgradeId, level] of Object.entries(iterateUpgrades)) {
+        effect = rawUpgrades[upgradeId].getEffect(level, context);
         if (effect.special) {
             for (const [special, value] of Object.entries(effect.special)) {
                 currentEffects.specials[special] = value;
@@ -170,8 +175,8 @@ async function ping(interaction, isSuper = false) {
     /* PTS CALCULATION */
 
     
-    for (const [upgradeId, level] of Object.entries(playerProfile.upgrades)) {
-        const upgradeClass = upgrades['pts'][upgradeId];
+    for (const [upgradeId, level] of Object.entries(iterateUpgrades)) {
+        const upgradeClass = rawUpgrades[upgradeId];
         effect = upgradeClass.getEffect(level,context);
 
         let effectString = upgradeClass.getDetails().emoji;

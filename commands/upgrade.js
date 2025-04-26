@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, InteractionContextType, MessageFlags } = require('discord.js');
-const upgrades = require('./../helpers/upgrades.js')
+const { upgrades } = require('./../helpers/upgrades.js')
 const database = require('./../helpers/database.js');
 const { UpgradeTypes } = require('./../helpers/upgradeEnums.js');
 const formatNumber = require('./../helpers/formatNumber.js');
@@ -53,7 +53,7 @@ module.exports = {
                 await interaction.followUp({ content: `
 *welcome to Eternity. congratulations on making it here.*
 *i suppose you're wondering why you want to be here.*
-*how about... </ponder:1364808067618836491>? try it out.*
+*how about... </ponder:[ID]>? try it out.*
 *good luck, pinger.*`, flags: MessageFlags.Ephemeral });
             }
         })
