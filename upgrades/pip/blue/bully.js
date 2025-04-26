@@ -17,7 +17,7 @@ module.exports = {
     },
     getEffect(level, context) {
         return {
-            special: { "bully": true },
+            special: { "bully": context.spawnedSuper },
         }
     },
     upgradeRequirements() {

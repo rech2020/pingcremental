@@ -21,6 +21,7 @@ module.exports = {
                 special: { "budge": true },
             };
         }
+        return {};
     },
     isBuyable(context) {
         return context.upgrades['blueshift'] && context.upgrades.blueshift > 6;

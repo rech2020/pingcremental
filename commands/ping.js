@@ -279,8 +279,8 @@ async function ping(interaction, isSuper = false) {
             .setStyle(ButtonStyle.Primary);
         rowComponents.push(superPing);
     }
-    if (currentEffects.specials.budge && !currentEffects.specials.bully) {
-        rowComponents.push(again);
+    if (currentEffects.specials.budge) {
+        if (!currentEffects.specials.bully) rowComponents.push(again);
     }
 
     score = Math.max(score, 1); // prevent negative scores

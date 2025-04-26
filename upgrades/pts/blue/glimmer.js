@@ -26,7 +26,7 @@ module.exports = {
                 multiply: 1.2,
                 message: `(${context.glimmerClicks} left)`,
             }
-        }
+        } else return {};
     },
     isBuyable(context) {
         return context.upgrades.budge && context.upgrades.budge > 1 && context.upgrades.blueshift && context.upgrades.blueshift > 3;
