@@ -3,27 +3,28 @@ const { PipUpgradeTypes } = require('../../../helpers/upgradeEnums.js');
 module.exports = {
     getPrice(currentLevel) {
         if (currentLevel >= 3) return null;
-        return 8.5**(currentLevel+1) * 325;
+        return Math.round(8.5**(currentLevel+1) * 325);
     },
     getDetails() {
         return {
             description: "start gaining `bp` before unlocking pingularity",
             name: "Foresight",
-            emoji: "✨",
+            emoji: ":upgrade_foresight:",
             flavor: "know before you go.",
         }
     },
     getEffectString(level) {
-        return `+${level*0.2} bp`
+        if (level === 0) return "+0 bp"
+        return `+${level*0.5 + 0.5} bp`
     },
     getEffect(level, context) {
         return {
-            bp: level*0.2
+            bp: level*0.5 + 0.5
         }
     },
     upgradeRequirements() {
-        return { upgrade: 1 };
+        return { hoard: 2 };
     },
     sortOrder() { return 405 }, // upgrade IS found (i'm not using 404 to spite you)
-    type() { return PipUpgradeTypes.MISC }
+    type() { return PipUpgradeTypes.PRESTIGE }
 }

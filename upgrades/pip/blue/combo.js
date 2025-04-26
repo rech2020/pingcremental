@@ -8,16 +8,16 @@ module.exports = {
         return {
             description: "gain __1.15x__ pts for each blue ping in the current combo",
             name: "Chain Combo",
-            emoji: "✨",
+            emoji: ":upgrade_chain:",
             flavor: "a rare coincidence twisted to an incredible feat.",
         }
     },
     getEffectString(level) {
-        return `x${(1.15 * level)}`
+        return `x${(0.15 * level)+1}`
     },
     getEffect(level, context) {
         if (context.specials.blueCombo-1 > 0) return {
-            multiplier: (1.2 * level * (context.specials.blueCombo - 1)),
+            multiplier: (1.15 * level * (context.specials.blueCombo - 1)),
         }
         return {}
     },

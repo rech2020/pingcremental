@@ -163,7 +163,7 @@ async function ping(interaction, isSuper = false) {
     if (isSuper) {
         let blueStrength = (currentEffects.blueStrength) * 15;
         currentEffects.mults.push(blueStrength);
-        displays.mult.push(`<:upgrade_blue:1361881310544527542> __\`x${blueStrength}\`__`)
+        displays.mult.push(`<:upgrade_blue:1361881310544527542> __\`x${blueStrength.toFixed(2)}\`__`)
     }
     if (Math.random() * 1000 < (currentEffects.blue * 10 * currentEffects.specials.RNGmult) && currentEffects.specials.blueping) {
         context.spawnedSuper = true;
@@ -289,6 +289,9 @@ async function ping(interaction, isSuper = false) {
     for (const mult of currentEffects.mults) {
         score *= mult;
     }
+    for (const exponent of currentEffects.exponents) {
+        score = Math.pow(score, exponent);
+    }
     score = Math.round(score);
     context.score = score; // update context for later effects
     const bpMax = ((playerProfile.upgrades.limit || 0) + 1) * 10000
@@ -359,7 +362,7 @@ you have a lot of pts... why don't you go spend them over in </upgrade:136037740
     displayDisplay = displayDisplay.substring(2); // remove first comma and space
     
     if (currentEffects.bp) {
-        displayDisplay += `\n-# \`${formatNumber(playerProfile.bp)}/${formatNumber(bpMax)} bp\`${playerProfile.bp >= bpMax ? " **(MAX)**" : ""}`
+        displayDisplay += `\n-# \`${formatNumber(Math.ceil(playerProfile.bp))}/${formatNumber(bpMax)} bp\`${playerProfile.bp >= bpMax ? " **(MAX)**" : ""}`
     }
 
     try {

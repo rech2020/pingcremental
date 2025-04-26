@@ -8,7 +8,7 @@ module.exports = {
         return {
             description: "gain __^1.05__ pts",
             name: "Exponentiate",
-            emoji: "✨",
+            emoji: ":upgrade_up:",
             flavor: "they only way out is up.",
         }
     },

@@ -8,7 +8,7 @@ module.exports = {
         return {
             description: "gain __+0.3%__ pts for every upgrade level removed",
             name: "Vague Memories",
-            emoji: "✨",
+            emoji: ":upgrade_vague:",
             flavor: "sometimes all you can remember is that it happened.",
         }
     },

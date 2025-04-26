@@ -8,7 +8,7 @@ module.exports = {
         return {
             description: "get pinged when a blue ping appears",
             name: "Sixth Sense",
-            emoji: "✨",
+            emoji: ":upgrade_sense:",
             flavor: "open your mind to a new world.",
         }
     },

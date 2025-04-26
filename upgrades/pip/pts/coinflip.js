@@ -8,12 +8,12 @@ module.exports = {
         return {
             description: "flip a coin until you land on heads, and gain __x1.1__ (multiplicative) pts for every tails you land on",
             name: "Eternal Coinflip",
-            emoji: "✨",
+            emoji: ":upgrade_coinflip:",
             flavor: "the coin has been flipping endlessly from the moment it was tossed.", // this is a phigros reference!
         }
     },
     getEffectString(level) {
-        return `x${level*1.1}`
+        return `x${(level*0.1)+1}`
     },
     getEffect(level, context) {
         let heads = false;
@@ -21,17 +21,20 @@ module.exports = {
         let mult = 1;
 
         while (!heads) {
-            heads = Math.random() > (0.5 / context.specials.RNGmult);
+            heads = Math.random() < (0.5 / (context.specials.RNGmult || 1));
             if (!heads) {
-                mult *= (1.1 * level);
+                mult = (mult * 1.1 * level);
                 tails++;
             }
         }
 
-        return {
-            multiplier: mult,
-            message: `${tails} tails`,
+        if (tails > 0) {
+            return {
+                multiply: mult,
+                message: `${tails} tails`,
+            }
         }
+        return {};
     },
     upgradeRequirements() {
         return { glamour: 1 };

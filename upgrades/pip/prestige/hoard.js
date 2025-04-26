@@ -8,12 +8,12 @@ module.exports = {
         return {
             description: "gain __+0.01%__ pts per PIP held",
             name: "Stardust",
-            emoji: "✨",
+            emoji: ":upgrade_stardust:",
             flavor: "the stars offer both beauty and utility.",
         }
     },
     getEffectString(level) {
-        return `+${level*0.01}% each`
+        return `+${level*0.01}% per`
     },
     getEffect(level, context) {
         return {
