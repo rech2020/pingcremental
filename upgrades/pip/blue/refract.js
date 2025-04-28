@@ -32,7 +32,7 @@ module.exports = {
         }
     },
     upgradeRequirements() {
-        return { indigo: 2 };
+        return { indigo: 106 };
     },
     sortOrder() { return 1000 },
     type() { return PipUpgradeTypes.BLUE_PING }
