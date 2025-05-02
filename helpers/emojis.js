@@ -1,18 +1,22 @@
-async function fetchEmoji(name, client) {
-    // make sure application is fetched and not useless data
+let emojiCache = null;
+
+async function initEmojis(client) {
     if (!client.application.name) {
         await client.application.fetch();
     }
 
-    // get the emoji from the application
     const emojis = await client.application.emojis.fetch();
-    const emoji = emojis.find(emoji => emoji.name === name);
-
-    if (!emoji) {
-        return `:${name}:`;
-    }
-
-    return `<:${emoji.name}:${emoji.id}>`;
+    emojiCache = new Map();
+    emojis.forEach(emoji => {
+        emojiCache.set(emoji.name, `<:${emoji.name}:${emoji.id}>`);
+    });
 }
 
-module.exports = fetchEmoji;
+function getEmoji(name) {
+    if (!emojiCache) {
+        return `🟥`; // if emojis aren't initialized yet somehow
+    }
+    return emojiCache.get(name) || `:${name}:`;
+}
+
+module.exports = { initEmojis, getEmoji };
