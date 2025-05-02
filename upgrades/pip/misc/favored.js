@@ -7,9 +7,9 @@ module.exports = {
     getDetails() {
         return {
             description: "RNG events like rare pings are __x1.5__ as likely to occur",
-            name: "Glamour",
+            name: "Favored",
             emoji: "✨",
-            flavor: "flaunting, glimmering wealth.",
+            flavor: "little hints that the universe is on your side.",
         }
     },
     getEffectString(level) {
