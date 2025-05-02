@@ -37,7 +37,7 @@ module.exports = {
         return {};
     },
     upgradeRequirements() {
-        return { glamour: 1 };
+        return { favored: 1 };
     },
     sortOrder() { return 4 },
     type() { return PipUpgradeTypes.BONUS }
