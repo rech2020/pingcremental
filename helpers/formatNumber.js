@@ -16,12 +16,15 @@ function formatNumber(num, shortHand = false, decimalPlaces = 2) {
 
     if (numStr.length < 4) return numStr; // if less than 4 digits, return as is
 
+    const suffixIndex = Math.floor((numStr.length - 1) / 3); 
+    if (decimalPlaces >= suffixIndex*3) {
+        decimalPlaces = suffixIndex*3;
+        shortHand = false;
+    }
+
     if (!shortHand) { 
         return numStr.replace(/\B(?=(\d{3})+(?!\d))/g, ','); 
     }
-
-    const suffixIndex = Math.floor((numStr.length - 1) / 3); 
-    decimalPlaces = Math.min(suffixIndex*3, decimalPlaces)
 
     const baseNum = (Math.ceil((num * (10**(decimalPlaces+1)) / Math.pow(10, suffixIndex * 3))) / (10**(decimalPlaces+1))).toFixed(decimalPlaces); 
 
