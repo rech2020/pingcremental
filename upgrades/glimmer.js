@@ -1,4 +1,5 @@
 const UpgradeTypes = require('../helpers/upgradeEnums.js');
+const { getEmoji } = require('../helpers/emojis.js');
 
 module.exports = {
     getPrice(currentLevel) {
@@ -8,7 +9,7 @@ module.exports = {
         return {
             description: "after clicking a blue ping, the next 5 pings will give x1.2 pts",
             name: "glimmer",
-            emoji: "<:upgrade_glimmer:1362633769491890378>",
+            emoji: getEmoji('upgrade_glimmer'),
         }
     },
     getEffectString(level) {
