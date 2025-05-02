@@ -1,4 +1,5 @@
 const { PipUpgradeTypes } = require('../../../helpers/upgradeEnums.js');
+const { getEmoji } = require('../../../helpers/emojis.js');
 
 module.exports = {
     getPrice(currentLevel) {
@@ -9,7 +10,7 @@ module.exports = {
         return {
             description: "start gaining `bp` before unlocking pingularity",
             name: "Foresight",
-            emoji: ":upgrade_foresight:",
+            emoji: getEmoji('upgrade_foresight'),
             flavor: "know before you go.",
         }
     },

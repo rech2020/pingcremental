@@ -1,4 +1,5 @@
 const { PipUpgradeTypes } = require('../../../helpers/upgradeEnums.js');
+const { getEmoji } = require('../../../helpers/emojis.js');
 
 module.exports = {
     getPrice(currentLevel) {
@@ -8,7 +9,7 @@ module.exports = {
         return {
             description: "roll __1__ extra d20, take the higher result",
             name: "Loaded Dice",
-            emoji: "✨",
+            emoji: getEmoji('upgrade_rigged'),
             flavor: "maybe the house doesn't always win.",
         }
     },

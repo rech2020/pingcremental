@@ -1,4 +1,5 @@
 const { PipUpgradeTypes } = require('../../../helpers/upgradeEnums.js');
+const { getEmoji } = require('../../../helpers/emojis.js');
 
 module.exports = {
     getPrice(currentLevel) {
@@ -8,7 +9,7 @@ module.exports = {
         return {
             description: "RNG events like rare pings are __x1.5__ as likely to occur",
             name: "Favored",
-            emoji: "✨",
+            emoji: getEmoji('upgrade_favored'),
             flavor: "little hints that the universe is on your side.",
         }
     },

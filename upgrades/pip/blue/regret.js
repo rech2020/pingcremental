@@ -1,4 +1,5 @@
 const { PipUpgradeTypes } = require('../../../helpers/upgradeEnums.js');
+const { getEmoji } = require('../../../helpers/emojis.js');
 
 module.exports = {
     getPrice(currentLevel) {
@@ -8,7 +9,7 @@ module.exports = {
         return {
             description: "blue pings are __0.25%__ stronger for every blue ping missed",
             name: "Regret",
-            emoji: "✨",
+            emoji: getEmoji('upgrade_regret'),
             flavor: "sometimes the past is painful. but it is also a part of you.",
         }
     },

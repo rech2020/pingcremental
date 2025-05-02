@@ -1,4 +1,5 @@
 const { PipUpgradeTypes } = require('../../../helpers/upgradeEnums.js');
+const { getEmoji } = require('../../../helpers/emojis.js');
 
 module.exports = {
     getPrice(currentLevel) {
@@ -8,7 +9,7 @@ module.exports = {
         return {
             description: "gain __1.15x__ pts for each blue ping in the current combo",
             name: "Chain Combo",
-            emoji: ":upgrade_chain:",
+            emoji: getEmoji('upgrade_combo'),
             flavor: "a rare coincidence twisted to an incredible feat.",
         }
     },

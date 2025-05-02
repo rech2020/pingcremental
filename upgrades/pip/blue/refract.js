@@ -1,4 +1,5 @@
 const { PipUpgradeTypes } = require('../../../helpers/upgradeEnums.js');
+const { getEmoji } = require('../../../helpers/emojis.js');
 
 module.exports = {
     getPrice(currentLevel) {
@@ -8,7 +9,7 @@ module.exports = {
         return {
             description: "5% of your Glimmer clicks are used instead of 1, gain an extra __x1.15__ pts for each additional one used",
             name: "Refract",
-            emoji: "✨",
+            emoji: getEmoji('upgrade_refract'),
             flavor: "'i can see the light!' - someone long forgotten",
         }
     },

@@ -1,4 +1,5 @@
 const { PipUpgradeTypes } = require('../../../helpers/upgradeEnums.js');
+const { getEmoji } = require('../../../helpers/emojis.js');
 
 module.exports = {
     getPrice(currentLevel) {
@@ -8,7 +9,7 @@ module.exports = {
         return {
             description: "gain __+0.3%__ pts for every upgrade level removed",
             name: "Vague Memories",
-            emoji: ":upgrade_vague:",
+            emoji: getEmoji('upgrade_vague'),
             flavor: "sometimes all you can remember is that it happened.",
         }
     },

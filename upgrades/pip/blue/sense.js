@@ -1,4 +1,5 @@
 const { PipUpgradeTypes } = require('../../../helpers/upgradeEnums.js');
+const { getEmoji } = require('../../../helpers/emojis.js');
 
 module.exports = {
     getPrice(currentLevel) {
@@ -8,7 +9,7 @@ module.exports = {
         return {
             description: "get pinged when a blue ping appears",
             name: "Sixth Sense",
-            emoji: ":upgrade_sense:",
+            emoji: getEmoji('upgrade_sense'),
             flavor: "open your mind to a new world.",
         }
     },

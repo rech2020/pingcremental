@@ -1,4 +1,5 @@
 const { PipUpgradeTypes } = require('../../../helpers/upgradeEnums.js');
+const { getEmoji } = require('../../../helpers/emojis.js');
 
 module.exports = {
     getPrice(currentLevel) {
@@ -8,7 +9,7 @@ module.exports = {
         return {
             description: 'budge deletes "ping again" instead of moving it',
             name: "Bully",
-            emoji: "✨",
+            emoji: getEmoji('upgrade_bully'),
             flavor: "a sacrifice of one for the benefit of... also one.",
         }
     },
