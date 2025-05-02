@@ -1,4 +1,5 @@
 const { UpgradeTypes } = require('../../../helpers/upgradeEnums.js');
+const { getEmoji } = require('../../../helpers/emojis.js');
 
 module.exports = {
     getPrice(currentLevel) {
@@ -8,7 +9,7 @@ module.exports = {
         return {
             description: "?",
             name: "pingularity",
-            emoji: "<:upgrade_pingularity:1361881430162145451>",
+            emoji: getEmoji('upgrade_pingularity'),
         }
     },
     getEffectString(level) {

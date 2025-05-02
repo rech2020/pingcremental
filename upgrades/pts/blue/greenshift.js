@@ -1,4 +1,5 @@
 const { UpgradeTypes } = require('../../../helpers/upgradeEnums.js');
+const { getEmoji } = require('../../../helpers/emojis.js');
 
 module.exports = {
     getPrice(currentLevel) {
@@ -9,7 +10,7 @@ module.exports = {
         return {
             description: "__x1.15__ chance to spawn a blue ping (after other upgrades)",
             name: "greenshift?",
-            emoji: "<:upgrade_greenshift:1361881347345612895>",
+            emoji: getEmoji('upgrade_greenshift'),
         }
     },
     getEffectString(level) {

@@ -1,4 +1,5 @@
 const { UpgradeTypes } = require('../../../helpers/upgradeEnums.js');
+const { getEmoji } = require('../../../helpers/emojis.js');
 
 module.exports = {
     getPrice(currentLevel) {
@@ -13,7 +14,7 @@ module.exports = {
         return {
             description: "gain __+2__ pts when ping is less/equal to 50",
             name: "prioritize usability",
-            emoji: "<:upgrade_usability:1361881470875996352>",
+            emoji: getEmoji('upgrade_usability'),
         }
     },
     getEffectString(level) {

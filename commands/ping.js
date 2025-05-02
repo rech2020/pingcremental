@@ -4,6 +4,7 @@ const database = require('./../helpers/database.js')
 const { upgrades, rawUpgrades } = require('./../helpers/upgrades.js')
 const { ownerId } = require('./../config.json');
 const formatNumber = require('./../helpers/formatNumber.js')
+const { getEmoji } = require('../helpers/emojis.js');
 const MAX_PING_OFFSET = 5
 
 module.exports = {
@@ -134,11 +135,12 @@ async function ping(interaction, isSuper = false) {
         // add more if needed
     }
     let displays = {
-        add: [`<:ping:1361883358832885871> \`+${ping}\``],
+        add: [`${getEmoji('ping')} \`+${ping}\``],
         mult: [],
         exponents: [],
         extra: [],
     }
+    if (isSuper) displays.mult.push(`<:upgrade_blue:1361881310544527542> __\`x15\`__`);
     let effect;
     let score = ping; // base score is ping
 
@@ -163,7 +165,7 @@ async function ping(interaction, isSuper = false) {
     if (isSuper) {
         let blueStrength = (currentEffects.blueStrength) * 15;
         currentEffects.mults.push(blueStrength);
-        displays.mult.push(`<:upgrade_blue:1361881310544527542> __\`x${blueStrength.toFixed(2)}\`__`)
+        displays.mult.push(`${getEmoji('upgrade_blue')} __\`x${blueStrength.toFixed(2)}\`__`)
     }
     if (Math.random() * 1000 < (currentEffects.blue * 10 * currentEffects.specials.RNGmult) && currentEffects.specials.blueping) {
         context.spawnedSuper = true;
@@ -211,7 +213,7 @@ async function ping(interaction, isSuper = false) {
         // apply effects where appropriate
         if (effect.add && effect.add !== 0) {
             score += effect.add;
-            effectString += ` \`${effect.add >= 0 ? "+" : ""}${effect.add}\``
+            effectString += ` \`${effect.add >= 0 ? "+" : ""}${formatNumber(effect.add)}\``
         }
 
         if (effect.multiply && effect.multiply !== 1) {
@@ -370,7 +372,7 @@ you have a lot of pts... why don't you go spend them over in </upgrade:136037740
         await interaction.update({
             content:
                 `${pingMessage}
-\`${formatNumber(playerProfile.score)} pts\` (**\`+${formatNumber(score)}\`**)\n-# ${displayDisplay}`,
+\`${formatNumber(playerProfile.score, true, 4)} pts\` (**\`+${formatNumber(score, true, 3)}\`**)\n-# ${displayDisplay}`,
             components: [row]
         });
     } catch (error) {
@@ -379,7 +381,7 @@ you have a lot of pts... why don't you go spend them over in </upgrade:136037740
             await interaction.update({
                 content:
                     `this ping message is non-offensive, and contains nothing that will anger AutoMod! (${ping}ms)
-\`${formatNumber(playerProfile.score)} pts\` (**\`+${formatNumber(score)}\`**)\n-# ${displayDisplay}`,
+\`${formatNumber(playerProfile.score, true, 4)} pts\` (**\`+${formatNumber(score, true, 3)}\`**)\n-# ${displayDisplay}`,
                 components: [row]
             });
         } else {

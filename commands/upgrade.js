@@ -81,7 +81,7 @@ module.exports = {
 
                 await interaction.update(await getEditMessage(interaction, upgradeClass.type())); // fix dropdown remaining after failed upgrade
                 return await interaction.followUp({
-                    content: `you dont have enough \`pts\` to afford that! (missing \`${formatNumber(price - playerData.score)} pts\`)`,
+                    content: `you dont have enough \`pts\` to afford that! (missing \`${formatNumber(price - playerData.score, true)} pts\`)`,
                     components: [new ActionRowBuilder().addComponents(button)]
                 })
             }
@@ -126,7 +126,7 @@ module.exports = {
             await interaction.update(await getEditMessage(interaction, upgradeClass.type()));
 
             return await interaction.followUp({
-                content: `upgraded **${upgradeClass.getDetails().name}** to level ${playerUpgradeLevel + 1}! you've \`${formatNumber(playerData.score)} pts\` left.`,
+                content: `upgraded **${upgradeClass.getDetails().name}** to level ${playerUpgradeLevel + 1}! you've \`${formatNumber(playerData.score, true, 4)} pts\` left.`,
                 components: [new ActionRowBuilder().addComponents(button)]
             })
         })
@@ -163,7 +163,7 @@ async function getEditMessage(interaction, category) {
     const select = new StringSelectMenuBuilder()
         .setCustomId('upgrade:buy')
         .setPlaceholder('pick an upgrade')
-    let description = `you have **__\`${formatNumber(playerData.score)} pts\`__** to spend...`
+    let description = `you have **__\`${formatNumber(playerData.score, true, 4)} pts\`__** to spend...`
     const embed = new EmbedBuilder()
         .setTitle("upgrades")
         .setColor("#73c9ae")
