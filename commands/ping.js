@@ -4,6 +4,7 @@ const database = require('./../helpers/database.js')
 const upgrades = require('./../helpers/upgrades.js')
 const { ownerId } = require('./../config.json');
 const formatNumber = require('./../helpers/formatNumber.js')
+const { getEmoji } = require('../helpers/emojis.js');
 const MAX_PING_OFFSET = 5
 
 module.exports = {
@@ -112,11 +113,11 @@ async function ping(interaction, isSuper = false) {
         // add more if needed
     }
     let displays = {
-        add: [`<:ping:1361883358832885871> \`+${ping}\``],
+        add: [`${getEmoji('ping')} \`+${ping}\``],
         mult: [],
         extra: [],
     }
-    if (isSuper) displays.mult.push(`<:upgrade_blue:1361881310544527542> __\`x15\`__`);
+    if (isSuper) displays.mult.push(`${getEmoji('upgrade_blue')} __\`x15\`__`);
     let effect;
     let score = ping; // base score is ping
 

@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder, InteractionContextType, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
 const database = require('./../helpers/database.js')
 const formatNumber = require('./../helpers/formatNumber.js');
+const { getEmoji } = require('../helpers/emojis.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -26,18 +27,11 @@ async function getMessage(interaction) {
         ]
     });
 
-    const leaderboardEmojis = [
-        "<:rank_1:1363227127197077745>",
-        "<:rank_2:1363227134881042685>",
-        "<:rank_3:1363227143005409360>",
-        "<:rank_4:1363227150446231622>",
-        "<:rank_5:1363227158331265205>",
-        "<:rank_6:1363227168309514352>",
-        "<:rank_7:1363227175997935757>",
-        "<:rank_8:1363227183782432869>",
-        "<:rank_9:1363227190942241040>",
-        "<:rank_10:1363227198080942220>",
-    ]
+    let leaderboardEmojis = []
+    for (let i = 0; i < 10; i++) {
+        leaderboardEmojis.push(getEmoji(`rank_${i + 1}`)); // get the emoji for the position
+    }
+    leaderboardEmojis.push('✨');
 
     for (player of lbPlayers) {
         const puser = await interaction.client.users.fetch(player.userId) // find the user for username display
