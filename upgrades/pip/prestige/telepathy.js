@@ -18,7 +18,7 @@ module.exports = {
     },
     getEffect(level, context) {
         return {
-            specials: {
+            special: {
                 "pip": ((level ? level : 0)*0.25) + 1,
             },
         }

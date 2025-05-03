@@ -2,6 +2,7 @@ const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, Strin
 const { upgrades } = require('./../helpers/upgrades.js')
 const database = require('./../helpers/database.js');
 const { PipUpgradeTypes } = require('./../helpers/upgradeEnums.js');
+const formatNumber = require('../helpers/formatNumber.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -40,7 +41,7 @@ module.exports = {
 
                 await interaction.update(await getEditMessage(interaction, upgradeClass.type())); // fix dropdown remaining after failed upgrade
                 return await interaction.followUp({
-                    content: `You can't afford that. (Missing \`${price-playerData.pip} PIP\`)`,
+                    content: `You can't afford that. (Missing \`${formatNumber(price-playerData.pip)} PIP\`)`,
                     components: [new ActionRowBuilder().addComponents(button)]
                 })
             }
@@ -99,7 +100,7 @@ module.exports = {
             }
 
             return await interaction.followUp({
-                content: `**${upgradeClass.getDetails().name}** is now level ${playerUpgradeLevel}. (\`${playerData.pip} PIP\` left)${unlockMessage}`,
+                content: `**${upgradeClass.getDetails().name}** is now level ${playerUpgradeLevel}. (\`${formatNumber(playerData.pip)} PIP\` left)${unlockMessage}`,
                 components: [new ActionRowBuilder().addComponents(button)]
             })
         })
@@ -134,7 +135,7 @@ async function getEditMessage(interaction, category) {
     const select = new StringSelectMenuBuilder()
         .setCustomId('ponder:buy')
         .setPlaceholder('pick an upgrade')
-    let description = `You have **__\`${playerData.pip} PIP\`__**. Spend wisely.`
+    let description = `You have **__\`${formatNumber(playerData.pip)} PIP\`__**. Spend wisely.`
     const embed = new EmbedBuilder()
         .setTitle("Ponder")
         .setColor("#162b94")
@@ -157,7 +158,7 @@ async function getEditMessage(interaction, category) {
         description += `\n**${upgrade.getDetails().emoji} ${upgrade.getDetails().name} (Lv${upgradeLevel})**
 *"${upgrade.getDetails().flavor}"*
 ${upgrade.getDetails().description}
-${upgrade.getEffectString(upgradeLevel)} -> ${upgrade.getEffectString(upgradeLevel+1)} for \`${upgrade.getPrice(upgradeLevel)} PIP\`` 
+${upgrade.getEffectString(upgradeLevel)} -> ${upgrade.getEffectString(upgradeLevel+1)} for \`${formatNumber(upgrade.getPrice(upgradeLevel))} PIP\`` 
 
         select.addOptions(
             new StringSelectMenuOptionBuilder()

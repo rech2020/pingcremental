@@ -50,7 +50,7 @@ module.exports = {
             playerData.changed('upgrades', true) // this is a hacky way to set the upgrades field, but it works
 
             await playerData.save();
-            await interaction.update({ content: `*it is done.*\n-# you now have __\`${playerData.pip} PIP\`__`, components: [] });
+            await interaction.update({ content: `*it is done.*\n-# you now have __\`${formatNumber(playerData.pip)} PIP\`__`, components: [] });
             if (firstEternity) {
                 await interaction.followUp({ content: `
 *welcome to Eternity. congratulations on making it here.*
@@ -94,7 +94,7 @@ module.exports = {
                     content: 
 `*Eternity calls for you, but you must make sure you're ready.*
 ***are you?***
--# this will **reset** your current upgrades and give you __\`${Math.floor(playerData.bp*mult)} PIP\`__`,
+-# this will **reset** your current upgrades and give you __\`${formatNumber(Math.floor(playerData.bp*mult))} PIP\`__`,
                     components: [
                         new ActionRowBuilder().addComponents(
                             new ButtonBuilder()
