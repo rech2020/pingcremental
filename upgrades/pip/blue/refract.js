@@ -7,7 +7,7 @@ module.exports = {
     },
     getDetails() {
         return {
-            description: "5% of your Glimmer clicks are used instead of 1, gain an extra __x1.15__ pts for each additional one used",
+            description: "an additional 5% of your Glimmer clicks are used per click, gain __x1.15__ pts (multiplicative) for each",
             name: "Refract",
             emoji: getEmoji('ponder_refract'),
             flavor: "'i can see the light!' - someone long forgotten",
@@ -20,21 +20,21 @@ module.exports = {
         if (!context.glimmerClicks) return {};
         if (context.isSuper) return {};
 
-        const extraGlimmer = Math.floor(context.glimmerClicks / 5);
+        const extraGlimmer = Math.floor(context.glimmerClicks * 0.05);
         const mult = (level*0.15+1) ** extraGlimmer;
 
         if (mult === 1) return {};
         return {
             special: {
-                "glimmer": -(extraGlimmer + 1)
+                "glimmer": -extraGlimmer
             },
             multiply: mult,
             message: `(used ${extraGlimmer} extra)`
         }
     },
     upgradeRequirements() {
-        return { indigo: 106 };
+        return { indigo: 3 };
     },
-    sortOrder() { return 1000 },
+    sortOrder() { return 106 },
     type() { return PipUpgradeTypes.BLUE_PING }
 }
