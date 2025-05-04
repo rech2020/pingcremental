@@ -9,7 +9,7 @@ module.exports = {
         return {
             description: "RNG events like rare pings are __x1.5__ as likely to occur",
             name: "Favored",
-            emoji: getEmoji('upgrade_favored'),
+            emoji: getEmoji('ponder_favored'),
             flavor: "little hints that the universe is on your side.",
         }
     },

@@ -9,7 +9,7 @@ module.exports = {
         return {
             description: "",
             name: "",
-            emoji: getEmoji('upgrade_template'),
+            emoji: getEmoji('ponder_template'),
             flavor: "",
         }
     },

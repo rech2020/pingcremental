@@ -9,7 +9,7 @@ module.exports = {
         return {
             description: "blue pings are __20%__ stronger",
             name: "Indigo Vision",
-            emoji: getEmoji('upgrade_indigo'),
+            emoji: getEmoji('ponder_indigo'),
             flavor: "seeing an almost alternate reality.",
         }
     },

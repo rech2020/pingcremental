@@ -9,7 +9,7 @@ module.exports = {
         return {
             description: "roll __1__ extra d20, take the higher result",
             name: "Loaded Dice",
-            emoji: getEmoji('upgrade_rigged'),
+            emoji: getEmoji('ponder_rigged'),
             flavor: "maybe the house doesn't always win.",
         }
     },

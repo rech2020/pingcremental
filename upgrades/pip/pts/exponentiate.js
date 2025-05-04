@@ -9,7 +9,7 @@ module.exports = {
         return {
             description: "gain __^1.05__ pts",
             name: "Exponentiate",
-            emoji: getEmoji('upgrade_exponentiate'),
+            emoji: getEmoji('ponder_exponentiate'),
             flavor: "they only way out is up.",
         }
     },

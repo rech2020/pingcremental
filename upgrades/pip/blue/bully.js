@@ -9,7 +9,7 @@ module.exports = {
         return {
             description: 'budge deletes "ping again" instead of moving it',
             name: "Bully",
-            emoji: getEmoji('upgrade_bully'),
+            emoji: getEmoji('ponder_bully'),
             flavor: "a sacrifice of one for the benefit of... also one.",
         }
     },

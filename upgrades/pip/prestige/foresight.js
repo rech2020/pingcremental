@@ -10,7 +10,7 @@ module.exports = {
         return {
             description: "start gaining `bp` before unlocking pingularity",
             name: "Foresight",
-            emoji: getEmoji('upgrade_foresight'),
+            emoji: getEmoji('ponder_foresight'),
             flavor: "know before you go.",
         }
     },
