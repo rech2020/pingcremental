@@ -98,6 +98,7 @@ async function ping(interaction, isSuper = false) {
         // player profile bits
         score: playerProfile.score,
         clicks: playerProfile.clicks,
+        totalClicks: playerProfile.totalClicks,
         pip: playerProfile.pip,
         removedUpgrades: playerProfile.removedUpgrades,
         missedBluePings: playerProfile.bluePingsMissed,
@@ -307,6 +308,8 @@ async function ping(interaction, isSuper = false) {
 
     // apply stats and save
     playerProfile.clicks += 1;
+    playerProfile.totalClicks += 1;
+    if (playerProfile.clicks > playerProfile.totalClicks) playerProfile.totalClicks = playerProfile.clicks; // make sure total clicks is always higher than clicks
     playerProfile.score += score;
     playerProfile.totalScore += score;
     if (context.rare) playerProfile.luckyPings += 1;
@@ -327,7 +330,7 @@ async function ping(interaction, isSuper = false) {
     await playerProfile.save();
 
     // show upgrade popup after 150 clicks
-    if (playerProfile.clicks === 150) {
+    if (playerProfile.totalClicks === 150) {
         const button = new ButtonBuilder()
             .setLabel('that looks important...')
             .setStyle(ButtonStyle.Secondary)

@@ -36,6 +36,7 @@ module.exports = {
             // TODO: reset upgrade data bits (e.g. slumber clicks)
             playerData.pip += Math.floor(playerData.bp * mult); // give pip for eternity
             playerData.bp = 0;
+            playerData.clicks = 0;
 
             // memory effects
             if (playerData.prestigeUpgrades.memory) {
@@ -135,7 +136,7 @@ module.exports = {
 
 async function getEditMessage(interaction, category) {
     const [playerData, _created] = await database.Player.findOrCreate({ where: { userId: interaction.user.id } })
-    if (playerData.clicks < 150) { // prevent upgrading before 150 clicks
+    if (playerData.totalClicks < 150) { // prevent upgrading before 150 clicks
         const button = new ButtonBuilder()
             .setCustomId('upgrade:delete')
             .setLabel('oh... okay')

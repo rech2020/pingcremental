@@ -33,6 +33,12 @@ module.exports = (sequelize) => {
 			allowNull: false,
 		},
 
+		totalClicks: {
+			type: DataTypes.NUMBER,
+			defaultValue: 0,
+			allowNull: false,
+		},
+
 		// misc stats (move to separate table?)
 		bluePings: {
 			type: DataTypes.NUMBER,
