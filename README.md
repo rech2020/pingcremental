@@ -13,12 +13,7 @@ actually pretty simple; there's not a lot you need to do.
 
 1. click the green Code button on the repository's main page.
 2. select your method of choice.
-3. after setting up, ensure you have the following packages installed from NPM:
-
-    1. `discord.js`
-    2. `sequelize`
-    3. `sqlite3`
-    4. alternatively, try just `npm install` to maybe get everything automagically
+3. after setting up, ensure you have the correct packages installed by running `npm install`.
 
 ### config
 
@@ -58,8 +53,9 @@ to run the bot, simply run the `index.js` file. there are some flags for running
 1. `-d` or `--dev`
 
     this prevents the usage of /ping unless you are the owner.
+    this additionally sets the ping to always be 5, in order to bypass the wait for `client.ws.ping` to update.
 
-2. `-v` or `--verbose` (UPCOMING)
+3. `-v` or `--verbose` (not done yet)
 
     this logs a lot of actions that occur, used for debugging.
 
