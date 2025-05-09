@@ -7,18 +7,18 @@ module.exports = {
     },
     getDetails() {
         return {
-            description: "gain __+0.01%__ pts per PIP held",
+            description: "gain __+10%__ pts per digit in your owned PIP count",
             name: "Stardust",
             emoji: getEmoji('ponder_hoard', "🌌"),
             flavor: "the stars offer both beauty and utility.",
         }
     },
     getEffectString(level) {
-        return `+${level*0.01}% per`
+        return `+${level*10}% per digit`
     },
     getEffect(level, context) {
         return {
-            multiply: 1 + (context.pip * level * 0.0001),
+            multiply: 1 + (`${Math.round(context.pip)}`.length * level * 0.1),
         }
     },
     upgradeRequirements() {
