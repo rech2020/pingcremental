@@ -21,12 +21,12 @@ module.exports = {
 
         if (roll < 1.8) {
             return {
-                add: 5,
+                add: 5 + Math.floor(Math.random()*5),
                 message: "mrrow!"
             }
         } else if (roll < 2.7) {
             return {
-                multiply: 1.5,
+                multiply: 1.2 + Math.random()*0.5,
                 message: "mrrp!",
             }
         } else {

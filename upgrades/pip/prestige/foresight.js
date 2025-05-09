@@ -16,7 +16,7 @@ module.exports = {
     },
     getEffectString(level) {
         if (level === 0) return "+0 bp"
-        return `+${level*0.5 + 0.5} bp`
+        return `+${(level*0.5 + 0.5).toFixed(1)} bp`
     },
     getEffect(level, context) {
         return {

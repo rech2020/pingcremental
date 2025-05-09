@@ -14,7 +14,7 @@ module.exports = {
         }
     },
     getEffectString(level) {
-        return `+${level*2500}`
+        return `+${(level*2.5).toFixed(1)}K`
     },
     getEffect(level, context) {
         return {}

@@ -14,7 +14,7 @@ module.exports = {
         }
     },
     getEffectString(level) {
-        return `${(level*0.15)+1}x each`
+        return `${((level*0.15)+1).toFixed(2)}x each`
     },
     getEffect(level, context) {
         if (!context.glimmerClicks) return {};

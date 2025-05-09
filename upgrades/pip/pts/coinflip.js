@@ -21,7 +21,8 @@ module.exports = {
         let tails = 0;
         let mult = 1;
 
-        while (!heads) {
+        // hard cap tails to 100 to prevent infinite loops and rediculous multipliers
+        while (!heads && tails < 100) {
             heads = Math.random() < (0.5 / (context.specials.RNGmult || 1));
             if (!heads) {
                 mult = (mult * 1.1 * level);
