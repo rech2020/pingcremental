@@ -9,7 +9,7 @@ module.exports = {
         return {
             description: "gain __+0.6__ pts per ping for every __350__ total clicks",
             name: "inpingity",
-            emoji: getEmoji('upgrade_inpingity'),
+            emoji: getEmoji('upgrade_inpingity', "♾️"),
         }
     },
     getEffectString(level) {

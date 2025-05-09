@@ -9,7 +9,7 @@ module.exports = {
         return {
             description: "gain __x1.25__ PIP",
             name: "Telepathy",
-            emoji: getEmoji('ponder_telepathy'),
+            emoji: getEmoji('ponder_telepathy', "🧠"),
             flavor: "know your thoughts before you even think them.",
         }
     },

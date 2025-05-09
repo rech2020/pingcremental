@@ -10,7 +10,7 @@ module.exports = {
         return {
             description: "__+5%__ chance to find a blue ping after a different blue ping",
             name: "blue chain",
-            emoji: getEmoji('upgrade_chain'),
+            emoji: getEmoji('upgrade_chain', "🔗"),
         }
     },
     getEffectString(level) {

@@ -10,7 +10,7 @@ module.exports = {
         return {
             description: "1% chance of spawning a blue ping for 15x pts",
             name: "blue ping",
-            emoji: getEmoji('upgrade_blue'),
+            emoji: getEmoji('upgrade_blue', "🟦"),
         }
     },
     getEffectString(level) {

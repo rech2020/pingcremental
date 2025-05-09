@@ -9,7 +9,7 @@ module.exports = {
         return {
             description: "gain __+2,500__ max bp",
             name: "Stellar Strength",
-            emoji: getEmoji('ponder_storage'),
+            emoji: getEmoji('ponder_storage', "🪐"),
             flavor: "carry the weight of the stars.",
         }
     },

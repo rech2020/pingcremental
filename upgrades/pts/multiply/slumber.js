@@ -10,7 +10,7 @@ module.exports = {
         return {
             description: "gain __x1.1__ pts for 1 ping, for every __20__ minutes of non-pinging (up to __144__ pings, or 2d inactive)",
             name: "slumber",
-            emoji: getEmoji("upgrade_slumber"),
+            emoji: getEmoji("upgrade_slumber", "💤"),
         }
     },
     getEffectString(level) {

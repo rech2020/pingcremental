@@ -9,7 +9,7 @@ module.exports = {
         return {
             description: "?",
             name: "pingularity",
-            emoji: getEmoji('upgrade_pingularity'),
+            emoji: getEmoji('upgrade_pingularity', "▪️"),
         }
     },
     getEffectString(level) {

@@ -10,7 +10,7 @@ module.exports = {
         return {
             description: "__+0.5%__ (additive) chance to get x3 pts",
             name: "pipiping",
-            emoji: getEmoji('upgrade_pipiping'),
+            emoji: getEmoji('upgrade_pipiping', "🔁"),
         }
     },
     getEffectString(level) {

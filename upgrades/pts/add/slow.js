@@ -9,7 +9,7 @@ module.exports = {
         return {
             description: "each ping gives __+1__ pt",
             name: "slow internet",
-            emoji: getEmoji('upgrade_slow'),
+            emoji: getEmoji('upgrade_slow', "🕓"),
         }
     },
     getEffectString(level) {

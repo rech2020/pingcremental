@@ -9,7 +9,7 @@ module.exports = {
         return {
             description: "flip a coin until you land on heads, and gain __x1.1__ (multiplicative) pts for every tails you land on",
             name: "Eternal Coinflip",
-            emoji: getEmoji('ponder_coinflip'),
+            emoji: getEmoji('ponder_coinflip', "🪙"),
             flavor: "the coin has been flipping endlessly from the moment it was tossed.", // this is a phigros reference!
         }
     },

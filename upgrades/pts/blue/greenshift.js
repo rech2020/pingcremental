@@ -10,7 +10,7 @@ module.exports = {
         return {
             description: "__x1.15__ chance to spawn a blue ping (after other upgrades)",
             name: "greenshift?",
-            emoji: getEmoji('upgrade_greenshift'),
+            emoji: getEmoji('upgrade_greenshift', "🟢"),
         }
     },
     getEffectString(level) {

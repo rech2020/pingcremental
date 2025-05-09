@@ -9,7 +9,7 @@ module.exports = {
         return {
             description: "start with __10,000__ pts",
             name: "Distant Memories",
-            emoji: getEmoji('ponder_memory'),
+            emoji: getEmoji('ponder_memory', "🧠"),
             flavor: "your past isn't worthless. don't forget it.",
         }
     },

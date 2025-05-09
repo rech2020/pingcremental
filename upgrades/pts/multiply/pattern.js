@@ -10,7 +10,7 @@ module.exports = {
         return {
             description: "gain __x1.11__ pts when last two digits of ping are the same",
             name: "pattern recognision",
-            emoji: getEmoji('upgrade_pattern'),
+            emoji: getEmoji('upgrade_pattern', "🔍"),
         }
     },
     getEffectString(level) {

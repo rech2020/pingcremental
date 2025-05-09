@@ -10,7 +10,7 @@ module.exports = {
         return {
             description: "__-20__ pts but __x1.5__ pts",
             name: "Sacrifice Simplicity",
-            emoji: getEmoji('ponder_sacrifice'),
+            emoji: getEmoji('ponder_sacrifice', "⚙️"),
             flavor: "the best of progress inevitably becomes complex.",
         }
     },

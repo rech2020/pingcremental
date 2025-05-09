@@ -9,7 +9,7 @@ module.exports = {
         return {
             description: "gain __+2^(level-1)__ pts",
             name: "pinginomial",
-            emoji: getEmoji('upgrade_pinginomial'),
+            emoji: getEmoji('upgrade_pinginomial', "📈"),
         }
     },
     getEffectString(level) {

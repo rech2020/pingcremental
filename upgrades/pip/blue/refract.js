@@ -9,7 +9,7 @@ module.exports = {
         return {
             description: "an additional 5% of your Glimmer clicks are used per click, gain __x1.15__ pts (multiplicative) for each",
             name: "Refract",
-            emoji: getEmoji('ponder_refract'),
+            emoji: getEmoji('ponder_refract', "☀️"),
             flavor: "'i can see the light!' - someone long forgotten",
         }
     },

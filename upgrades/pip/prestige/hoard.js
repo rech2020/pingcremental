@@ -9,7 +9,7 @@ module.exports = {
         return {
             description: "gain __+0.01%__ pts per PIP held",
             name: "Stardust",
-            emoji: getEmoji('ponder_hoard'),
+            emoji: getEmoji('ponder_hoard', "🌌"),
             flavor: "the stars offer both beauty and utility.",
         }
     },

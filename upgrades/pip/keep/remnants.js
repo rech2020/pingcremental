@@ -9,7 +9,7 @@ module.exports = {
         return {
             description: "start with __+1__ level of various upgrades",
             name: "Remnants",
-            emoji: getEmoji('ponder_remnants'),
+            emoji: getEmoji('ponder_remnants', "🗿"),
             flavor: "preserve the past as you would the future.",
         }
     },

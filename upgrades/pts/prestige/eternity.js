@@ -9,7 +9,7 @@ module.exports = {
         return {
             description: "ping remains eternal.",
             name: "Eternity",
-            emoji: getEmoji('upgrade_eternity'),
+            emoji: getEmoji('upgrade_eternity', "🌌"),
         }
     },
     getEffectString(level) {

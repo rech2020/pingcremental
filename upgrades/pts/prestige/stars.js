@@ -9,7 +9,7 @@ module.exports = {
         return {
             description: "gain \`bp\`",
             name: "beyond the stars",
-            emoji: getEmoji('upgrade_stars'),
+            emoji: getEmoji('upgrade_stars', "💫"),
         }
     },
     getEffectString(level) {

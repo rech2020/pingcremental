@@ -9,7 +9,7 @@ module.exports = {
         return {
             description: "increase \`bp\` storage",
             name: "beyond the limit",
-            emoji: getEmoji('upgrade_limit'),
+            emoji: getEmoji('upgrade_limit', "🔏"),
         }
     },
     getEffectString(level) {

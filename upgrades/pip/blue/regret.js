@@ -9,7 +9,7 @@ module.exports = {
         return {
             description: "blue pings are __0.25%__ stronger for every blue ping missed",
             name: "Regret",
-            emoji: getEmoji('ponder_regret'),
+            emoji: getEmoji('ponder_regret', "😔"),
             flavor: "sometimes the past is painful. but it is also a part of you.",
         }
     },
