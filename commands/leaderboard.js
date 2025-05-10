@@ -20,12 +20,12 @@ module.exports = {
 }
 
 async function getMessage(interaction) {
-    let description = "*leaderboard updates every minute*\n";
-    const lbPlayers = await database.LeaderboardPlayer.findAll({
-        order: [
-            ['position', 'ASC'], // highest first
-        ]
-    });
+    let description = "";
+    const topPlayers = await database.Player.findAll({
+        order: [['totalScore', 'DESC']], // highest first
+        attributes: ['userId', 'totalScore'], // only get userId and totalScore
+        limit: 10, // top 10 only
+    })
 
     let leaderboardEmojis = []
     for (let i = 0; i < 10; i++) {
@@ -33,7 +33,7 @@ async function getMessage(interaction) {
     }
     leaderboardEmojis.push('✨');
 
-    for (player of lbPlayers) {
+    for (player of topPlayers) {
         const puser = await interaction.client.users.fetch(player.userId) // find the user for username display
         let userDisplay = puser.username.replaceAll("_", "\\_")
         if (player.userId == interaction.user.id) {
