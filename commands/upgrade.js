@@ -136,7 +136,7 @@ module.exports = {
 
 async function getEditMessage(interaction, category) {
     const [playerData, _created] = await database.Player.findOrCreate({ where: { userId: interaction.user.id } })
-    if (playerData.totalClicks < 150) { // prevent upgrading before 150 clicks
+    if (playerData.totalClicks < 150 && !playerData.clicks >= 150) { // prevent upgrading before 150 clicks
         const button = new ButtonBuilder()
             .setCustomId('upgrade:delete')
             .setLabel('oh... okay')
