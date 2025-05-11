@@ -338,7 +338,7 @@ function get(ping, context) {
             context.score >= 1e6 ? `you have... a megapt? why?` : `did you know 1,000,000 pts is called a megapt?`,
             `if you keep clicking like this, you'll be the next clicker extraordinaire`,
             "i'm glad it's a button and not a command",
-            context.clicks >= 150 ? `there's no... upgrades...? oh, wait` : `there's no upgrades for this, by the way`,
+            context.totalClicks >= 150 ? `there's no... upgrades...? oh, wait` : `there's no upgrades for this, by the way`,
             `hopefully this ping isn't too much to deal with while you click away`,
             `how come you like clicking this so much?`,
             `i mean, i get it, clicking can be fun, but don't you have other things to do? like sleep? eat?`,
@@ -350,8 +350,8 @@ function get(ping, context) {
             `i'm so glad they let you ping eternally`,
             `you're currently #4 in the world! just kidding, i don't actually know`,
             `do you actually care about my ping? or do you just want pts?`,
-            context.clicks >= 100 ? `${context.clicks} is a pretty big amount of pings` : `you've pinged me ${context.clicks} times`,
-            context.clicks >= 1000 ? `is the carpal tunnel setting in yet? with your ${context.clicks} pings?` : `you've pinged me ${context.clicks} times`,
+            context.totalClicks >= 100 ? `${context.totalClicks} is a pretty big amount of pings` : `you've pinged me ${context.totalClicks} times`,
+            context.totalClicks >= 1000 ? `is the carpal tunnel setting in yet? with your ${context.totalClicks} pings?` : `you've pinged me ${context.totalClicks} times`,
             `points and pts are not the same, do NOT confuse them`,
             `you've got ${context.score} pts. now what?`,
             `at ${context.score} pts, you've officially out-clicked my expectations`,
@@ -361,13 +361,13 @@ function get(ping, context) {
             context.score >= 250000 ? `you now qualify for our totally imaginary platinum tier` : `click more. platinum tier requires 250k pts`,
             `based on your current score of ${context.score}, i diagnose you with: terminal pinging`,
             context.score >= 1e6 ? `thats like, more than a megapt` : `keep going! you're only ${1e6 - context.score} away from a megapt`,
-            context.clicks >= 500 ? `you've clicked ${context.clicks} times. is your mouse okay?` : `you've clicked ${context.clicks} times. that's like, medium pinger level`,
-            context.score % 1000 === 0 ? `your score is a very satisfying multiple of 1000. good job` : `your score isn’t divisible by 1000. i noticed`,
+            context.totalClicks >= 500 ? `you've clicked ${context.totalClicks} times. is your mouse okay?` : `you've clicked ${context.totalClicks} times. that's like, medium pinger level`,
             `at this rate, you'll hit ${context.score + 10000} in no time. probably`,
             `fun fact: you've earned ${context.score} pts and not a single one was a tax write-off`,
             context.score >= 2e6 ? `two megapts? ok, now you're just showing off` : (context.score >=1e6? `approaching the legendary double megapt threshold...`:`you're approaching one megapt (probably)`),
-            `click count: ${context.clicks}. you should probably stretch your fingers`,
+            `click count: ${context.totalClicks}. you should probably stretch your fingers`,
         ]
+        if (context.score % 1000 === 0) messagesList.push(`your score is a very satisfying multiple of 1000. good job`)
     }
 
     if (context.slumberClicks && Math.random() * 100 <= 12) {
@@ -500,7 +500,7 @@ function get(ping, context) {
 
     // blue ping just clicked
     if (context.isSuper) {
-        const mult = 15 * (context.blueStrength)
+        const mult = (15 * (context.blueStrength)).toFixed(2);
         messagesList = [
             `that's a lot of \`pts\`!`,
             "whoa",
