@@ -3,11 +3,11 @@ const { getEmoji } = require('../../../helpers/emojis.js');
 
 module.exports = {
     getPrice(currentLevel) {
-        return 20**(currentLevel+2) * 180;
+        return 20**(currentLevel+1) * 180;
     },
     getDetails() {
         return {
-            description: "gain __+0.3%__ pts for every upgrade level removed",
+            description: "gain __+0.3%__ pts for every upgrade level removed by visiting Eternity",
             name: "Vague Memories",
             emoji: getEmoji('ponder_vague', "☁️"),
             flavor: "sometimes all you can remember is that it happened.",
