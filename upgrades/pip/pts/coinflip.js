@@ -25,7 +25,7 @@ module.exports = {
         while (!heads && tails < 100) {
             heads = Math.random() < (0.5 / context.RNGmult);
             if (!heads) {
-                mult = (mult * 1.1 * level);
+                mult = (mult * (1 + ((level * 0.1))));
                 tails++;
             }
         }
