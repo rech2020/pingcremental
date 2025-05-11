@@ -71,6 +71,7 @@ async function getMessage(userId) {
                 // show eternity pings if not the same as total
                 `${player.totalClicks !== player.clicks ? `${formatNumber(player.clicks)} ping${player.clicks === 1 ? '' : 's'} this eternity\n` : ''}` +
                 `${formatNumber(player.totalScore)} total pts\n` +
+                `${formatNumber(player.highestScore)} pts in one ping\n` +
                 `${formatNumber(player.bluePings)} blue ping${player.bluePings === 1 ? '' : 's'} clicked\n` +
                 `${formatNumber(player.bluePingsMissed)} missed blue ping${player.bluePingsMissed === 1 ? '' : 's'} (${missRate}% miss rate)\n` +
                 `${formatNumber(player.luckyPings)} lucky ping${player.luckyPings === 1 ? '' : 's'}\n` +

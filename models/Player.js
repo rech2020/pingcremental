@@ -33,6 +33,12 @@ module.exports = (sequelize) => {
 			allowNull: false,
 		},
 
+		highestScore: {
+			type: DataTypes.NUMBER,
+			defaultValue: 0,
+			allowNull: false,
+		},
+
 		totalClicks: {
 			type: DataTypes.NUMBER,
 			defaultValue: 0,

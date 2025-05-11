@@ -320,6 +320,7 @@ async function ping(interaction, isSuper = false) {
     if (context.rare) playerProfile.luckyPings += 1;
     playerProfile.bp = Math.min(currentEffects.bp + playerProfile.bp, bpMax);
     playerProfile.lastPing = Date.now();
+    if (playerProfile.highestScore < score) playerProfile.highestScore = score; // update highest score
 
     if (!isSuper) {
         let missed = false;
