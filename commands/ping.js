@@ -187,7 +187,7 @@ async function ping(interaction, isSuper = false) {
         }
 
         if (combo && combo > playerProfile.highestBlueStreak) {
-            playerProfile.highestBlueStreak = combo-1;
+            playerProfile.highestBlueStreak = combo;
         }
         
         context.blueCombo = combo;
