@@ -37,6 +37,8 @@ module.exports = {
             playerData.pip += Math.floor(playerData.bp * mult); // give pip for eternity
             playerData.bp = 0;
             playerData.clicks = 0;
+            playerData.glimmerClicks = 0;
+            playerData.slumberClicks = 0;
 
             // memory effects
             if (playerData.prestigeUpgrades.memory) {
