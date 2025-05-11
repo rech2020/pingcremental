@@ -18,9 +18,7 @@ module.exports = {
     },
     getEffect(level, context) {
         return {
-            special: {
-                RNGmult: (level*0.5)+1,
-            }
+            RNGmult: (level*0.5),
         }
     },
     upgradeRequirements() {

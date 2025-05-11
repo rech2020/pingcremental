@@ -16,7 +16,7 @@ module.exports = {
         return level === 1 ? "d20" : "d0"
     },
     getEffect(level, context) {
-        const rollCount = context.specials.extraDice + 1;
+        const rollCount = (context.specials.extraDice || 0) + 1;
 
         let roll = 0
         for (let i = 0; i < rollCount; i++) {

@@ -113,6 +113,7 @@ async function ping(interaction, isSuper = false) {
         blue: 0,
         blueStrength: 1,
         specials: {},
+        RNGmult: 1,
     }
 
     let iterateUpgrades = {}
@@ -133,6 +134,7 @@ async function ping(interaction, isSuper = false) {
         blueStrength: 1,
         specials: {},
         bp: 0,
+        RNGmult: 1,
         // add more if needed
     }
     let displays = {
@@ -141,7 +143,6 @@ async function ping(interaction, isSuper = false) {
         exponents: [],
         extra: [],
     }
-    if (isSuper) displays.mult.push(`<:upgrade_blue:1361881310544527542> __\`x15\`__`);
     let effect;
     let score = ping; // base score is ping
 
@@ -161,6 +162,10 @@ async function ping(interaction, isSuper = false) {
             currentEffects.blueStrength += effect.blueStrength; 
             context.blueStrength = currentEffects.blueStrength; 
         }
+        if (effect.RNGmult) { 
+            currentEffects.RNGmult += effect.RNGmult; 
+            context.RNGmult = currentEffects.RNGmult; 
+        }
     }
 
     if (isSuper) {
@@ -168,7 +173,7 @@ async function ping(interaction, isSuper = false) {
         currentEffects.mults.push(blueStrength);
         displays.mult.push(`${getEmoji('upgrade_blue')} __\`x${blueStrength.toFixed(2)}\`__`)
     }
-    if (Math.random() * 1000 < (currentEffects.blue * 10 * currentEffects.specials.RNGmult) && currentEffects.specials.blueping) {
+    if (Math.random() * 1000 < (currentEffects.blue * 10 * currentEffects.RNGmult) && currentEffects.specials.blueping) {
         context.spawnedSuper = true;
         
         let combo = false;
@@ -182,12 +187,12 @@ async function ping(interaction, isSuper = false) {
         }
 
         if (combo && combo > playerProfile.highestBlueStreak) {
-            playerProfile.highestBlueStreak = combo-1;
+            playerProfile.highestBlueStreak = combo;
         }
         
         context.blueCombo = combo;
     }
-    if ((Math.random() * 1000 < 1 * (currentEffects.specials.RNGmult || 1))) {
+    if ((Math.random() * 1000 < 1 * currentEffects.RNGmult)) {
         context.rare = true;
     }
     
@@ -238,7 +243,7 @@ async function ping(interaction, isSuper = false) {
         }
         if (effect.bp) { 
             currentEffects.bp += effect.bp;
-            effectString += `\`+${effect.bp} bp\``
+            effectString += ` \`+${effect.bp} bp\``
         }
         if (effect.message) { effectString += ` ${effect.message}`; }
 

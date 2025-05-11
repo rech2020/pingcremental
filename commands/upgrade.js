@@ -37,6 +37,8 @@ module.exports = {
             playerData.pip += Math.floor(playerData.bp * mult); // give pip for eternity
             playerData.bp = 0;
             playerData.clicks = 0;
+            playerData.glimmerClicks = 0;
+            playerData.slumberClicks = 0;
 
             // memory effects
             if (playerData.prestigeUpgrades.memory) {
@@ -56,7 +58,7 @@ module.exports = {
                 await interaction.followUp({ content: `
 *welcome to Eternity. congratulations on making it here.*
 *i suppose you're wondering why you want to be here.*
-*how about... </ponder:[ID]>? try it out.*
+*how about... </ponder:1371248161309593651>? try it out.*
 *good luck, pinger.*`, flags: MessageFlags.Ephemeral });
             }
         })
@@ -95,7 +97,7 @@ module.exports = {
                     content: 
 `*Eternity calls for you, but you must make sure you're ready.*
 ***are you?***
--# this will **reset** your current upgrades and give you __\`${formatNumber(Math.floor(playerData.bp*mult))} PIP\`__`,
+-# this will **reset** your current upgrades, pts, and clicks and give you __\`${formatNumber(Math.floor(playerData.bp*mult))} PIP\`__ from your __\`${formatNumber(playerData.bp)} BP\`__.`,
                     components: [
                         new ActionRowBuilder().addComponents(
                             new ButtonBuilder()
@@ -136,7 +138,7 @@ module.exports = {
 
 async function getEditMessage(interaction, category) {
     const [playerData, _created] = await database.Player.findOrCreate({ where: { userId: interaction.user.id } })
-    if (playerData.totalClicks < 150) { // prevent upgrading before 150 clicks
+    if (playerData.totalClicks < 150 && !playerData.clicks >= 150) { // prevent upgrading before 150 clicks
         const button = new ButtonBuilder()
             .setCustomId('upgrade:delete')
             .setLabel('oh... okay')
