@@ -23,7 +23,7 @@ module.exports = {
 
         // hard cap tails to 100 to prevent infinite loops and rediculous multipliers
         while (!heads && tails < 100) {
-            heads = Math.random() < (0.5 / (context.specials.RNGmult || 1));
+            heads = Math.random() < (0.5 / context.RNGmult);
             if (!heads) {
                 mult = (mult * 1.1 * level);
                 tails++;
