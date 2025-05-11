@@ -143,7 +143,6 @@ async function ping(interaction, isSuper = false) {
         exponents: [],
         extra: [],
     }
-    if (isSuper) displays.mult.push(`<:upgrade_blue:1361881310544527542> __\`x15\`__`);
     let effect;
     let score = ping; // base score is ping
 
