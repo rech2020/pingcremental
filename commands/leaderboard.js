@@ -136,7 +136,7 @@ function initTypes() {
 }
 
 function formatPlayer(username, score, leaderboard, interaction) {
-    const userDisplay = username.replaceAll("_", "\\_")
+    let userDisplay = username.replaceAll("_", "\\_")
     if (interaction.user.id == username) {
         userDisplay = `__${userDisplay}__` // highlight the user's own score
     }
