@@ -137,7 +137,7 @@ function initTypes() {
 
 function formatPlayer(username, score, leaderboard, interaction) {
     let userDisplay = username.replaceAll("_", "\\_")
-    if (interaction.user.id == username) {
+    if (interaction.user.username == username) {
         userDisplay = `__${userDisplay}__` // highlight the user's own score
     }
     return `**${userDisplay}** - \`${formatNumber(score)}\` ${leaderboardTypes[leaderboard].metric}`
