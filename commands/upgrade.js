@@ -95,7 +95,7 @@ module.exports = {
                     content: 
 `*Eternity calls for you, but you must make sure you're ready.*
 ***are you?***
--# this will **reset** your current upgrades and give you __\`${formatNumber(Math.floor(playerData.bp*mult))} PIP\`__`,
+-# this will **reset** your current upgrades, pts, and clicks and give you __\`${formatNumber(Math.floor(playerData.bp*mult))} PIP\`__ from your __\`${formatNumber(playerData.bp)} BP\`__.`,
                     components: [
                         new ActionRowBuilder().addComponents(
                             new ButtonBuilder()
