@@ -238,7 +238,7 @@ async function ping(interaction, isSuper = false) {
         }
         if (effect.bp) { 
             currentEffects.bp += effect.bp;
-            effectString += `\`+${effect.bp} bp\``
+            effectString += ` \`+${effect.bp} bp\``
         }
         if (effect.message) { effectString += ` ${effect.message}`; }
 
