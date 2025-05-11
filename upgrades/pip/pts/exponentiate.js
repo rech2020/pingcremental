@@ -7,18 +7,18 @@ module.exports = {
     },
     getDetails() {
         return {
-            description: "gain __^1.05__ pts",
+            description: "gain __^1.03__ pts",
             name: "Exponentiate",
             emoji: getEmoji('ponder_exponentiate', "^"),
             flavor: "they only way out is up.",
         }
     },
     getEffectString(level) {
-        return `^${((level*0.05)+1).toFixed(2)}`
+        return `^${((level*0.03)+1).toFixed(2)}`
     },
     getEffect(level, context) {
         return {
-            exponent: (level*0.05) + 1,
+            exponent: (level*0.03) + 1,
         }
     },
     upgradeRequirements() {
