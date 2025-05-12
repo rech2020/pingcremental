@@ -13,11 +13,11 @@ module.exports = {
         }
     },
     getEffectString(level) {
-        return `+${(level*0.6).toFixed(1)} per ${350-level+1} clicks`
+        return `+${(level*0.6).toFixed(1)} per ${maxClicks(level)} clicks`
     },
     getEffect(level, context) {
         return {
-            add: Math.round(level * (context.clicks/(350-level+1)) * 0.6,2),
+            add: Math.round(level * (context.clicks/(maxClicks(level))) * 0.6,2),
         }
     },
     isBuyable(context) {
@@ -25,4 +25,8 @@ module.exports = {
     },
     sortOrder() { return 8 },
     type() { return UpgradeTypes.ADD_BONUS }
+}
+
+function maxClicks(level) {
+    return Math.max(100,350-level+1);
 }

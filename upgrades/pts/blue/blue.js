@@ -8,7 +8,7 @@ module.exports = {
     },
     getDetails() {
         return {
-            description: "1% chance of spawning a blue ping for 15x pts",
+            description: "1% chance (35% hard cap) of spawning a blue ping for 15x pts",
             name: "blue ping",
             emoji: getEmoji('upgrade_blue', "🟦"),
         }
@@ -19,6 +19,7 @@ module.exports = {
     getEffect(level, context) {
         return {
             special: { "blueping" : true },
+            blue: 1,
         };
     },
     isBuyable(context) {

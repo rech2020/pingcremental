@@ -7,7 +7,7 @@ module.exports = {
     },
     getDetails() {
         return {
-            description: "an additional 5% of your Glimmer clicks are used per click, gain __x1.15__ pts (multiplicative) for each",
+            description: "an additional 5% of your Glimmer clicks (up to 20) are used per click, gain __x1.15__ pts (multiplicative) for each",
             name: "Refract",
             emoji: getEmoji('ponder_refract', "☀️"),
             flavor: "'i can see the light!' - someone long forgotten",
@@ -20,7 +20,7 @@ module.exports = {
         if (!context.glimmerClicks) return {};
         if (context.isSuper) return {};
 
-        const extraGlimmer = Math.floor(context.glimmerClicks * 0.05);
+        const extraGlimmer = Math.min(Math.floor(context.glimmerClicks * 0.05),20);
         const mult = (level*0.15+1) ** extraGlimmer;
 
         if (mult === 1) return {};

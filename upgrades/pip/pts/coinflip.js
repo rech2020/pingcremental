@@ -7,25 +7,25 @@ module.exports = {
     },
     getDetails() {
         return {
-            description: "flip a coin until you land on heads, and gain __x1.1__ (multiplicative) pts for every tails you land on",
+            description: "flip a coin until you land on heads, and gain __+10%__ (additive) pts for every tails you land on",
             name: "Eternal Coinflip",
             emoji: getEmoji('ponder_coinflip', "🪙"),
             flavor: "the coin has been flipping endlessly from the moment it was tossed.", // this is a phigros reference!
         }
     },
     getEffectString(level) {
-        return `x${(level*0.1)+1}`
+        return `${(level*10)}%`
     },
     getEffect(level, context) {
         let heads = false;
         let tails = 0;
         let mult = 1;
 
-        // hard cap tails to 100 to prevent infinite loops and rediculous multipliers
-        while (!heads && tails < 100) {
+        // hard cap tails to 99 to prevent infinite loops and rediculous multipliers
+        while (!heads && tails < 99) {
             heads = Math.random() < (0.5 / context.RNGmult);
             if (!heads) {
-                mult = (mult * (1 + ((level * 0.1))));
+                mult += (level * 0.1);
                 tails++;
             }
         }

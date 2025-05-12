@@ -168,6 +168,8 @@ async function ping(interaction, isSuper = false) {
         }
     }
 
+    effect.blue = Math.min(currentEffects.blue, 35); // cap blue at 35%
+
     if (isSuper) {
         let blueStrength = (currentEffects.blueStrength) * 15;
         currentEffects.mults.push(blueStrength);
@@ -302,6 +304,7 @@ async function ping(interaction, isSuper = false) {
     }
     score = Math.round(score);
     context.score = score; // update context for later effects
+    if (score === Infinity) score = 0; // prevent infinite score (and fuck you; you get nothing)
     const bpMax = ((playerProfile.upgrades.limit || 0) + 1) * 10000
     
 
