@@ -63,11 +63,11 @@ ${leaderboardEmojis[Math.min(leaderboardEmojis.length, position) - 1]} ${formatP
         const userIndex = topPlayers.findIndex(player => player.userId == interaction.user.id);
 
         // show next user and user below
-        if (userIndex > 12) {
+        if (userIndex >= 12) {
             description += `\n...`
         }
 
-        if (userIndex > 11) {
+        if (userIndex >= 11) {
             const userBelow = topPlayers[userIndex - 1];
             const userBelowUsername = (await interaction.client.users.fetch(userBelow.userId)).username;
             description += `\n#${userIndex} ${formatPlayer(userBelowUsername, userBelow[leaderboardType], leaderboardType, interaction)}`
