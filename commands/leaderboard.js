@@ -155,6 +155,11 @@ function initTypes() {
             emoji: getEmoji('upgrade_chain', '🔗'),
             metric: "blue pings in a row"
         },
+        highestScore: {
+            name: 'highest score',
+            emoji: getEmoji('ponder_favored', '🏆'),
+            metric: "pts in best ping"
+        },
     }
 }
 
