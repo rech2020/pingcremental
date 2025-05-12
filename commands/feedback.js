@@ -41,7 +41,7 @@ module.exports = {
         ),
     async execute(interaction) {
         if (interaction.options.getSubcommand() === 'submit') {
-            if (await database.Feedback.count({ where: { userId: interaction.user.id } }) >= 5) {
+            if (interaction.user.id !== ownerId && await database.Feedback.count({ where: { userId: interaction.user.id } }) >= 5) {
                 return await interaction.reply({ content: 'you have already submitted 5 feedbacks! please wait until they are reviewed before submitting more, or remove them from the queue yourself.', flags: MessageFlags.Ephemeral });
             }
 
@@ -50,6 +50,10 @@ module.exports = {
             const userId = interaction.user.id;
 
             await database.Feedback.create({ userId, type: feedbackType, text: feedbackText });
+            await client.users.fetch(ownerId).then(user => {
+                sillies = ['ding dong! new feedback is here', 'feedback! feedback! get your feedback here!', 'someone has an opinion!', 'a package was delievered!', 'i have bad news... feedback just arrived!']
+                user.send(`${sillies[Math.floor(Math.random() * sillies.length)]}\n\n__${feedbackType}__ from __${interaction.user.username}__ (${interaction.user.id})\n${feedbackText}`);
+            })
             await interaction.reply({ content: `success! thanks for the feedback.`, flags: MessageFlags.Ephemeral });
         }
         else if (interaction.options.getSubcommand() === 'view') {
