@@ -169,7 +169,7 @@ async function ping(interaction, isSuper = false) {
         }
     }
 
-    effect.blue = Math.min(currentEffects.blue ?? 0, 35); // cap blue at 35%
+    currentEffects.blue = Math.min(currentEffects.blue, 35); // cap blue at 35%
 
     if (isSuper) {
         let blueStrength = (currentEffects.blueStrength) * 15;
