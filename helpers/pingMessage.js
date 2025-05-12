@@ -606,7 +606,6 @@ function get(ping, context) {
             "you just dealt 15x damage to the button. nice.",
             "your click was a direct hit!",
             "i didn't expect you to actually get it. but here we are.",
-            "boo! 15x jumpscare"
         ]
     }
 
