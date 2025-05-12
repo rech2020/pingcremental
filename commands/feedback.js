@@ -50,7 +50,7 @@ module.exports = {
             const userId = interaction.user.id;
 
             await database.Feedback.create({ userId, type: feedbackType, text: feedbackText });
-            await client.users.fetch(ownerId).then(user => {
+            await interaction.client.users.fetch(ownerId).then(user => {
                 sillies = ['ding dong! new feedback is here', 'feedback! feedback! get your feedback here!', 'someone has an opinion!', 'a package was delievered!', 'i have bad news... feedback just arrived!']
                 user.send(`${sillies[Math.floor(Math.random() * sillies.length)]}\n\n__${feedbackType}__ from __${interaction.user.username}__ (${interaction.user.id})\n${feedbackText}`);
             })
