@@ -142,6 +142,7 @@ async function ping(interaction, isSuper = false) {
         mult: [],
         exponents: [],
         extra: [],
+        bp: [],
     }
     let effect;
     let score = ping; // base score is ping
@@ -257,6 +258,8 @@ async function ping(interaction, isSuper = false) {
                 displays.mult.push(effectString);
             } else if (effect.exponent) {
                 displays.exponents.push(effectString);
+            } else if (effect.bp) {
+                displays.bp.push(effectString);
             } else {
                 displays.extra.push(effectString);
             }
@@ -370,14 +373,15 @@ you have a lot of pts... why don't you go spend them over in </upgrade:136037740
     }
 
     let displayDisplay = ""
-    for (const display of Object.values(displays)) {
+    for (const display of ['add', 'mult', 'exponents', 'extra']) {
         if (display.length === 0) continue; // skip empty displays
         displayDisplay += ", " + display.join(', ') 
     }
     displayDisplay = displayDisplay.substring(2); // remove first comma and space
     
     if (currentEffects.bp) {
-        displayDisplay += `\n-# \`${formatNumber(Math.ceil(playerProfile.bp))}/${formatNumber(bpMax)} bp\`${playerProfile.bp >= bpMax ? " **(MAX)**" : ""}`
+        displayDisplay += `\n-# \`${formatNumber(Math.ceil(playerProfile.bp))}/${formatNumber(bpMax)} bp\`${playerProfile.bp >= bpMax ? " **(MAX)**" : ""} `
+        displayDisplay += displays.bp.join(', ');
     }
 
     try {
