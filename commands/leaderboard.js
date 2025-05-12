@@ -131,7 +131,7 @@ function initTypes() {
             metric: "clicks"
         },
         score: {
-            name: 'pts',
+            name: 'owned pts',
             emoji: '💰',
             metric: "pts currently owned"
         },
