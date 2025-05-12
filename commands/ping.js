@@ -373,7 +373,8 @@ you have a lot of pts... why don't you go spend them over in </upgrade:136037740
     }
 
     let displayDisplay = ""
-    for (const display of ['add', 'mult', 'exponents', 'extra']) {
+    for (const dispType of ['add', 'mult', 'exponents', 'extra']) {
+        const display = displays[dispType];
         if (display.length === 0) continue; // skip empty displays
         displayDisplay += ", " + display.join(', ') 
     }
