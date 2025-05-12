@@ -36,7 +36,6 @@ async function getMessage(interaction, leaderboardType) {
     const topPlayers = await database.Player.findAll({
         order: [[leaderboardType, 'DESC']], // highest first
         attributes: ['userId', leaderboardType], // only get userId and totalScore
-        limit: 10, // top 10 only
     })
 
     let leaderboardEmojis = []
@@ -46,19 +45,41 @@ async function getMessage(interaction, leaderboardType) {
     leaderboardEmojis.push('✨');
 
     let position = 0;
+    let showedSelf = false;
 
     for (player of topPlayers) {
         position++;
+        if (position > 10) break; // only show the top 10 players
         const puser = await interaction.client.users.fetch(player.userId) // find the user for username display
 
         description +=
             `
 ${leaderboardEmojis[Math.min(leaderboardEmojis.length, position) - 1]} ${formatPlayer(puser.username, player[leaderboardType], leaderboardType, interaction)}`
+        showedSelf = showedSelf || (interaction.user.id == player.userId);
     }
 
-    // if the user is not in the leaderboard, add them to the end of the list
-    if (topPlayers.find(player => player.userId == interaction.user.id) == null) {
-        description += `\n...\n**##** ${formatPlayer(interaction.user.username, interaction.user[leaderboardType], leaderboardType, interaction)}`
+    if (!showedSelf) {
+        // find position of the user
+        const userIndex = topPlayers.findIndex(player => player.userId == interaction.user.id);
+
+        // show next user and user below
+        if (userIndex > 12) {
+            description += `\n...`
+        }
+
+        if (userIndex > 11) {
+            const userBelow = topPlayers[userIndex - 1];
+            const userBelowUsername = (await interaction.client.users.fetch(userBelow.userId)).username;
+            description += `\n#${userIndex} ${formatPlayer(userBelowUsername, userBelow[leaderboardType], leaderboardType, interaction)}`
+        }
+
+        description += `\n#${userIndex + 1} ${formatPlayer(interaction.user.username, topPlayers[userIndex][leaderboardType], leaderboardType, interaction)}`
+
+        if (userIndex !== topPlayers.length - 1) {
+            const userAbove = topPlayers[userIndex + 1];
+            const userAboveUsername = (await interaction.client.users.fetch(userAbove.userId)).username;
+            description += `\n#${userIndex + 2} ${formatPlayer(userAboveUsername, userAbove[leaderboardType], leaderboardType, interaction)}`
+        }
     }
 
     const embed = new EmbedBuilder()
