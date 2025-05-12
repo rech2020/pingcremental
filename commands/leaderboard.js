@@ -31,6 +31,7 @@ module.exports = {
 
 async function getMessage(interaction, leaderboardType) {
     if (!leaderboardTypes) initTypes();
+    if (!leaderboardType) leaderboardType = "totalScore";
 
     let description = "";
     const topPlayers = await database.Player.findAll({
