@@ -74,6 +74,14 @@ module.exports = {
             if (!feedback) return await interaction.reply({ content: 'this one doesn\'t even exist? how?', ephemeral: true });
             if (feedback.userId !== interaction.user.id && interaction.user.id !== ownerId) return await interaction.reply({ content: 'you don\'t have permission to delete this...', ephemeral: true });
 
+            if (interaction.user.id === ownerId && feedback.userId !== ownerId) {
+                const userToAlert = await interaction.client.users.fetch(feedback.userId)
+                if (feedback.type === 'bug') {
+                    await userToAlert.send(`your below bug report has been either fixed or otherwise addressed. thank you for reporting!\n"${feedback.text}"`);
+                } else {
+                    await userToAlert.send(`your below feedback has been either implemented, denied, or otherwise addressed. thank you for the suggestion!\n"${feedback.text}"`);
+                }
+            }
             await feedback.destroy();
             await interaction.update(await generateFeedbackResponse(interaction, feedback.type));
             await interaction.followUp({ content: `deleted successfully.`, flags: MessageFlags.Ephemeral });
