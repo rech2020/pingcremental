@@ -313,7 +313,7 @@ function get(ping, context) {
         "this ping contains zero percent drama",
         "if you can read this, you're within ping range",
         "this ping could be worse. but it's not. so yay",
-        "i ran out of ping jokes so here's a normal one"
+        "i ran out of ping jokes so here's a normal one",
         
 
         //ok, these next ones are kinda weird but they're fun, so here
