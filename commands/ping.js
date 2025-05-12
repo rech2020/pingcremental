@@ -305,8 +305,9 @@ async function ping(interaction, isSuper = false) {
     score = Math.round(score);
     context.score = score; // update context for later effects
     if (score === Infinity) score = 0; // prevent infinite score (and fuck you; you get nothing)
-    const bpMax = ((playerProfile.upgrades.limit || 0) + 1) * 10000
     
+    let bpMax = ((playerProfile.upgrades.limit || 0) + 1) * 10000;
+    bpMax += (playerProfile.upgrades.storage || 1) * 2500;
 
     /* SAVE STATS */
 
