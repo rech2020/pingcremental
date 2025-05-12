@@ -17,14 +17,14 @@ module.exports = {
     buttons: {
         refresh: (async (interaction, leaderboard) => {
             await interaction.deferUpdate();
-            await interaction.update(await getMessage(interaction, leaderboard));
+            await interaction.editReply(await getMessage(interaction, leaderboard));
         })
     },
     dropdowns: {
         select: (async (interaction) => {
             const leaderboardType = interaction.values[0];
             await interaction.deferUpdate();
-            await interaction.update(await getMessage(interaction, leaderboardType));
+            await interaction.editReply(await getMessage(interaction, leaderboardType));
         })
     }
 }
