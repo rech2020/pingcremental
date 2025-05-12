@@ -310,7 +310,7 @@ async function ping(interaction, isSuper = false) {
     if (score === Infinity) score = 0; // prevent infinite score (and fuck you; you get nothing)
     
     let bpMax = ((playerProfile.upgrades.limit || 0) + 1) * 10000;
-    bpMax += (playerProfile.upgrades.storage || 1) * 2500;
+    bpMax += (playerProfile.upgrades.storage || 0) * 2500;
 
     /* SAVE STATS */
 
