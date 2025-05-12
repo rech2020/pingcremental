@@ -173,7 +173,7 @@ async function ping(interaction, isSuper = false) {
         currentEffects.mults.push(blueStrength);
         displays.mult.push(`${getEmoji('upgrade_blue')} __\`x${blueStrength.toFixed(2)}\`__`)
     }
-    if (Math.random() * 1000 < (currentEffects.blue * 10 * currentEffects.RNGmult) && currentEffects.specials.blueping) {
+    if (Math.random() * 1000 < (currentEffects.blue * 10) && currentEffects.specials.blueping) {
         context.spawnedSuper = true;
         
         let combo = false;
