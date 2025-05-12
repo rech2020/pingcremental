@@ -136,7 +136,11 @@ module.exports = {
     }
 }
 
-async function getEditMessage(interaction, category) {
+async function getBuySetting(interaction) {
+    let buySetting = 1; // in case something breaks
+}
+
+async function getEditMessage(interaction, category, buySetting) {
     const [playerData, _created] = await database.Player.findOrCreate({ where: { userId: interaction.user.id } })
     if (playerData.totalClicks < 150 && !playerData.clicks >= 150) { // prevent upgrading before 150 clicks
         const button = new ButtonBuilder()
@@ -170,6 +174,19 @@ async function getEditMessage(interaction, category) {
     const embed = new EmbedBuilder()
         .setTitle("upgrades")
         .setColor("#73c9ae")
+
+    const multiBuys = [1,5,25,'MAX']
+    const multiBuyButtons = []
+    for (const multiBuy of multiBuys) {
+        const button = new ButtonBuilder()
+            .setCustomId(`upgrade:multibuy-${multiBuy}`)
+            .setLabel(`x${multiBuy}`)
+            .setStyle(ButtonStyle.Secondary)
+            .setDisabled(true)
+        multiBuyButtons.push(button)
+    }
+    const multiBuyRow = new ActionRowBuilder()
+        .addComponents(multiBuyButtons)
 
     for (const [upgradeId, upgrade] of Object.entries(upgrades['pts'])) {
         // go through each upgrade and check if should be displayed
