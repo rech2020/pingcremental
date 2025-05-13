@@ -61,6 +61,18 @@ module.exports = {
 *how about... </ponder:1371248161309593651>? try it out.*
 *good luck, pinger.*`, flags: MessageFlags.Ephemeral });
             }
+        }),
+        multibuy: (async (interaction, buySetting) => {
+            const catButtonRow = interaction.message.components[0];
+            const category = catButtonRow.components.find(button => button.disabled === true).customId.split('-')[1];
+
+            if (buySetting === 'MAX') {
+                buySetting = 'MAX';
+            } else {
+                buySetting = parseInt(buySetting);
+            }
+
+            await interaction.update(await getEditMessage(interaction, category, buySetting));
         })
     },
     dropdowns: {
@@ -72,12 +84,14 @@ module.exports = {
             
             const playerUpgradeLevel = playerData.upgrades[upgradeId] ?? 0;
             const upgradeClass = upgrades['pts'][upgradeId];
-            let price = 0;
-            let levels = buySetting;
+            let price = 1;
+            let levels = 1;
 
             // skip multi-buy on eternity so it doesn't pointlessly loop millions of times
-            if (!upgradeId === 'eternity') {
-                const [price, levels] = multiBuy(buySetting, upgradeClass, playerData.score);
+            if (upgradeId !== 'eternity') {
+                const mbr = getMultiBuyCost(buySetting, upgradeClass, playerData.score, playerUpgradeLevel);
+                price = mbr.price;
+                levels = mbr.levels;
             }
             
 
@@ -134,10 +148,10 @@ module.exports = {
                 .setLabel(msg[Math.floor(Math.random() * msg.length)]) // random happy message
                 .setStyle(ButtonStyle.Success)
 
-            await interaction.update(await getEditMessage(interaction, upgradeClass.type()));
+            await interaction.update(await getEditMessage(interaction, upgradeClass.type(), buySetting));
 
             return await interaction.followUp({
-                content: `upgraded **${upgradeClass.getDetails().name}** to level ${playerUpgradeLevel + 1}! you've \`${formatNumber(playerData.score, true, 4)} pts\` left.`,
+                content: `upgraded **${upgradeClass.getDetails().name}** to level ${playerUpgradeLevel + levels}! you've \`${formatNumber(playerData.score, true, 4)} pts\` left.`,
                 components: [new ActionRowBuilder().addComponents(button)]
             })
         })
@@ -147,7 +161,7 @@ module.exports = {
 function getBuySetting(interaction) {
     let buySetting = 1; // in case something breaks
     const embedDesc = interaction.message.embeds[0].description;
-    const multibuyMatch = embedDesc.match(/x*.\*/g);
+    const multibuyMatch = embedDesc.match(/x.*?\*/g);
     if (multibuyMatch) {
         let multibuy = multibuyMatch[0].replace('x', '');
         multibuy = multibuy.replace('*', '');
@@ -161,16 +175,22 @@ function getBuySetting(interaction) {
     return buySetting;
 }
 
-function multiBuy(buySetting, upgrade, score) {
+function getMultiBuyCost(buySetting, upgrade, score, playerUpgradeLevel) {
     let price = 0;
     let levels = 0;
 
     if (buySetting === 'MAX') {
         levels = 0;
+
         do {
             price += upgrade.getPrice(playerUpgradeLevel + levels);
             levels++;
         } while (price <= score && upgrade.getPrice(playerUpgradeLevel + levels) !== null);
+
+        if (levels > 1) {
+            levels--;
+            price -= upgrade.getPrice(playerUpgradeLevel + levels);
+        }
     } else {
         for (let i = 0; i < buySetting; i++) {
             if (upgrade.getPrice(playerUpgradeLevel + i) === null) break; // maxed out
@@ -212,7 +232,7 @@ async function getEditMessage(interaction, category, buySetting) {
     const select = new StringSelectMenuBuilder()
         .setCustomId('upgrade:buy')
         .setPlaceholder('pick an upgrade')
-    let description = `you have **__\`${formatNumber(playerData.score, true, 4)} pts\`__** to spend...\nbuying **x${buySetting}** upgrade${buySetting > 1 ? 's' : ''} per click.`
+    let description = `you have **__\`${formatNumber(playerData.score, true, 4)} pts\`__** to spend...\nbuying **x${buySetting}** upgrade${buySetting > 1 ? 's' : ''} per click...\n`
     const embed = new EmbedBuilder()
         .setTitle("upgrades")
         .setColor("#73c9ae")
@@ -240,7 +260,7 @@ async function getEditMessage(interaction, category, buySetting) {
             continue;
         }
         
-        const [price, levels] = multiBuy(buySetting, upgrade, playerData.score);
+        const {price, levels} = getMultiBuyCost(buySetting, upgrade, playerData.score, upgradeLevel);
 
         description += `\n**${upgrade.getDetails().emoji} ${upgrade.getDetails().name} (Lv${upgradeLevel})**
 ${upgrade.getDetails().description}
