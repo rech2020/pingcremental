@@ -7,18 +7,18 @@ module.exports = {
     },
     getDetails() {
         return {
-            description: "gain __+0.3%__ pts for every upgrade level removed by visiting Eternity",
+            description: "gain __+0.2%__ pts for every upgrade level removed by visiting Eternity",
             name: "Vague Memories",
             emoji: getEmoji('ponder_vague', "☁️"),
             flavor: "sometimes all you can remember is that it happened.",
         }
     },
     getEffectString(level) {
-        return `+${(level*0.3).toFixed(1)}%`
+        return `+${(level*0.2).toFixed(1)}%`
     },
     getEffect(level, context) {
         return {
-            multiply: (level*0.003*context.removedUpgrades) + 1,
+            multiply: (level*0.002*context.removedUpgrades) + 1,
         }
     },
     upgradeRequirements() {
