@@ -172,6 +172,10 @@ function getBuySetting(interaction) {
         }
     }
 
+    if (!buySetting || isNaN(buySetting) || buySetting < 1) {
+        buySetting = 1;
+    }
+
     return buySetting;
 }
 
