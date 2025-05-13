@@ -31,7 +31,7 @@ module.exports = {
             }
         } else {
             return {
-                exponent: 1.1,
+                exponent: 1.075,
                 message: "purrrr!",
             }
         }
