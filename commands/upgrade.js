@@ -172,7 +172,7 @@ function getBuySetting(interaction) {
         }
     }
 
-    if (!buySetting || isNaN(buySetting) || buySetting < 1) {
+    if ((!buySetting || isNaN(buySetting) || buySetting < 1) && buySetting !== 'MAX') {
         buySetting = 1;
     }
 
@@ -236,7 +236,7 @@ async function getEditMessage(interaction, category, buySetting) {
     const select = new StringSelectMenuBuilder()
         .setCustomId('upgrade:buy')
         .setPlaceholder('pick an upgrade')
-    let description = `you have **__\`${formatNumber(playerData.score, true, 4)} pts\`__** to spend...\nbuying **x${buySetting}** upgrade${buySetting > 1 ? 's' : ''} per click...\n`
+    let description = `you have **__\`${formatNumber(playerData.score, true, 4)} pts\`__** to spend...\nbuying **x${buySetting}** upgrade${buySetting === 1 ? '' : 's'} per click...\n`
     const embed = new EmbedBuilder()
         .setTitle("upgrades")
         .setColor("#73c9ae")

@@ -18,7 +18,7 @@ module.exports = {
     },
     getEffect(level, context) {
         if (context.specials.blueCombo-1 > 0) return {
-            multiplier: (1.15 * level * (context.specials.blueCombo - 1)),
+            multiplier: (((level*0.15)+1) * (context.specials.blueCombo - 1)),
         }
         return {}
     },
