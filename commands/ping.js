@@ -237,7 +237,7 @@ async function ping(interaction, isSuper = false) {
 
         if (effect.exponent && effect.exponent !== 1) {
             currentEffects.exponents.push(effect.exponent);
-            effectString += ` **__\`^${effect.exponent}\`__**`
+            effectString += ` **__\`^${effect.exponent.toFixed(2)}\`__**`
         }
 
         if (effect.special) { 
