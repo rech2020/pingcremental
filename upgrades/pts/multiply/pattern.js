@@ -19,7 +19,7 @@ module.exports = {
     getEffect(level, context) {
         const pString = `${context.ping}`
         return {
-            multiply: (pString[0] === pString[1]) ? 1 + (level*0.11) : 1,
+            multiply: (pString[pString.length - 1] === pString[pString.length - 2]) ? 1 + (level*0.11) : 1,
         }
     },
     isBuyable(context) {
