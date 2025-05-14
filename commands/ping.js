@@ -114,6 +114,7 @@ async function ping(interaction, isSuper = false) {
         blueStrength: 1,
         specials: {},
         RNGmult: 1,
+        blueCombo: 0,
     }
 
     let iterateUpgrades = {}
