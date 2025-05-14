@@ -186,12 +186,14 @@ function getMultiBuyCost(buySetting, upgrade, score, playerUpgradeLevel) {
     if (buySetting === 'MAX') {
         levels = 0;
 
+        // loop through all levels that are affordable
         do {
             price += upgrade.getPrice(playerUpgradeLevel + levels);
             levels++;
         } while (price <= score && upgrade.getPrice(playerUpgradeLevel + levels) !== null);
 
-        if (levels > 1) {
+        // always goes over by 1, so remove the last level if not maxed
+        if (levels > 1 && upgrade.getPrice(playerUpgradeLevel + levels) !== null) {
             levels--;
             price -= upgrade.getPrice(playerUpgradeLevel + levels);
         }
