@@ -3,7 +3,6 @@ const { getEmoji } = require('../../../helpers/emojis.js');
 
 module.exports = {
     getPrice(currentLevel) {
-        if (currentLevel >= 3) return null;
         return Math.round(8.5**(currentLevel+1) * 325);
     },
     getDetails() {
@@ -16,11 +15,11 @@ module.exports = {
     },
     getEffectString(level) {
         if (level === 0) return "+0 bp"
-        return `+${(level*0.5 + 0.5).toFixed(1)} bp`
+        return `+${(level*2 + 6).toFixed(1)} bp`
     },
     getEffect(level, context) {
         return {
-            bp: level*0.5 + 0.5
+            bp: level*2 + 6
         }
     },
     upgradeRequirements() {

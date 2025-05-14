@@ -7,18 +7,18 @@ module.exports = {
     },
     getDetails() {
         return {
-            description: "blue pings are __0.25%__ stronger for every blue ping missed",
+            description: "blue pings are __0.2%__ stronger for every blue ping missed",
             name: "Regret",
             emoji: getEmoji('ponder_regret', "😔"),
             flavor: "sometimes the past is painful. but it is also a part of you.",
         }
     },
     getEffectString(level) {
-        return `${(level*0.25).toFixed(2)}%`
+        return `${(level*0.2).toFixed(1)}%`
     },
     getEffect(level, context) {
         return {
-            blueStrength: (level*0.0025)*context.missedBluePings,
+            blueStrength: (level*0.002)*context.missedBluePings,
         }
     },
     upgradeRequirements() {
