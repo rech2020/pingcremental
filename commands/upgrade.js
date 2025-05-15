@@ -143,6 +143,10 @@ module.exports = {
 
             const msg = ['sweet!', 'nice!', 'sick!', 'cool!', 'neat!', 'nifty!', 'yippee!', 'awesome!'];
 
+            if (msg === 'awesome!' && Math.random() < 0.001) {
+                msg = ['awesome sauce 🐴'];
+            }
+
             const button = new ButtonBuilder()
                 .setCustomId('upgrade:delete')
                 .setLabel(msg[Math.floor(Math.random() * msg.length)]) // random happy message
