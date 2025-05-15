@@ -112,7 +112,7 @@ module.exports = {
             }
 
             if (upgradeId === 'eternity') {
-                await interaction.update(await getEditMessage(interaction, upgradeClass.type())); 
+                await interaction.update(await getEditMessage(interaction, upgradeClass.type(), buySetting)); 
                 if (playerData.bp < 10000) { return await interaction.followUp({ content: `*you shouldn't be here, yet.*`, flags: MessageFlags.Ephemeral }) }
                 const mult = upgrades['pip']['telepathy'].getEffect(playerData.prestigeUpgrades.telepathy).special.pip;
                 return await interaction.followUp({
