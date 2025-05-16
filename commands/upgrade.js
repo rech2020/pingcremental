@@ -167,9 +167,9 @@ module.exports = {
 function getBuySetting(interaction) {
     let buySetting = 1; // in case something breaks
     const embedDesc = interaction.message.embeds[0].description;
-    const multibuyMatch = embedDesc.match(/x.*?\*/g);
+    const multibuyMatch = embedDesc.match(/buying \*\*x.*?\*/g);
     if (multibuyMatch) {
-        let multibuy = multibuyMatch[0].replace('x', '');
+        let multibuy = multibuyMatch[0].replace('buying **x', '');
         multibuy = multibuy.replace('*', '');
         if (multibuy === 'MAX') {
             buySetting = 'MAX';
