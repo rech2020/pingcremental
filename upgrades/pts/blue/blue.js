@@ -8,7 +8,7 @@ module.exports = {
     },
     getDetails() {
         return {
-            description: "1% chance (35% hard cap) of spawning a blue ping for 15x pts",
+            description: "1% chance (35% cap) of spawning a blue ping for 15x pts",
             name: "blue ping",
             emoji: getEmoji('upgrade_blue', "🟦"),
         }

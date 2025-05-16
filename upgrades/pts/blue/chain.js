@@ -8,7 +8,7 @@ module.exports = {
     },
     getDetails() {
         return {
-            description: "__+5%__ chance to find a blue ping after a different blue ping",
+            description: "__+5%__ chance to find a blue ping after a different blue ping, bypassing the 35% cap",
             name: "blue chain",
             emoji: getEmoji('upgrade_chain', "🔗"),
         }
@@ -17,9 +17,13 @@ module.exports = {
         return `+${(level * 5)}%`
     },
     getEffect(level, context) {
-        return {
-            blue: context.isSuper ? level * 5 : 0,
+        if (context.isSuper) {
+            return {
+                blue: level * 5,
+                special: { "blueCap": level * 5 },
+            }
         }
+        return {}
     },
     isBuyable(context) {
         if (!context.upgrades['blue'] || !context.upgrades['blueshift']) return false;
