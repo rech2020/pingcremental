@@ -248,12 +248,12 @@ module.exports = {
 
 async function getShowcaseDisplay(interaction) {
     const player = await database.Player.findByPk(`${interaction.user.id}`);
-    const displayedBadges = player.displayedBadges;
 
     if (!player) {
         return { content: 'you don\'t have a profile yet. try /ping instead of this command', flags: MessageFlags.Ephemeral };
     }
 
+    const displayedBadges = player.displayedBadges;
     const badges = await database.Badge.findAll({
         where: { dbId: player.badges },
     });
