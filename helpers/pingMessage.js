@@ -344,6 +344,20 @@ function get(ping, context) {
         "this is a ping message (i think)",
         "thank god there's no gambling in this bot. hey, wait",
         "i'm pretty sure you aren't about to get infinite pts. can't be sure though",
+        "hmmm",
+        "WAITER WAITER MORE PINGS PLEASE",
+        "live laugh lping",
+        "eat, sleep, ping, repeat",
+        "awesome sauce 🐴",
+        "cool beans",
+        "weird is my specialty",
+        `(${ping}ms) (${ping}ms) (${ping}ms) (${ping}ms)`,
+        "careful out there. the world doesn't always have more pings",
+        "it's dangerous to go alone! take this",
+        "kekekekekeke",
+        "i'm trying to think of good ping puns but i got nothing",
+        "if i had to guess, i'd say it's going to be more than 5ms",
+        "?!",
 
 
         // these are all references
@@ -421,6 +435,7 @@ function get(ping, context) {
             context.totalClicks >= 100 ? `${context.totalClicks} is a pretty big amount of pings` : `you've pinged me ${context.totalClicks} times`,
             context.totalClicks >= 1000 ? `is the carpal tunnel setting in yet? with your ${context.totalClicks} pings?` : `you've pinged me ${context.totalClicks} times`,
             `points and pts are not the same, do NOT confuse them`,
+            `"pts" is pronounced like "points" but remember they're not the same`,
             `you've got ${context.score} pts. now what?`,
             `at ${context.score} pts, you've officially out-clicked my expectations`,
             `what if i gave you ${context.score * 2} pts? no, i won't, but what if`,
