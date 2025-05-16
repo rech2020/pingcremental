@@ -1,7 +1,26 @@
 const { Sequelize, DataTypes, Model } = require('sequelize');
+const { getEmoji } = require('./../helpers/emojis.js');
 
 module.exports = (sequelize) => {
-	class User extends Model { }
+	class User extends Model {
+		async getUserDisplay(client, database) {
+			const user = await client.users.resolve(this.userId);
+			let display = user ? user.username : this.userId;
+			display = display.replaceAll("_", "\\_")
+
+			// badges display
+			if (this.displayedBadges.length > 0) {
+				const badges = await database.Badge.findAll({
+					where: {
+						dbId: this.displayedBadges,
+					}
+				});
+				display += ' ' + badges.map(badge => getEmoji(badge.emoji)).join('');
+			}
+
+			return display;
+		}
+	}
 
 	User.init({
 		userId: {
@@ -43,6 +62,33 @@ module.exports = (sequelize) => {
 			type: DataTypes.NUMBER,
 			defaultValue: 0,
 			allowNull: false,
+		},
+
+		badges: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			defaultValue: '',
+			get() {
+				return this.getDataValue('badges')
+					.split(',')
+					.filter(x => x !== '');
+			},
+			set(value) {
+				this.setDataValue('badges', value.join(','));
+			}
+		},
+		displayedBadges: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			defaultValue: '',
+			get() {
+				return this.getDataValue('displayedBadges')
+					.split(',')
+					.filter(x => x !== '');
+			},
+			set(value) {
+				this.setDataValue('displayedBadges', value.join(','));
+			}
 		},
 
 		// misc stats (move to separate table?)
