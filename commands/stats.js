@@ -29,7 +29,7 @@ module.exports = {
             return;
         } else if (interaction.options.getSubcommand() === 'user') {
             const user = interaction.options.getUser('user') || interaction.user;
-            await interaction.reply(await getUserMessage(user.id));
+            await interaction.reply(await getUserMessage(user.id, interaction));
             return;
         }
     },
@@ -39,7 +39,7 @@ module.exports = {
                 await interaction.update(await getGlobalMessage());
                 return;
             } else {
-                await interaction.update(await getUserMessage(userId || interaction.user.id));
+                await interaction.update(await getUserMessage(userId || interaction.user.id, interaction));
             }
         })
     },
@@ -85,7 +85,7 @@ async function getGlobalMessage() {
     };
 }
 
-async function getUserMessage(userId) {
+async function getUserMessage(userId, interaction) {
     const player = await database.Player.findByPk(userId);
     if (!player) return { content: `<@${userId}> hasn't pinged yet.`, allowedMentions: { parse: [] }, flags: MessageFlags.Ephemeral };
     
