@@ -146,7 +146,7 @@ module.exports = {
             let pickedMsg = msg[Math.floor(Math.random() * msg.length)];
 
             if (pickedMsg === 'awesome!' && Math.random() < 0.001) {
-                pickedMsg = ['awesome sauce 🐴'];
+                pickedMsg = 'awesome sauce 🐴';
             }
 
             const button = new ButtonBuilder()
