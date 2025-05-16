@@ -17,8 +17,8 @@ module.exports = {
         return `x${((0.15 * level)+1).toFixed(2)}`
     },
     getEffect(level, context) {
-        if (context.blueCombo > 0) return {
-            multiply: (((level*0.15)+1) * (context.blueCombo)),
+        if (context.blueCombo - 1 > 0) return {
+            multiply: (level*0.15 * (context.blueCombo - 1)) + 1,
         }
         return {}
     },
