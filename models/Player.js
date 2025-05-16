@@ -4,7 +4,7 @@ const { getEmoji } = require('./../helpers/emojis.js');
 module.exports = (sequelize) => {
 	class User extends Model {
 		async getUserDisplay(client, database) {
-			const user = await client.users.cache.get(this.userId);
+			const user = await client.users.resolve(this.userId);
 			let display = user ? user.username : this.userId;
 			display = display.replaceAll("_", "\\_")
 
@@ -69,7 +69,9 @@ module.exports = (sequelize) => {
 			allowNull: false,
 			defaultValue: '',
 			get() {
-				return this.getDataValue('badges').split(',');
+				return this.getDataValue('badges')
+					.split(',')
+					.filter(x => x !== '');
 			},
 			set(value) {
 				this.setDataValue('badges', value.join(','));
@@ -80,7 +82,9 @@ module.exports = (sequelize) => {
 			allowNull: false,
 			defaultValue: '',
 			get() {
-				return this.getDataValue('displayedBadges').split(',');
+				return this.getDataValue('displayedBadges')
+					.split(',')
+					.filter(x => x !== '');
 			},
 			set(value) {
 				this.setDataValue('displayedBadges', value.join(','));

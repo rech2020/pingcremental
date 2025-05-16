@@ -101,28 +101,33 @@ module.exports = {
             }
 
             const user = interaction.options.getUser('user');
-            const badgeId = parseInt(interaction.options.getString('badge'));
-            if (isNaN(badgeId)) {
-                return await interaction.reply({ content: 'that\'s not a badge...?', flags: MessageFlags.Ephemeral });
-            }
+            const badgeName =interaction.options.getString('badge');
 
-            const player = await database.Player.findByPk(`${user.id}`);
-            const badge = await database.Badge.findByPk(badgeId);
+            const player = await database.Player.findByPk(user.id.toString());
+            const badge = await database.Badge.findOne({ where: { name: badgeName } });
             let dmMessage = '';
-            if (player.badges.includes(badgeId)) {
-                player.badges = player.badges.filter(badge => badge !== badgeId);
-                player.displayedBadges = player.displayedBadges.filter(badgeId => badgeId !== badgeId);
+            let playerDisplayedBadges = player.displayedBadges;
+            let playerBadges = player.badges; // because sequelize doesn't like it when you try to modify the array directly
+
+            if (playerBadges.includes(badge.dbId.toString())) {
+                playerBadges = playerBadges.filter(bId => bId !== badge.dbId.toString());
+                playerDisplayedBadges = playerDisplayedBadges.filter(bId => bId !== badge.dbId.toString());
 
                 dmMessage = `**bad news...**\n\nyou lost the badge ${badgeDisplay(badge,true)}.\nif you think this was a mistake, stay tuned; your badge will likely be restored soon!`;
             } else {
-                player.badges.push(badgeId);
+                playerBadges.push(badge.dbId);
 
                 dmMessage = `**good news!!**\n\nyou have been awarded the badge ${badgeDisplay(badge,true)}! be sure to show it off with \`/badges\`.`;
             }
+
+            player.badges = playerBadges;
+            player.displayedBadges = playerDisplayedBadges;
             await player.save();
 
             const dmablePlayer = await interaction.client.users.resolve(user.id);
             await dmablePlayer.send(dmMessage);
+
+            await interaction.reply({ content: `successfully ${player.badges.includes(badge.dbId.toString()) ? 'awarded' : 'removed'} the badge ${badgeDisplay(badge,true)} to ${await player.getUserDisplay(interaction.client, database)}`, flags: MessageFlags.Ephemeral });
         }
         else if (interaction.options.getSubcommand() === 'create') {
             if (interaction.user.id !== ownerId) {
@@ -169,6 +174,7 @@ module.exports = {
         "badgeSelect": async (interaction) => {
             const badgeToToggle = parseInt(interaction.values[0]);
             const playerData = await database.Player.findByPk(`${interaction.user.id}`);
+            let displayedBadges = playerData.displayedBadges;
 
             let followUp = null;
             const okButton = new ButtonBuilder()
@@ -176,16 +182,17 @@ module.exports = {
                 .setLabel('oh... okay')
                 .setStyle(ButtonStyle.Secondary);
 
-            if (player.displayedBadges.includes(badgeToToggle)) {
-                playerData.displayedBadges = playerData.displayedBadges.filter(badgeId => badgeId !== badgeToToggle);
+            if (displayedBadges.includes(badgeToToggle.toString())) {
+                displayedBadges = displayedBadges.filter(badgeId => badgeId !== badgeToToggle.toString());
             } else {
-                if (playerData.displayedBadges.length >= 3) {
+                if (displayedBadges.length >= 3) {
                     followUp = "you can only display up to 3 badges! please remove one of your other badges before adding this one.";
                 } else {
-                    playerData.displayedBadges.push(badgeToToggle);
+                    displayedBadges.push(badgeToToggle);
                 }
             }
 
+            playerData.displayedBadges = displayedBadges;
             await playerData.save();
             await interaction.update(await getShowcaseDisplay(interaction));
             if (followUp) {
@@ -221,7 +228,7 @@ module.exports = {
         const badges = await database.Badge.findAll({
             where: {
                 name: {
-                    [Op.substring]: `${focusedValue}`
+                    [Op.substring]: focusedValue
                 }
             },
             limit: 25,
@@ -231,7 +238,7 @@ module.exports = {
         for (const badge of badges) {
             options.push({
                 name: badge.name,
-                value: badge.dbId,
+                value: badge.name,
             });
         }
 
@@ -241,6 +248,7 @@ module.exports = {
 
 async function getShowcaseDisplay(interaction) {
     const player = await database.Player.findByPk(`${interaction.user.id}`);
+    const displayedBadges = player.displayedBadges;
 
     if (!player) {
         return { content: 'you don\'t have a profile yet. try /ping instead of this command', flags: MessageFlags.Ephemeral };
@@ -254,19 +262,19 @@ async function getShowcaseDisplay(interaction) {
         return { content: `${getEmoji('badge_empty')} you don't have any badges...`, flags: MessageFlags.Ephemeral };
     }
 
-    let description = `choose which badges to display (**${player.displayedBadges.length}/3**)...\npreview: ${await player.getUserDisplay(interaction.client, database)}\n\n`;
+    let description = `choose which badges to display (**${displayedBadges.length}/3**)...\npreview: ${await player.getUserDisplay(interaction.client, database)}\n\n`;
 
     const dropdown = new StringSelectMenuBuilder()
-        .setCustomId('showcase:badgeSelect')
+        .setCustomId('badges:badgeSelect')
         .setPlaceholder('choose a badge to toggle...');
 
     for (const badge of badges) {
         dropdown.addOptions({
             label: `${badge.name}`,
             value: `${badge.dbId}`,
-            emoji: getEmoji(badge.emoji),
+            // emoji: getEmoji(badge.emoji),
         });
-        description += `${badgeDisplay(badge,true)} (${player.displayedBadges.includes(badge.dbId) ? 'displayed' : 'not displayed'})\n`;
+        description += `${badgeDisplay(badge,true)} (${displayedBadges.includes(badge.dbId.toString()) ? 'displayed' : 'not displayed'})\n`;
     }
 
     const row = new ActionRowBuilder().addComponents(dropdown);

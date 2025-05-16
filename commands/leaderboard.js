@@ -54,7 +54,7 @@ async function getMessage(interaction, leaderboardType) {
 
         description +=
             `
-${leaderboardEmojis[Math.min(leaderboardEmojis.length, position) - 1]} ${formatPlayer(player.id, player[leaderboardType], leaderboardType, interaction)}`
+${leaderboardEmojis[Math.min(leaderboardEmojis.length, position) - 1]} ${await formatPlayer(player.userId, player[leaderboardType], leaderboardType, interaction)}`
         showedSelf = showedSelf || (interaction.user.id == player.userId);
     }
 
@@ -69,14 +69,14 @@ ${leaderboardEmojis[Math.min(leaderboardEmojis.length, position) - 1]} ${formatP
 
         if (userIndex >= 11) {
             const userBelow = topPlayers[userIndex - 1];
-            description += `\n#${userIndex} ${formatPlayer(userBelow.id, userBelow[leaderboardType], leaderboardType, interaction)}`
+            description += `\n#${userIndex} ${await formatPlayer(userBelow.userId, userBelow[leaderboardType], leaderboardType, interaction)}`
         }
 
-        description += `\n#${userIndex + 1} ${formatPlayer(interaction.user.id, topPlayers[userIndex][leaderboardType], leaderboardType, interaction)}`
+        description += `\n#${userIndex + 1} ${await formatPlayer(interaction.user.id, topPlayers[userIndex][leaderboardType], leaderboardType, interaction)}`
 
         if (userIndex !== topPlayers.length - 1) {
             const userAbove = topPlayers[userIndex + 1];
-            description += `\n#${userIndex + 2} ${formatPlayer(userAbove.id, userAbove[leaderboardType], leaderboardType, interaction)}`
+            description += `\n#${userIndex + 2} ${await formatPlayer(userAbove.userId, userAbove[leaderboardType], leaderboardType, interaction)}`
         }
     }
 
@@ -162,7 +162,8 @@ function initTypes() {
 }
 
 async function formatPlayer(userId, score, leaderboard, interaction) {
-    const player = await database.Player.findByPk(userId);
+    const player = await database.Player.findByPk(`${userId}`);
+
     let userDisplay = await player.getUserDisplay(interaction.client, database);
     if (interaction.user.id == userId) {
         userDisplay = `__${userDisplay}__` // highlight the user's own score
