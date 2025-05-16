@@ -21,7 +21,7 @@ module.exports = {
         }
     },
     isBuyable(context) {
-        return context.clicks >= 1000;
+        return context.totalClicks >= 1000;
     },
     sortOrder() { return 8 },
     type() { return UpgradeTypes.ADD_BONUS }

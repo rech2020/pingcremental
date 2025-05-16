@@ -34,7 +34,7 @@ module.exports = {
         }
     },
     isBuyable(context) {
-        return context.upgrades.lucky && context.clicks > 500;
+        return context.upgrades.lucky && context.totalClicks > 500;
     },
     sortOrder() { return 103 },
     type() { return UpgradeTypes.ONE_TIME }

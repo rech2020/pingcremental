@@ -266,7 +266,7 @@ async function getEditMessage(interaction, category, buySetting) {
         // go through each upgrade and check if should be displayed
         const upgradeLevel = pUpgrades[upgradeId] ?? 0
         if (upgrade.type() != category) continue; // wrong category
-        if (!upgrade.isBuyable({ upgrades: pUpgrades, clicks: playerData.clicks, bp: playerData.bp })) continue; // hidden
+        if (!upgrade.isBuyable({ upgrades: pUpgrades, clicks: playerData.clicks, totalClicks: playerData.totalClicks, bp: playerData.bp })) continue; // hidden
         if (upgrade.getPrice(upgradeLevel) === null) { // maxed out
             description += `\n**${upgrade.getDetails().emoji} ${upgrade.getDetails().name} (MAX)**\n${upgrade.getDetails().description}\nCurrently ${upgrade.getEffectString(upgradeLevel)}`
             continue;
