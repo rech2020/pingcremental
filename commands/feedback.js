@@ -41,8 +41,8 @@ module.exports = {
         ),
     async execute(interaction) {
         if (interaction.options.getSubcommand() === 'submit') {
-            if (interaction.user.id !== ownerId && await database.Feedback.count({ where: { userId: interaction.user.id } }) >= 5) {
-                return await interaction.reply({ content: 'you have already submitted 5 feedbacks! please wait until they are reviewed before submitting more, or remove them from the queue yourself.', flags: MessageFlags.Ephemeral });
+            if (interaction.user.id !== ownerId && await database.Feedback.count({ where: { userId: interaction.user.id } }) >= 20) {
+                return await interaction.reply({ content: 'you\'ve submitted a lot of feedbacks! please wait until they are reviewed before submitting more, or remove them from the queue yourself.', flags: MessageFlags.Ephemeral });
             }
 
             const feedbackType = interaction.options.getString('type');
