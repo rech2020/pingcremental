@@ -140,11 +140,16 @@ async function ping(interaction, isSuper = false) {
         // add more if needed
     }
     let displays = {
-        add: [`${getEmoji('ping')} \`+${ping}\``],
+        add: [],
         mult: [],
         exponents: [],
         extra: [],
         bp: [],
+    }
+    if (playerProfile.settings.pingFormat === "expanded") {
+        displays.add.push(`${getEmoji('ping')} \`+${ping}\``);
+    } else if (playerProfile.settings.pingFormat === "compact") {
+        displays.add.push(`${getEmoji('ping')}`);
     }
     let effect;
     let score = ping; // base score is ping
@@ -176,7 +181,11 @@ async function ping(interaction, isSuper = false) {
     if (isSuper) {
         let blueStrength = (currentEffects.blueStrength) * 15;
         currentEffects.mults.push(blueStrength);
-        displays.mult.push(`${getEmoji('upgrade_blue')} __\`x${blueStrength.toFixed(2)}\`__`)
+        if (playerProfile.settings.pingFormat === "expanded") {
+            displays.mult.push(`${getEmoji('upgrade_blue')} __\`x${blueStrength.toFixed(2)}\`__`)
+        } else if (playerProfile.settings.pingFormat === "compact") {
+            displays.mult.push(`${getEmoji('upgrade_blue')}`)
+        }
     }
     if (Math.random() * 1000 < (currentEffects.blue * 10) && currentEffects.specials.blueping) {
         context.spawnedSuper = true;
@@ -248,14 +257,25 @@ async function ping(interaction, isSuper = false) {
                 if (!currentEffects.specials[special]) currentEffects.specials[special] = value;
             }
         }
+
         if (effect.bp) { 
             currentEffects.bp += effect.bp;
             effectString += ` \`+${effect.bp} bp\``
         }
+
+        if (playerProfile.settings.pingFormat === "compact" && effectString !== upgradeClass.getDetails().emoji) {
+            effectString = `${upgradeClass.getDetails().emoji} `;
+        }
+        
+        // bypasses compact mode
         if (effect.message) { effectString += ` ${effect.message}`; }
+        
+        if (playerProfile.settings.pingFormat === "compact emojiless") {
+            effectString = "";
+        }
 
         // add to display
-        if (effectString !== upgradeClass.getDetails().emoji) {
+        if (effectString !== upgradeClass.getDetails().emoji && effectString !== "") {
             if (effect.add) {
                 displays.add.push(effectString);
             } else if (effect.multiply) {
@@ -270,6 +290,12 @@ async function ping(interaction, isSuper = false) {
         }
     }
 
+    if (playerProfile.settings.pingFormat !== "expanded") {
+        displays.add.push(`\`+${formatNumber(score)}\``);
+        if (currentEffects.bp) {
+            displays.bp.push(`\`+${formatNumber(currentEffects.bp)} bp\``);
+        }
+    }
 
 
     /* SPECIALS */
@@ -302,13 +328,27 @@ async function ping(interaction, isSuper = false) {
 
     score = Math.max(score, 1); // prevent negative scores
 
+    let totalMult = 1;
     // add mults at the end so they're actually effective
     for (const mult of currentEffects.mults) {
         score *= mult;
+        totalMult *= mult;
     }
+
+    if (totalMult > 1 && playerProfile.settings.pingFormat !== "expanded") {
+        displays.mult.push(`__\`x${totalMult.toFixed(2)}\`__`);
+    }
+
+    let totalExp = 1;
     for (const exponent of currentEffects.exponents) {
         score = Math.pow(score, exponent);
+        totalExp *= exponent;
     }
+
+    if (totalExp > 1 && playerProfile.settings.pingFormat !== "expanded") {
+        displays.exponents.push(`**__\`^${totalExp.toFixed(2)}\`__**`);
+    }
+
     score = Math.round(score);
     context.score = score; // update context for later effects
     if (score === Infinity) score = 0; // prevent infinite score (and fuck you; you get nothing)
@@ -384,7 +424,12 @@ you have a lot of pts... why don't you go spend them over in </upgrade:136037740
     for (const dispType of ['add', 'mult', 'exponents', 'extra']) {
         const display = displays[dispType];
         if (display.length === 0) continue; // skip empty displays
-        displayDisplay += ", " + display.join(', ') 
+        if (playerProfile.settings.pingFormat === "expanded") {
+            displayDisplay += ", " + display.join(', ') 
+        } else {
+            displayDisplay += ", " + display.join(' ')
+        }
+
     }
     displayDisplay = displayDisplay.substring(2); // remove first comma and space
     
