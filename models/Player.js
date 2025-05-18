@@ -91,6 +91,12 @@ module.exports = (sequelize) => {
 			}
 		},
 
+		settings: {
+			type: DataTypes.JSON,
+			allowNull: false,
+			defaultValue: {},
+		},
+
 		// misc stats (move to separate table?)
 		bluePings: {
 			type: DataTypes.NUMBER,
