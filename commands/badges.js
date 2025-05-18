@@ -100,6 +100,7 @@ module.exports = {
                 return await interaction.reply({ content: 'you can\'t do that, you\'re not my owner', flags: MessageFlags.Ephemeral });
             }
 
+            await interaction.deferReply({ ephemeral: true });
             const user = interaction.options.getUser('user');
             const badgeName =interaction.options.getString('badge');
 
@@ -113,11 +114,11 @@ module.exports = {
                 playerBadges = playerBadges.filter(bId => bId !== badge.dbId.toString());
                 playerDisplayedBadges = playerDisplayedBadges.filter(bId => bId !== badge.dbId.toString());
 
-                dmMessage = `**bad news...**\n\nyou lost the badge ${badgeDisplay(badge,true)}.\nif you think this was a mistake, stay tuned; your badge will likely be restored soon!`;
+                dmMessage = `**bad news...**\n\nthe badge ${badgeDisplay(badge,true)} was manually removed. \nif you think this was a mistake, stay tuned; your badge will likely be returned soon.`;
             } else {
                 playerBadges.push(badge.dbId);
 
-                dmMessage = `**good news!!**\n\nyou have been awarded the badge ${badgeDisplay(badge,true)}! be sure to show it off with \`/badges\`.`;
+                dmMessage = `**good news!!**\n\nyou have been manually awarded the badge ${badgeDisplay(badge,true)}! be sure to show it off with \`/badges\`.`;
             }
 
             player.badges = playerBadges;
@@ -127,7 +128,7 @@ module.exports = {
             const dmablePlayer = await interaction.client.users.resolve(user.id);
             await dmablePlayer.send(dmMessage);
 
-            await interaction.reply({ content: `successfully ${player.badges.includes(badge.dbId.toString()) ? 'awarded' : 'removed'} the badge ${badgeDisplay(badge,true)} to ${await player.getUserDisplay(interaction.client, database)}`, flags: MessageFlags.Ephemeral });
+            await interaction.editReply({ content: `successfully ${player.badges.includes(badge.dbId.toString()) ? 'awarded' : 'removed'} the badge ${badgeDisplay(badge,true)} to ${await player.getUserDisplay(interaction.client, database)}` });
         }
         else if (interaction.options.getSubcommand() === 'create') {
             if (interaction.user.id !== ownerId) {
@@ -160,12 +161,19 @@ module.exports = {
                 .setStyle(TextInputStyle.Paragraph)
                 .setPlaceholder('what\'s the backstory of this badge?')
                 .setRequired(true);
+            const tierInput = new TextInputBuilder()
+                .setCustomId('badgeTierInput')
+                .setLabel('tier')
+                .setStyle(TextInputStyle.Short)
+                .setPlaceholder('1 = silver, 2 = blue, 3 = purple')
+                .setRequired(true);
             
             modal.addComponents(
                 new ActionRowBuilder().addComponents(nameInput),
                 new ActionRowBuilder().addComponents(emojiInput),
                 new ActionRowBuilder().addComponents(descriptionInput),
                 new ActionRowBuilder().addComponents(flavorTextInput),
+                new ActionRowBuilder().addComponents(tierInput),
             );
             await interaction.showModal(modal);
         }
@@ -212,12 +220,14 @@ module.exports = {
             const emoji = interaction.fields.getTextInputValue('badgeEmojiInput');
             const description = interaction.fields.getTextInputValue('badgeDescriptionInput');
             const flavorText = interaction.fields.getTextInputValue('badgeFlavorTextInput');
+            const tier = parseInt(interaction.fields.getTextInputValue('badgeTierInput'));
 
             const newBadge = await database.Badge.create({
                 name,
                 emoji,
                 description,
                 flavorText,
+                tier,
             });
 
             await interaction.reply({ content: `successfully created the badge ${badgeDisplay(newBadge, true)}!`, flags: MessageFlags.Ephemeral });

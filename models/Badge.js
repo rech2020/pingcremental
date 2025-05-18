@@ -30,11 +30,18 @@ module.exports = (sequelize) => {
             allowNull: false,
         },
 
-        obtainable: {
-            type: DataTypes.BOOLEAN,
+        tier: {
+            // 1 = silver, 2 = blue, 3 = purple
+            type: DataTypes.INTEGER,
             allowNull: false,
-            defaultValue: true,
-        },
+            defaultValue: 1,
+            validate: {
+                isIn: {
+                    args: [[1, 2, 3]],
+                    msg: 'badge tier must be from 1-3',
+                },
+            },
+        }
     }, {
         sequelize,
         timestamps: true,
