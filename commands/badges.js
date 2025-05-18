@@ -2,6 +2,7 @@ const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, Inter
 const database = require('./../helpers/database.js');
 const { getEmoji } = require('./../helpers/emojis.js')
 const { ownerId } = require('./../config.json');
+const { Op } = require('sequelize');
 const BADGES_PER_PAGE = 10;
 
 module.exports = {
