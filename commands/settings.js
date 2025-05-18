@@ -19,14 +19,14 @@ const settings = {
         ],
         default: "expanded",
     },
-    'numberFormat': {
-        name: 'number format',
-        description: 'how should large numbers be formatted by default?',
-        options: [
-            "suffix", "full", "scientific"
-        ],
-        default: "suffix",
-    },
+    // 'numberFormat': {
+    //     name: 'number format',
+    //     description: 'how should large numbers be formatted by default?',
+    //     options: [
+    //         "suffix", "full", "scientific"
+    //     ],
+    //     default: "suffix",
+    // },
 }
 
 module.exports = {
