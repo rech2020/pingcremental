@@ -57,7 +57,7 @@ module.exports = {
             const player = await database.Player.findByPk(`${user.id}`);
 
             if (player.badges.length === 0) {
-                return await interaction.reply({ content: `${getEmoji('badge_empty')} ${user.username} has no badges.`, flags: MessageFlags.Ephemeral });
+                return await interaction.reply({ content: `${getEmoji('badge_none_1')} ${user.username} has no badges.`, flags: MessageFlags.Ephemeral });
             }
             
             const badges = await database.Badge.findAll({
@@ -254,10 +254,10 @@ async function getListPage(interaction, tier, page = 1) {
 
     if (page < 1 || isNaN(page)) page = 1;
 
-    let description = `__${['silver','blue','purple'][tier-1]} badges__ (${badgeCount} total)\n\n`;
+    let description = `${getEmoji(`badge_none_${tier}`)} __${['silver','blue','purple'][tier-1]} badges__ (${badgeCount} total)\n\n`;
 
     if (badgeCount === 0) {
-        description += `${getEmoji('badge_none')} huh. there's nothing here...?`;
+        description += `huh. there's nothing here...?`;
     } else {
         const badges = await database.Badge.findAll({
             where: { tier: tier },
@@ -279,7 +279,8 @@ async function getListPage(interaction, tier, page = 1) {
             .setCustomId(`badges:list-${t},1`) // formatted tier-page
             .setLabel(`${['silver','blue','purple'][t-1]} tier`)
             .setStyle(ButtonStyle.Secondary)
-            .setDisabled(t === tier);
+            .setDisabled(t === tier)
+            .setEmoji(getEmoji(`badge_none_${t}`));
     });
 
     let navRow = undefined;
@@ -290,7 +291,7 @@ async function getListPage(interaction, tier, page = 1) {
         
         const leftButton = new ButtonBuilder()
             .setCustomId(`badges:list-${tier},${page - 1}`)
-            .setLabel('previous')
+            .setLabel('<--')
             .setStyle(ButtonStyle.Secondary)
             .setDisabled(page === 1);
         if (page - 1 === 1) {
@@ -299,7 +300,7 @@ async function getListPage(interaction, tier, page = 1) {
         
         const rightButton = new ButtonBuilder()
             .setCustomId(`badges:list-${tier},${page + 1}`)
-            .setLabel('next')
+            .setLabel('-->')
             .setStyle(ButtonStyle.Secondary)
             .setDisabled(page >= pageCount);
         
