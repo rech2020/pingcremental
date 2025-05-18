@@ -1,5 +1,6 @@
 const { getEmoji } = require('../helpers/emojis.js');
 const database = require('./database.js');
+const { log } = require('./log.js');
 
 async function awardBadge(userId, badge, client) {
     const player = await database.Player.findOne({
@@ -8,7 +9,7 @@ async function awardBadge(userId, badge, client) {
         },
     });
     if (!player) {
-        console.error(`[WARN] tried to award badge ${badge} to user ${userId} but the user somehow doesn't exist`);
+        await log(`[WARN] tried to award badge ${badge} to user ${userId} but the user somehow doesn't exist`, client);
         return false;
     }
 
@@ -24,12 +25,12 @@ async function awardBadge(userId, badge, client) {
     } else if (typeof badge === 'number') {
         badgeObj = await database.Badge.findByPk(badge);
     } else {
-        console.error(`[WARN] tried to award badge ${badge} but it's not a string or number`);
+        await log(`[WARN] tried to award badge ${badge} but it's not a string or number`, client);
         return false; // no idea what this could be
     }
 
     if (!badgeObj) {
-        console.error(`[WARN] tried to award badge ${badge} but it doesn't exist`);
+        await log(`[WARN] tried to award badge ${badge} but it doesn't exist`, client);
         return false;
     }
 
