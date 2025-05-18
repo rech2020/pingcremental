@@ -5,6 +5,7 @@ const { upgrades, rawUpgrades } = require('./../helpers/upgrades.js')
 const { ownerId } = require('./../config.json');
 const formatNumber = require('./../helpers/formatNumber.js')
 const { getEmoji } = require('../helpers/emojis.js');
+const awardBadge = require('../helpers/awardBadge.js');
 const MAX_PING_OFFSET = 5
 
 module.exports = {
@@ -194,10 +195,12 @@ async function ping(interaction, isSuper = false) {
             playerProfile.highestBlueStreak = combo;
         }
         
+        if (combo >= 10) { await awardBadge(interaction.user.id, 'blue stupor', interaction.client); }
         context.blueCombo = combo;
     }
     if ((Math.random() * 1000 < 1 * currentEffects.RNGmult)) {
         context.rare = true;
+        await awardBadge(interaction.user.id, 'lucky', interaction.client);
     }
     
     context.specials = currentEffects.specials; // update context for later effects
@@ -339,6 +342,10 @@ async function ping(interaction, isSuper = false) {
             }
         }
         if (missed) playerProfile.bluePingsMissed += 1; // if the button is still there, it means they didn't click it
+    }
+
+    if (playerProfile.totalClicks >= 10000) {
+        await awardBadge(interaction.user.id, 'heavy hands', interaction.client);
     }
 
     await playerProfile.save();
