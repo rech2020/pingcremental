@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, InteractionContextType, MessageFlags } = require('discord.js');
 const pingMessages = require('./../helpers/pingMessage.js')
 const database = require('./../helpers/database.js')
-const { upgrades, rawUpgrades } = require('./../helpers/upgrades.js')
+const { rawUpgrades } = require('./../helpers/upgrades.js')
 const { ownerId } = require('./../config.json');
 const formatNumber = require('./../helpers/formatNumber.js')
 const { getEmoji } = require('../helpers/emojis.js');

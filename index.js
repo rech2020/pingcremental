@@ -1,7 +1,7 @@
 // Require the necessary discord.js classes
 const fs = require('node:fs');
 const path = require('node:path');
-const { Client, GatewayIntentBits, Collection } = require('discord.js');
+const { Client, Collection } = require('discord.js');
 const { token } = require('./config.json');
 
 // Create a new client instance

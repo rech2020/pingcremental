@@ -1,4 +1,4 @@
-const { Sequelize, DataTypes, Model } = require('sequelize');
+const { DataTypes, Model } = require('sequelize');
 const { getEmoji } = require('./../helpers/emojis.js');
 
 module.exports = (sequelize) => {

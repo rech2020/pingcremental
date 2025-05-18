@@ -1,7 +1,6 @@
 const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, InteractionContextType, MessageFlags, EmbedBuilder } = require('discord.js');
 const database = require('./../helpers/database.js');
 const formatNumber = require('./../helpers/formatNumber.js');
-const interactionCreate = require('../events/interactionCreate.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
