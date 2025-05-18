@@ -1,5 +1,4 @@
 const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, InteractionContextType, MessageFlags, EmbedBuilder, StringSelectMenuBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
-const { Op } = require('sequelize');
 const database = require('./../helpers/database.js');
 const { getEmoji } = require('./../helpers/emojis.js')
 const { ownerId } = require('./../config.json');

@@ -7,6 +7,11 @@ async function awardBadge(userId, badge, client) {
             userId: userId,
         },
     });
+    if (!player) {
+        console.error(`[WARN] tried to award badge ${badge} to user ${userId} but the user somehow doesn't exist`);
+        return false;
+    }
+
     let badgeObj = null;
     
     // allow for badge name or id to be passed in
@@ -34,7 +39,7 @@ async function awardBadge(userId, badge, client) {
         return false;
     }
 
-    ownedBadges.push(badgeObj.dbId);
+    ownedBadges.push(badgeObj.dbId.toString());
     await player.update({
         badges: ownedBadges,
     });
