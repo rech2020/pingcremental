@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, InteractionContextType, MessageFlags } = require('discord.js');
+const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, InteractionContextType, MessageFlags, flatten } = require('discord.js');
 const { upgrades } = require('./../helpers/upgrades.js')
 const database = require('./../helpers/database.js');
 const { UpgradeTypes } = require('./../helpers/upgradeEnums.js');
@@ -87,6 +87,8 @@ module.exports = {
             let price = 1;
             let levels = 1;
 
+            const ephemeral = playerData.settings.upgradeFollowup === 'ephemeral' || playerData.settings.upgradeFollowup === 'none' ? MessageFlags.Ephemeral : null;
+
             // skip multi-buy on eternity so it doesn't pointlessly loop millions of times
             if (upgradeId !== 'eternity') {
                 const mbr = getMultiBuyCost(buySetting, upgradeClass, playerData.score, playerUpgradeLevel);
@@ -107,7 +109,8 @@ module.exports = {
                 await interaction.update(await getEditMessage(interaction, upgradeClass.type(), buySetting)); // fix dropdown remaining after failed upgrade
                 return await interaction.followUp({
                     content: `you dont have enough \`pts\` to afford that! (missing \`${formatNumber(price - playerData.score, true)} pts\`)`,
-                    components: [new ActionRowBuilder().addComponents(button)]
+                    components: [new ActionRowBuilder().addComponents(button)],
+                    flags: ephemeral
                 })
             }
 
@@ -156,10 +159,14 @@ module.exports = {
 
             await interaction.update(await getEditMessage(interaction, upgradeClass.type(), buySetting));
 
-            return await interaction.followUp({
-                content: `upgraded **${upgradeClass.getDetails().name}** to level ${playerUpgradeLevel + levels}! you've \`${formatNumber(playerData.score, true, 4)} pts\` left.`,
-                components: [new ActionRowBuilder().addComponents(button)]
-            })
+            if (playerData.settings.upgradeFollowup !== 'none') {
+                return await interaction.followUp({
+                    content: `upgraded **${upgradeClass.getDetails().name}** to level ${playerUpgradeLevel + levels}! you've \`${formatNumber(playerData.score, true, 4)} pts\` left.`,
+                    components: [new ActionRowBuilder().addComponents(button)],
+                    flags: ephemeral
+                })
+            }
+            
         })
     }
 }
