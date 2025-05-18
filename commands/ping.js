@@ -146,7 +146,7 @@ async function ping(interaction, isSuper = false) {
         extra: [],
         bp: [],
     }
-    if (playerProfile.settings.pingFormat === "expanded") {
+    if (playerProfile.settings.pingFormat === "expanded" || !playerProfile.settings.pingFormat) {
         displays.add.push(`${getEmoji('ping')} \`+${ping}\``);
     } else if (playerProfile.settings.pingFormat === "compact") {
         displays.add.push(`${getEmoji('ping')}`);
@@ -181,7 +181,7 @@ async function ping(interaction, isSuper = false) {
     if (isSuper) {
         let blueStrength = (currentEffects.blueStrength) * 15;
         currentEffects.mults.push(blueStrength);
-        if (playerProfile.settings.pingFormat === "expanded") {
+        if (playerProfile.settings.pingFormat === "expanded" || !playerProfile.settings.pingFormat) {
             displays.mult.push(`${getEmoji('upgrade_blue')} __\`x${blueStrength.toFixed(2)}\`__`)
         } else if (playerProfile.settings.pingFormat === "compact") {
             displays.mult.push(`${getEmoji('upgrade_blue')}`)
@@ -290,7 +290,7 @@ async function ping(interaction, isSuper = false) {
         }
     }
 
-    if (playerProfile.settings.pingFormat !== "expanded") {
+    if (playerProfile.settings.pingFormat !== "expanded" && playerProfile.settings.pingFormat) {
         displays.add.push(`\`+${formatNumber(score)}\``);
         if (currentEffects.bp) {
             displays.bp.push(`\`+${formatNumber(currentEffects.bp)} bp\``);
@@ -335,7 +335,7 @@ async function ping(interaction, isSuper = false) {
         totalMult *= mult;
     }
 
-    if (totalMult > 1 && playerProfile.settings.pingFormat !== "expanded") {
+    if (totalMult > 1 && playerProfile.settings.pingFormat !== "expanded" && playerProfile.settings.pingFormat) {
         displays.mult.push(`__\`x${totalMult.toFixed(2)}\`__`);
     }
 
@@ -345,7 +345,7 @@ async function ping(interaction, isSuper = false) {
         totalExp *= exponent;
     }
 
-    if (totalExp > 1 && playerProfile.settings.pingFormat !== "expanded") {
+    if (totalExp > 1 && playerProfile.settings.pingFormat !== "expanded" && playerProfile.settings.pingFormat) {
         displays.exponents.push(`**__\`^${totalExp.toFixed(2)}\`__**`);
     }
 
@@ -424,7 +424,7 @@ you have a lot of pts... why don't you go spend them over in </upgrade:136037740
     for (const dispType of ['add', 'mult', 'exponents', 'extra']) {
         const display = displays[dispType];
         if (display.length === 0) continue; // skip empty displays
-        if (playerProfile.settings.pingFormat === "expanded") {
+        if (playerProfile.settings.pingFormat === "expanded" || !playerProfile.settings.pingFormat) {
             displayDisplay += ", " + display.join(', ') 
         } else {
             displayDisplay += ", " + display.join(' ')
