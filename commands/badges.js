@@ -1,8 +1,8 @@
 const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, InteractionContextType, MessageFlags, EmbedBuilder, StringSelectMenuBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
-const { Op } = require('sequelize');
 const database = require('./../helpers/database.js');
 const { getEmoji } = require('./../helpers/emojis.js')
 const { ownerId } = require('./../config.json');
+const BADGES_PER_PAGE = 10;
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -75,22 +75,7 @@ module.exports = {
             return await interaction.reply({ embeds: [embed] });
         } 
         else if (interaction.options.getSubcommand() === 'list') {
-            const badges = await database.Badge.findAll();
-
-            if (badges.length === 0) {
-                return await interaction.reply({ content: 'there are somehow no badges yet...?', flags: MessageFlags.Ephemeral });
-            }
-
-            let description = '';
-            for (const badge of badges) {
-                description += `${badgeDisplay(badge)}\n`;
-            }
-
-            const embed = new EmbedBuilder()
-                .setColor('#d1b586')
-                .setDescription(description.trim());
-
-            return await interaction.reply({ embeds: [embed] });
+            return await interaction.reply(await getListPage(interaction, 1));
         }
         else if (interaction.options.getSubcommand() === 'showcase') {
             return await interaction.reply(await getShowcaseDisplay(interaction));
@@ -100,6 +85,7 @@ module.exports = {
                 return await interaction.reply({ content: 'you can\'t do that, you\'re not my owner', flags: MessageFlags.Ephemeral });
             }
 
+            await interaction.deferReply({ ephemeral: true });
             const user = interaction.options.getUser('user');
             const badgeName =interaction.options.getString('badge');
 
@@ -113,11 +99,11 @@ module.exports = {
                 playerBadges = playerBadges.filter(bId => bId !== badge.dbId.toString());
                 playerDisplayedBadges = playerDisplayedBadges.filter(bId => bId !== badge.dbId.toString());
 
-                dmMessage = `**bad news...**\n\nyou lost the badge ${badgeDisplay(badge,true)}.\nif you think this was a mistake, stay tuned; your badge will likely be restored soon!`;
+                dmMessage = `**bad news...**\n\nthe badge ${badgeDisplay(badge,true)} was manually removed. \nif you think this was a mistake, stay tuned; your badge will likely be returned soon.`;
             } else {
                 playerBadges.push(badge.dbId);
 
-                dmMessage = `**good news!!**\n\nyou have been awarded the badge ${badgeDisplay(badge,true)}! be sure to show it off with \`/badges\`.`;
+                dmMessage = `**good news!!**\n\nyou have been manually awarded the badge ${badgeDisplay(badge,true)}! be sure to show it off with \`/badges\`.`;
             }
 
             player.badges = playerBadges;
@@ -127,7 +113,7 @@ module.exports = {
             const dmablePlayer = await interaction.client.users.resolve(user.id);
             await dmablePlayer.send(dmMessage);
 
-            await interaction.reply({ content: `successfully ${player.badges.includes(badge.dbId.toString()) ? 'awarded' : 'removed'} the badge ${badgeDisplay(badge,true)} to ${await player.getUserDisplay(interaction.client, database)}`, flags: MessageFlags.Ephemeral });
+            await interaction.editReply({ content: `successfully ${player.badges.includes(badge.dbId.toString()) ? 'awarded' : 'removed'} the badge ${badgeDisplay(badge,true)} to ${await player.getUserDisplay(interaction.client, database)}` });
         }
         else if (interaction.options.getSubcommand() === 'create') {
             if (interaction.user.id !== ownerId) {
@@ -160,12 +146,19 @@ module.exports = {
                 .setStyle(TextInputStyle.Paragraph)
                 .setPlaceholder('what\'s the backstory of this badge?')
                 .setRequired(true);
+            const tierInput = new TextInputBuilder()
+                .setCustomId('badgeTierInput')
+                .setLabel('tier')
+                .setStyle(TextInputStyle.Short)
+                .setPlaceholder('1 = silver, 2 = blue, 3 = purple')
+                .setRequired(true);
             
             modal.addComponents(
                 new ActionRowBuilder().addComponents(nameInput),
                 new ActionRowBuilder().addComponents(emojiInput),
                 new ActionRowBuilder().addComponents(descriptionInput),
                 new ActionRowBuilder().addComponents(flavorTextInput),
+                new ActionRowBuilder().addComponents(tierInput),
             );
             await interaction.showModal(modal);
         }
@@ -204,6 +197,11 @@ module.exports = {
         "delete": async (interaction) => {
             await interaction.update({ content: "(bye!)", components: [] });
             await interaction.deleteReply(interaction.message);
+        },
+        "list": async (interaction, args) => {
+            const tier = args.split(',')[0];
+            const page = args.split(',')[1] || 1;
+            await interaction.update(await getListPage(interaction, parseInt(tier), parseInt(page)));
         }
     },
     modals: {
@@ -212,12 +210,14 @@ module.exports = {
             const emoji = interaction.fields.getTextInputValue('badgeEmojiInput');
             const description = interaction.fields.getTextInputValue('badgeDescriptionInput');
             const flavorText = interaction.fields.getTextInputValue('badgeFlavorTextInput');
+            const tier = parseInt(interaction.fields.getTextInputValue('badgeTierInput'));
 
             const newBadge = await database.Badge.create({
                 name,
                 emoji,
                 description,
                 flavorText,
+                tier,
             });
 
             await interaction.reply({ content: `successfully created the badge ${badgeDisplay(newBadge, true)}!`, flags: MessageFlags.Ephemeral });
@@ -244,6 +244,74 @@ module.exports = {
 
         await interaction.respond(options);
     }
+}
+
+async function getListPage(interaction, tier, page = 1) {
+    const badgeCount = await database.Badge.count({
+        where: { tier: tier },
+    });
+
+    if (page < 1 || isNaN(page)) page = 1;
+
+    let description = `__${['silver','blue','purple'][tier-1]} badges__ (${badgeCount} total)\n\n`;
+
+    if (badgeCount === 0) {
+        description += `${getEmoji('badge_none')} huh. there's nothing here...?`;
+    } else {
+        const badges = await database.Badge.findAll({
+            where: { tier: tier },
+            limit: 10,
+            offset: (page - 1) * BADGES_PER_PAGE,
+        });
+
+        for (const badge of badges) {
+            description += `${badgeDisplay(badge)}\n`;
+        }
+    }
+
+    const embed = new EmbedBuilder()
+        .setColor('#d1b586')
+        .setDescription(description.trim());
+
+    const tierButtons = [1,2,3].map(t => {
+        return new ButtonBuilder()
+            .setCustomId(`badges:list-${t},1`) // formatted tier-page
+            .setLabel(`${['silver','blue','purple'][t-1]} tier`)
+            .setStyle(ButtonStyle.Secondary)
+            .setDisabled(t === tier);
+    });
+
+    let navRow = undefined;
+
+    // add nav buttons if there's a lot of badges
+    if (badgeCount > BADGES_PER_PAGE) {
+        const pageCount = Math.ceil(badgeCount / BADGES_PER_PAGE);
+        
+        const leftButton = new ButtonBuilder()
+            .setCustomId(`badges:list-${tier},${page - 1}`)
+            .setLabel('previous')
+            .setStyle(ButtonStyle.Secondary)
+            .setDisabled(page === 1);
+        if (page - 1 === 1) {
+            leftButton.setCustomId(`badges:list-${tier}`) // discord doesn't like duplicate custom ids, so we work around it with this
+        }
+        
+        const rightButton = new ButtonBuilder()
+            .setCustomId(`badges:list-${tier},${page + 1}`)
+            .setLabel('next')
+            .setStyle(ButtonStyle.Secondary)
+            .setDisabled(page >= pageCount);
+        
+        navRow = new ActionRowBuilder()
+            .addComponents(leftButton, rightButton);
+    }
+
+    const tierRow = new ActionRowBuilder().addComponents(tierButtons);
+
+    const rows = [tierRow];
+    if (navRow) rows.push(navRow);
+
+    return { embeds: [embed], components: rows };
 }
 
 async function getShowcaseDisplay(interaction) {
