@@ -1,4 +1,4 @@
-const { getEmoji } = require('../helpers/emoji');
+const { getEmoji } = require('../helpers/emojis.js');
 const database = require('./database.js');
 
 async function awardBadge(userId, badge, client) {
