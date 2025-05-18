@@ -171,7 +171,7 @@ module.exports = {
 
             let followUp = null;
             const okButton = new ButtonBuilder()
-                .setCustomId('showcase:delete')
+                .setCustomId('badges:delete')
                 .setLabel('oh... okay')
                 .setStyle(ButtonStyle.Secondary);
 
