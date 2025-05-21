@@ -265,7 +265,7 @@ async function ping(interaction, isSuper = false) {
         }
 
         if (pingFormat === "compact" && effectString !== upgradeClass.getDetails().emoji) {
-            effectString = `${upgradeClass.getDetails().emoji} `;
+            effectString = `${upgradeClass.getDetails().emoji}~`;
         }
         
         // bypasses compact mode
@@ -277,6 +277,10 @@ async function ping(interaction, isSuper = false) {
 
         // add to display
         if (effectString !== upgradeClass.getDetails().emoji && effectString !== "") {
+            if (effectString.includes("~")) {
+                effectString = effectString.replace("~", "");
+            }
+
             if (effect.add) {
                 displays.add.push(effectString);
             } else if (effect.multiply) {
@@ -285,7 +289,7 @@ async function ping(interaction, isSuper = false) {
                 displays.exponents.push(effectString);
             } else if (effect.bp) {
                 displays.bp.push(effectString);
-            } else {
+            } else if (effect.message) {
                 displays.extra.push(effectString);
             }
         }
