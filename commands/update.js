@@ -89,6 +89,11 @@ module.exports = {
         announce: async (interaction) => {
             const description = interaction.fields.getTextInputValue('description');
             const type = interaction.fields.getTextInputValue('importance').toLowerCase();
+            if (!['major', 'minor', 'patch', 'hotfix'].includes(type)) {
+                await interaction.reply({ content: 'invalid importance type, must be one of: major, minor, patch, hotfix', flags: MessageFlags.Ephemeral });
+                return;
+            }
+            
             const currentVerInfo = getVersionInfo(await getLatestVersion());
 
             const newVersion = await database.Version.create({
