@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, InteractionContextType, MessageFlags, EmbedBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
 const database = require('./../helpers/database.js');
 const { ownerId } = require('./../config.json');
+const sequelize = require('sequelize');
 
 let cachedLatestVersion = null;
 
@@ -128,13 +129,71 @@ module.exports = {
                 description: description,
             })
 
-            // TODO: send announcements to users
+            let allowedSettings = ["always"];
+            if (type === 'major') {
+                allowedSettings.push("major only", "minor and major only", "everything but hotfixes");
+            }
+            if (type === 'minor') {
+                allowedSettings.push("minor and major only", "everything but hotfixes");
+            }
+            if (type === 'patch') {
+                allowedSettings.push("everything but hotfixes");
+            }
+
+            const usersToNotify = await database.Player.findAll({
+                where: {
+                    settings: {
+                        updateNotification: {
+                            [sequelize.Op.in]: allowedSettings,
+                        }
+                    }
+                },
+                attributes: ['userId'],
+            });
+
+            await interaction.reply({ content: `announcing \`v${newVersion.verNum}\` to ${usersToNotify.length} users...`, flags: MessageFlags.Ephemeral });
+            let alerts = { success: 0, noUser: 0, dmFailed: 0 };
+
+            for (const user of usersToNotify) {
+                const userToDm = await interaction.client.users.fetch(user.userId).catch(() => null);
+                if (!userToDm) {
+                    alerts.noUser++;
+                    continue;
+                }
+
+                try {
+                    await userToDm.send({
+                        content: `a new version of the bot has been released! \`v${newVersion.verNum}\``,
+                        embeds: [getVersionEmbed(newVersion)],
+                    });
+                    alerts.success++;
+                } catch (error) {
+                    console.log(`[WARN] failed to DM user ${user.userId} about new version:`, error);
+                    alerts.dmFailed++;
+                }
+            }
 
             await getLatestVersion(true); // update cached ver because there's a new one
-            await interaction.reply({ content: `success! announced \`v${newVersion.verNum}\``, flags: MessageFlags.Ephemeral });
+
+            let reply = `success! announced \`v${newVersion.verNum}\` to ${alerts.success} users`;
+            if (alerts.noUser > 0) {
+                reply += `\n${alerts.noUser} users could not be found`;
+            }
+            if (alerts.dmFailed > 0) {
+                reply += `\n${alerts.dmFailed} users could not be DMed`;
+            }
+            await interaction.editReply({ content: reply });
         }
     }
 }
+
+function getVersionEmbed(versionData) {
+    return new EmbedBuilder()
+        .setTitle(`v${versionData.verNum}`)
+        .setDescription(versionData.description)
+        .setTimestamp(versionData.releasedAt)
+        .setColor(versionData.importance === 'major' ? '#2c2cde' : versionData.importance === 'minor' ? '#2c76de' : versionData.importance === 'patch' ? '#5aa4b0' : '#52827c');
+}   
 
 async function getVersionMessage(version) {
     let versionData = await database.Version.findOne({
@@ -150,12 +209,7 @@ async function getVersionMessage(version) {
         return { content: `no changelog found for v\`${version}\` :(`, flags: MessageFlags.Ephemeral };
     }
 
-    const embed = new EmbedBuilder()
-        .setTitle(`v${versionData.verNum}`)
-        .setDescription(versionData.description)
-        .setTimestamp(versionData.releasedAt)
-        .setColor(versionData.importance === 'major' ? '#2c2cde' : versionData.importance === 'minor' ? '#2c76de' : versionData.importance === 'patch' ? '#5aa4b0' : '#52827c');
-
+    const embed = getVersionEmbed(versionData);
     const row = new ActionRowBuilder()
 
     if (versionData.dbId > 1) {
