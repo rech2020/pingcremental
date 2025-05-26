@@ -163,7 +163,7 @@ module.exports = {
 
                 try {
                     await userToDm.send({
-                        content: `a new version of the bot has been released! \`v${newVersion.verNum}\``,
+                        content: `a new ${type === 'minor' || type === 'major' ? `${type} update` : type} has been released! \`v${newVersion.verNum}\``,
                         embeds: [getVersionEmbed(newVersion)],
                     });
                     alerts.success++;
