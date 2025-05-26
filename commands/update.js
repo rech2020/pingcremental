@@ -127,11 +127,11 @@ module.exports = {
             await interaction.reply({ content: `announcing \`v${newVersion.verNum}\` to ${usersToNotify.length} users...`, flags: MessageFlags.Ephemeral });
             let alerts = { success: 0, noUser: 0, dmFailed: 0 };
 
-            for (const user of usersToNotify) {
+            await Promise.all(usersToNotify.map(async (user) => {
                 const userToDm = await interaction.client.users.fetch(user.userId).catch(() => null);
                 if (!userToDm) {
                     alerts.noUser++;
-                    continue;
+                    return;
                 }
 
                 try {
