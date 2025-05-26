@@ -144,7 +144,7 @@ module.exports = {
                     console.log(`[WARN] failed to DM user ${user.userId} about new version:`, error);
                     alerts.dmFailed++;
                 }
-            }
+            }));
 
             await getLatestVersion(true); // update cached ver because there's a new one
 
