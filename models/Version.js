@@ -10,7 +10,7 @@ module.exports = (sequelize) => {
             allowNull: false,
             validate: {
                 is: {
-                    args: /^\d+\.\d+\.\d+h*\d*$/,
+                    args: /^\d+\.\d+\.\d+(h\d+)?$/,
                     msg: 'version number must be in the format W.X.YhZ (e.g. 1.0.0, 1.0.0h1)',
                 },
             },
