@@ -5,7 +5,7 @@ const { rawUpgrades } = require('./../helpers/upgrades.js')
 const { ownerId } = require('./../config.json');
 const formatNumber = require('./../helpers/formatNumber.js')
 const { getEmoji } = require('../helpers/emojis.js');
-const { getLatestVersion } = require('./update.js');
+const getLatestVersion = require('./../helpers/versions.js');
 const awardBadge = require('../helpers/awardBadge.js');
 const MAX_PING_OFFSET = 5
 
