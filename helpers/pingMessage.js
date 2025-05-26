@@ -128,7 +128,7 @@ function get(ping, context) {
         "let me find a ping message for you...",
         "hot tip: this is NOT a cold tip, you can feel the heat", // kind of a reference to phigros
         "this ping message reminds me of the last time i saw this ping message",
-        "this ping message is only found in v0.3!",
+        context.version ? `this ping message is only found in v${context.version}!` : "this ping message is only found in... uhhh... this version!",
         "i don't think these ping messages are particularly useful. right?",
         `it's gonna say "(${ping}ms)" i just know it...`,
         "clicking the button gives you pts!",

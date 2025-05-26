@@ -19,6 +19,14 @@ const settings = {
         ],
         default: "expanded",
     },
+    'updateNotification': {
+        name: 'update notification',
+        description: 'when should the bot alert you when it updates?',
+        options: [
+            "always", "everything but hotfixes", "minor and major only", "major only", "never"
+        ],
+        default: "major only",
+    },
     // 'numberFormat': {
     //     name: 'number format',
     //     description: 'how should large numbers be formatted by default?',
