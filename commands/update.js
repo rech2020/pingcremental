@@ -184,7 +184,8 @@ module.exports = {
             }
             await interaction.editReply({ content: reply });
         }
-    }
+    },
+    getLatestVersion,
 }
 
 function getVersionEmbed(versionData) {
