@@ -224,16 +224,6 @@ async function ping(interaction, isSuper = false, overrides = {}) {
     }
 
 
-    /* SPECIALS */
-
-
-    if (currentEffects.specials.slumber) {
-        playerProfile.slumberClicks += currentEffects.specials.slumber;
-    }
-    if (currentEffects.specials.glimmer) {
-        playerProfile.glimmerClicks += currentEffects.specials.glimmer;
-    }
-
     score = Math.max(score, 1); // prevent negative scores
 
     let totalMult = 1;

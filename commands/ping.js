@@ -82,7 +82,14 @@ async function pingResponse(interaction, isSuper = false) {
 
     const {score, displays, currentEffects, context} = await ping(interaction, isSuper, { developmentMode});
 
-    // button special stuff
+    // funky specials
+
+    if (currentEffects.specials.slumber) {
+        playerProfile.slumberClicks += currentEffects.specials.slumber;
+    }
+    if (currentEffects.specials.glimmer) {
+        playerProfile.glimmerClicks += currentEffects.specials.glimmer;
+    }
 
     const rowComponents = [];
     // blue ping handling
