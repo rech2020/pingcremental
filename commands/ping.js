@@ -1,14 +1,9 @@
 const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, InteractionContextType, MessageFlags } = require('discord.js');
 const pingMessages = require('./../helpers/pingMessage.js')
-const database = require('./../helpers/database.js')
-const { rawUpgrades } = require('./../helpers/upgrades.js')
 const { ownerId } = require('./../config.json');
 const formatNumber = require('./../helpers/formatNumber.js')
-const { getEmoji } = require('../helpers/emojis.js');
 const ping = require('./../helpers/pingCalc.js');
-const getLatestVersion = require('./../helpers/versions.js');
 const awardBadge = require('../helpers/awardBadge.js');
-const MAX_PING_OFFSET = 5
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -85,7 +80,7 @@ async function pingResponse(interaction, isSuper = false) {
         })
     }
 
-    const {score, displays, currentEffects, context} = await ping(interaction, isSuper);
+    const {score, displays, currentEffects, context} = await ping(interaction, isSuper, { developmentMode});
 
     // button special stuff
 
@@ -109,8 +104,8 @@ async function pingResponse(interaction, isSuper = false) {
 
     /* SAVE STATS */
 
-    context.totalScore = playerProfilescore + score;
-    const pingMessage = pingMessages(ping, context); // get the ping message
+    context.totalScore = playerProfile.score + score;
+    const pingMessage = pingMessages(context.ping, context); // get the ping message
 
     // click saving
     playerProfile.clicks += 1;

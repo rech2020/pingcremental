@@ -5,9 +5,9 @@ const { getEmoji } = require('./emojis.js');
 const getLatestVersion = require('./versions.js');
 const MAX_PING_OFFSET = 5;
 
-async function ping(interaction, isSuper = false, overides = {}) {
+async function ping(interaction, isSuper = false, overrides = {}) {
     let ping = interaction.client.ws.ping;
-    if (developmentMode) {
+    if (overrides.developmentMode) {
         ping = 6; // for testing purposes; prevents too much point gain & bypasses unknown ping
     }
     ping += Math.round(Math.random() * MAX_PING_OFFSET * 2) - MAX_PING_OFFSET; // randomize a bit since it only updates occasionally
