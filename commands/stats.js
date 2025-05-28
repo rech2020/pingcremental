@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, InteractionContextType, MessageFlags, EmbedBuilder } = require('discord.js');
 const database = require('./../helpers/database.js');
 const formatNumber = require('./../helpers/formatNumber.js');
+const ping = require('../helpers/pingCalc.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -94,11 +95,9 @@ async function getUserMessage(userId, interaction) {
         ? Math.round(player.bluePingsMissed / (player.bluePings + player.bluePingsMissed) * 100)
         : 0;
 
-    let bluePingChance = upgrades.blue === 1 ? (0.01 + (upgrades.blueshift || 0) * 0.006 - (upgrades.redshift || 0) * 0.004) : 0;
-
-    if ((upgrades.greenshift || 0) > 0) {
-        bluePingChance = bluePingChance * (1 + 0.15 * upgrades.greenshift);
-    }
+    const simulatedPing = await ping(interaction, false, { forceNoRNG: true });
+    const bluePingChance = simulatedPing.currentEffects.blue;
+    const blueMult = simulatedPing.currentEffects.blueStrength || 1;
 
     const embed = new EmbedBuilder()
         .setTitle(`personal stats`)
@@ -116,7 +115,8 @@ async function getUserMessage(userId, interaction) {
                 `${formatNumber(player.luckyPings)} lucky ping${player.luckyPings === 1 ? '' : 's'}\n` +
                 `${formatNumber(player.highestBlueStreak)} highest blue ping streak\n` +
                 `\n` +
-                `${upgrades.bluePingChance < 0 ? `0%` : `${(bluePingChance*100).toFixed(1)}%`} blue ping chance`
+                `${upgrades.bluePingChance < 0 ? `0%` : `${(bluePingChance).toFixed(1)}%`} blue ping chance\n` + 
+                `${blueMult.toFixed(2)}x blue ping strength = ${(blueMult*15).toFixed(2)}x pts on a blue ping`
         )
         .setTimestamp();
     return {
