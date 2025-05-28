@@ -83,6 +83,7 @@ async function pingResponse(interaction, isSuper = false) {
 
     const {score, displays, currentEffects, context} = await ping(interaction, isSuper, { developmentMode});
     const playerProfile = await database.Player.findByPk(`${interaction.user.id}`);
+    const pingFormat = playerProfile.settings.pingFormat || "expanded";
 
     // funky specials
 

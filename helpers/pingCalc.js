@@ -64,7 +64,7 @@ async function ping(interaction, isSuper = false, overrides = {}) {
         // add more if needed
         
         // will be updated later
-        blueCombo, rare, spawnedSuper, bpMax,
+        blueCombo: 0, rare: false, spawnedSuper: false, bpMax: 10000,
     }
     let displays = {
         add: [],
