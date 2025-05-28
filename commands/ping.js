@@ -4,6 +4,7 @@ const { ownerId } = require('./../config.json');
 const formatNumber = require('./../helpers/formatNumber.js')
 const ping = require('./../helpers/pingCalc.js');
 const awardBadge = require('../helpers/awardBadge.js');
+const database = require('../helpers/database.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -81,6 +82,7 @@ async function pingResponse(interaction, isSuper = false) {
     }
 
     const {score, displays, currentEffects, context} = await ping(interaction, isSuper, { developmentMode});
+    const playerProfile = await database.Player.findByPk(`${interaction.user.id}`);
 
     // funky specials
 
@@ -97,11 +99,11 @@ async function pingResponse(interaction, isSuper = false) {
         rowComponents.push(again);
     }
     // check if blue ping should trigger
-    if (context.spawnedSuper) {
+    if (currentEffects.spawnedSuper) {
         playerProfile.bluePings += 1;
         const superPing = new ButtonBuilder()
             .setCustomId('ping:super')
-            .setLabel(`blue ping!${isSuper ? ` x${context.blueCombo}` : ''}`)
+            .setLabel(`blue ping!${isSuper ? ` x${currentEffects.blueCombo}` : ''}`)
             .setStyle(ButtonStyle.Primary);
         rowComponents.push(superPing);
     }
@@ -118,7 +120,7 @@ async function pingResponse(interaction, isSuper = false) {
     playerProfile.clicks += 1;
     playerProfile.totalClicks += 1;
     if (playerProfile.clicks > playerProfile.totalClicks) playerProfile.totalClicks = playerProfile.clicks; // make sure total clicks is always higher than clicks
-    if (context.rare) playerProfile.luckyPings += 1;
+    if (currentEffects.rare) playerProfile.luckyPings += 1;
     if (!isSuper) {
         let missed = false;
         for (const messageButton of interaction.message.components[0].components) { // check every button in the first row
@@ -141,7 +143,7 @@ async function pingResponse(interaction, isSuper = false) {
 
 
     // badges
-    if (combo >= 10) { 
+    if (currentEffects.blueCombo >= 10) { 
         await awardBadge(interaction.user.id, 'blue stupor', interaction.client); 
     }
     if (currentEffects.rare) {
@@ -170,7 +172,7 @@ you have a lot of pts... why don't you go spend them over in </upgrade:136037740
         })
     }
 
-    if (context.rare) {
+    if (currentEffects.rare) {
         row = new ActionRowBuilder()
             .addComponents(new ButtonBuilder()
                 .setCustomId('ping:again')
@@ -197,7 +199,7 @@ you have a lot of pts... why don't you go spend them over in </upgrade:136037740
     displayDisplay = displayDisplay.substring(2); // remove first comma and space
     
     if (currentEffects.bp) {
-        displayDisplay += `\n-# \`${formatNumber(Math.ceil(playerProfile.bp))}/${formatNumber(bpMax)} bp\`${playerProfile.bp >= bpMax ? " **(MAX)**" : ""} `
+        displayDisplay += `\n-# \`${formatNumber(Math.ceil(playerProfile.bp))}/${formatNumber(currentEffects.bpMax)} bp\`${playerProfile.bp >= currentEffects.bpMax ? " **(MAX)**" : ""} `
         displayDisplay += displays.bp.join(', ');
     }
 
@@ -223,7 +225,7 @@ you have a lot of pts... why don't you go spend them over in </upgrade:136037740
         }
     }
 
-    if (context.rare) {
+    if (currentEffects.rare) {
         await (new Promise(resolve => setTimeout(resolve, 2000))); // wait a bit
         await interaction.editReply({
             components: [new ActionRowBuilder().addComponents(rowComponents)], // refresh buttons
