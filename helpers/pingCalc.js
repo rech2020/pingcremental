@@ -258,8 +258,8 @@ async function ping(interaction, isSuper = false, overides = {}) {
     }
 
     score = Math.round(score);
-    context.score = score; // update context for later effects
     if (score === Infinity) score = 0; // prevent infinite score (and fuck you; you get nothing)
+    context.score = score; // update context for later effects
     
     let bpMax = ((playerProfile.upgrades.limit || 0) + 1) * 10000;
     bpMax += (playerProfile.prestigeUpgrades.storage || 0) * 2500;
@@ -277,3 +277,5 @@ async function ping(interaction, isSuper = false, overides = {}) {
         context,
     }
 }
+
+module.exports = ping;
