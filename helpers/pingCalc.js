@@ -60,7 +60,7 @@ async function ping(interaction, isSuper = false, overrides = {}) {
         blueStrength: 1,
         specials: {},
         bp: 0,
-        RNGmult: 1,
+        RNGmult: overrides.forceNoRNG ? 0 : 1,
         // add more if needed
     }
     let displays = {
