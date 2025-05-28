@@ -12,10 +12,10 @@ async function ping(interaction, isSuper = false, overrides = {}) {
     }
     ping += Math.round(Math.random() * MAX_PING_OFFSET * 2) - MAX_PING_OFFSET; // randomize a bit since it only updates occasionally
 
-    const [playerProfile, _created] = await database.Player.findOrCreate({ where: { userId: interaction.user.id } })
+    const [playerProfile, _created] = await database.Player.findOrCreate({ where: { userId: (interaction.user || overrides.user).id } })
     let context = { // BIG LONG EVIL CONTEXT (will kill you if it gets the chance)
         // actual context
-        user: interaction.user,
+        user: overrides.user || interaction.user,
         ping: ping,
         isSuper: isSuper,
         versionNumber: await getLatestVersion(),

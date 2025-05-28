@@ -95,7 +95,7 @@ async function getUserMessage(userId, interaction) {
         ? Math.round(player.bluePingsMissed / (player.bluePings + player.bluePingsMissed) * 100)
         : 0;
 
-    const simulatedPing = await ping(interaction, false, { forceNoRNG: true });
+    const simulatedPing = await ping(interaction, false, { forceNoRNG: true, user: interaction.user });
     const bluePingChance = simulatedPing.currentEffects.blue;
     const blueMult = simulatedPing.currentEffects.blueStrength || 1;
 
