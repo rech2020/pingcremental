@@ -17,7 +17,7 @@ module.exports = {
         return `x${(1+level*0.1).toFixed(1)}, every ${21-level}m, up to ${Math.round((2*24*60)/(21-level))} pings`;
     },
     getEffect(level, context) {
-        if (context.slumberClicks) {
+        if (context.slumberClicks > 0) {
             return {
                 multiply: 1 + (level * 0.1),
                 special: { "slumber": -1, "canGainSlumber": true },
