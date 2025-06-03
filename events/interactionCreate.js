@@ -33,7 +33,7 @@ module.exports = {
                     }
                 }
             } else if (interaction.isStringSelectMenu()) {
-                if (interaction.user.id != interaction.message.interaction.user.id) {
+                if (interaction.message.interaction && interaction.user.id != interaction.message.interaction.user.id) {
                     return await interaction.reply({ content: "this one's not yours?", flags: MessageFlags.Ephemeral })
                 }
 

@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, InteractionContextType, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, MessageFlags } = require('discord.js');
+const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, InteractionContextType, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, MessageFlags, TextInputBuilder, ModalBuilder } = require('discord.js');
 const database = require('./../helpers/database.js')
 const { ownerId } = require('./../config.json')
 const feedbackCategories = [
@@ -57,39 +57,89 @@ module.exports = {
             await interaction.reply({ content: `success! thanks for the feedback.`, flags: MessageFlags.Ephemeral });
         }
         else if (interaction.options.getSubcommand() === 'view') {
-            await interaction.reply(await generateFeedbackResponse(interaction, feedbackCategories[0]));
+            await interaction.reply(await buildFeedbackEmbed(interaction, feedbackCategories[0]));
         }
     },
     buttons: {
         "category": (async (interaction, newCategory) => {
-            await interaction.update(await generateFeedbackResponse(interaction, newCategory), { flags: MessageFlags.Ephemeral });
+            await interaction.update(await buildFeedbackEmbed(interaction, newCategory));
         })
     },
     dropdowns: {
-        "delete": (async (interaction) => {
+        "chooseFeedback": (async (interaction) => {
             const feedbackId = interaction.values[0];
             if (feedbackId === 'none') return await interaction.reply({ content: 'you didn\'t select anything? how did you manage that?', ephemeral: true });
             const feedback = await database.Feedback.findByPk(feedbackId);
 
             if (!feedback) return await interaction.reply({ content: 'this one doesn\'t even exist? how?', ephemeral: true });
             if (feedback.userId !== interaction.user.id && interaction.user.id !== ownerId) return await interaction.reply({ content: 'you don\'t have permission to delete this...', ephemeral: true });
-
-            if (interaction.user.id === ownerId && feedback.userId !== ownerId) {
-                const userToAlert = await interaction.client.users.fetch(feedback.userId)
-                if (feedback.type === 'bug') {
-                    await userToAlert.send(`your below bug report has been either fixed or otherwise addressed. thank you for reporting!\n"${feedback.text}"`);
-                } else {
-                    await userToAlert.send(`your below feedback has been either implemented, denied, or otherwise addressed. thank you for the suggestion!\n"${feedback.text}"`);
-                }
+            
+            if (feedback.userId === interaction.user.id && interaction.user.id !== ownerId) {
+                await feedback.destroy();
+                await interaction.update(await buildFeedbackEmbed(interaction, feedback.type));
+                return await interaction.followUp({ content: `deleted your feedback.`, flags: MessageFlags.Ephemeral });
             }
+
+
+            const dropdown = new StringSelectMenuBuilder()
+                .setCustomId(`feedback:finishDelete-${feedbackId}`)
+                .setPlaceholder('how come?')
+                .addOptions(
+                    new StringSelectMenuOptionBuilder()
+                        .setLabel('added/fixed')
+                        .setValue('added'),
+                    new StringSelectMenuOptionBuilder()
+                        .setLabel('denied')
+                        .setValue('denied'),
+                    new StringSelectMenuOptionBuilder()
+                        .setLabel('not a suggestion')
+                        .setValue('notSuggestion'),
+                    new StringSelectMenuOptionBuilder()
+                        .setLabel('silently delete')
+                        .setValue('silentDelete'),
+                    new StringSelectMenuOptionBuilder()
+                        .setLabel('no wait, never mind')
+                        .setValue('cancel')
+                );
+            await interaction.update(await buildFeedbackEmbed(interaction, feedback.type));
+            await interaction.followUp({ content: `deleting feedback #${feedbackId}?`, flags: MessageFlags.Ephemeral, components: [new ActionRowBuilder().addComponents(dropdown)] });
+        }),
+        "finishDelete": (async (interaction, feedbackId) => {
+            const deleteType = interaction.values[0];
+            if (deleteType === 'cancel') {
+                return await interaction.update({ content: 'cancelled deletion.', components: [], flags: MessageFlags.Ephemeral });
+            }
+
+            const feedback = await database.Feedback.findByPk(feedbackId);
+            if (deleteType === 'silentDelete') {
+                await feedback.destroy();
+                return await interaction.update({ content: `deleted feedback #${feedbackId} silently.`, components: [], flags: MessageFlags.Ephemeral });
+            }
+
+            const userToDm = await interaction.client.users.fetch(feedback.userId);
+            if (!userToDm) {
+                await feedback.destroy();
+                return await interaction.update({ content: `couldn't find the user to DM; deleting #${feedbackId} silently.`, components: [], flags: MessageFlags.Ephemeral });
+            }
+
+            let message = `your below ${feedback.type === 'bug' ? 'bug' : 'feedback'} was `;
+            if (deleteType === 'added') {
+                message += `${feedback.type === 'bug' ? 'fixed' : 'added'}! thank you for your feedback.`;
+            } else if (deleteType === 'denied') {
+                message += `${feedback.type === 'bug' ? 'found to be invalid' : 'denied'}. thank you for your feedback.`;
+            } else if (deleteType === 'notSuggestion') {
+                message += 'deemed to not be a suggestion, so it was deleted. /feedback is for __suggestions and bugs only__. if you gave vague feedback (e.g. "i don\'t like how slow upgrading is"), feel free to suggest more specific solutions or changes.';
+            }
+            message += `\n\nyour feedback:\n${feedback.text}`;
+
             await feedback.destroy();
-            await interaction.update(await generateFeedbackResponse(interaction, feedback.type));
-            await interaction.followUp({ content: `deleted successfully.`, flags: MessageFlags.Ephemeral });
+            await userToDm.send(message);
+            await interaction.update({ content: `deleted feedback #${feedbackId} and notified the user.`, components: [], flags: MessageFlags.Ephemeral });
         })
     },
 }
 
-async function generateFeedbackResponse(interaction, category) {
+async function buildFeedbackEmbed(interaction, category) {
     // get all feedback for the category
     const feedbacks = await database.Feedback.findAll({
         where: { type: category },
@@ -111,7 +161,7 @@ async function generateFeedbackResponse(interaction, category) {
     const row = new ActionRowBuilder()
         .addComponents(buttons);
     const dropdown = new StringSelectMenuBuilder()
-        .setCustomId('feedback:delete')
+        .setCustomId('feedback:chooseFeedback')
         .setPlaceholder('pick feedback to delete')
 
     let description = `__${feedbacks.length}__ for category __${category}__\n`;
