@@ -17,22 +17,24 @@ module.exports = {
         return level > 0 ? "cat :D" : "no cat D:"
     },
     getEffect(level, context) {
-        const roll = Math.random()*3;
+        const roll = Math.random();
 
-        if (roll < 1.8) {
+        if (roll < 0.65) { // 65%
             return {
-                add: 5 + Math.floor(Math.random()*5),
+                add: 5 + Math.floor(Math.random()*20), // add 5-25
                 message: "mrrow!"
             }
-        } else if (roll < 2.7) {
+        } else if (roll < 0.9) { // 25%
             return {
-                multiply: 1.2 + Math.random()*0.5,
+                multiply: 1.2 + Math.random()*0.5, // multiply by 1.2-1.7
                 message: "mrrp!",
             }
-        } else {
+        } else { // 10%
             return {
-                exponent: 1.08,
-                message: "purrrr!",
+                // force a blue ping to spawn
+                blue: 100,
+                special: { "blueCap": 100 },
+                message: "\`Blue!\` purrrr!",
             }
         }
     },
