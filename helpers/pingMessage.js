@@ -411,6 +411,70 @@ function get(ping, context) {
         "this ping feels like a big shot",
     ]
 
+    if (new Date().getMonth() === 1 && new Date().getDate() >= 9 && new Date().getDate() <= 19) {
+        messagesList.push(
+            "the cupids are swarming",
+            "my love letter to you is this ping",
+            "remember to spend time with people you care about, even if you're not lovers!",
+            "love is in the air",
+        )
+    }
+
+    if (new Date().getMonth() === 5) { 
+        messagesList.push(
+            "happy pride!",
+            "mmm... this ping seems like it'd be gay, don'tcha think?",
+            "trans rights!",
+            "screw the norm, be yourself",
+            "what if pts actually stood for pride (in) transgender status? i don't think it does, but that'd be fun",
+            "this ping is certified not homophobic",
+            "pretend this ping is rainbow",
+            "girls kissing",
+            "boys kissing",
+            "enbies kissing",
+            "enbies are awesome",
+            "SUPER shoutout to gay foxgirls",
+            "you don't need a gender if you don't want one",
+            "no, sorry, i don't have any estrogen or testosterone, best i can do is a ping",
+        )
+    }
+
+    if (new Date().getMonth() === 9 && new Date().getDate() >= 21) {
+        messagesList.push(
+            "BOO! ha, did i scare you?",
+            "pmukipn... guhh",
+            "it's spooky season, please don't scare me",
+            "the glow of the pumpkins are also powered by pings",
+            "not sure what a \"ghost ping\" is but i'm pretty sure that's not my job to deal with",
+            "the full moon is actually increasing your luck",
+            "awoooo! i mean, uhh, i'm not a werewolf, what's that",
+        )
+    }
+
+    if (new Date().getMonth() === 11 && new Date().getDate() >= 20) { 
+        messagesList.push(
+            "i'm feeling pretty jolly today",
+            "the holidays are upon us",
+            "hang your ornaments",
+            "it's beginning to lOok- ugh, sorry, i can't sing",
+            "have some pts as a gift this year. don't spend it all in one place",
+            "this ping is JOLLY",
+            "and we ping in merryment",
+            "since i also have to process snow, pings might be slower",
+            "careful not to get snow in your eyes while pinging",
+        )
+    }
+
+    // bonus message for LESBIANS
+    if (context.user && (context.user.id === "804762486946660353" || context.user.id === "1001871665745100870")) {
+        messagesList.push(
+            "stella and natalie kissing",
+            "you should kiss your girlfriend, NOW",
+            "you're LESBIAN and it's CUTE",
+            ":patthestella: :patthenatalie:"
+        )
+    }
+
     // only if player was clicking (can't appear with /ping, only on button press)
     if (context.score) {
         if (Math.random() * 100 <= 7) messagesList = [
