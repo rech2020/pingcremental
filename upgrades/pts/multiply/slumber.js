@@ -17,18 +17,23 @@ module.exports = {
         return `x${(1+level*0.1).toFixed(1)}, every ${21-level}m, up to ${Math.round((2*24*60)/(21-level))} pings`;
     },
     getEffect(level, context) {
-        if (context.slumberClicks > 0) {
+        let clicks = context.slumberClicks;
+        if (Date.now() - context.lastPing >= 1000 * 60 * (21 - level)) {
+            clicks += Math.floor((Date.now() - context.lastPing) / (1000 * 60 * (21 - level)));
+            clicks = Math.min(context.slumberClicks, Math.round((2 * 24 * 60) / (21 - level))); // max of 2 days
+            clicks = Math.max(context.slumberClicks, 0); // no negative
+        }
+
+        if (clicks > 0) {
+            clicks--;
             return {
                 multiply: 1 + (level * 0.1),
-                special: { "slumber": -1, "canGainSlumber": true },
-                message: `(${context.slumberClicks} left)`,
+                special: { "slumber": clicks - context.slumberClicks },
+                message: `(${clicks + 1} left)`,
             }
         }
-        else {
-            return {
-                special: { "canGainSlumber": true },
-            }
-        }
+        
+        return {}
     },
     isBuyable(context) {
         return context.upgrades.multiplier && context.upgrades.multiplier >= 10;
