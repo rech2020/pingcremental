@@ -3,7 +3,7 @@ const { getEmoji } = require('../../../helpers/emojis.js');
 
 module.exports = {
     getPrice(currentLevel) {
-        return currentLevel === 0 ? 1266 : null;
+        return currentLevel === 0 ? 266 : null;
     },
     getDetails() {
         return {
