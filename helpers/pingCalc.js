@@ -247,7 +247,7 @@ async function ping(interaction, isSuper = false, overrides = {}) {
     context.score = score; // update context for later effects
     
     let bpMax = ((playerProfile.upgrades.limit || 0) + 1) * 10000;
-    bpMax += (playerProfile.prestigeUpgrades.storage || 0) * 2500;
+    bpMax += (playerProfile.prestigeUpgrades.storage || 0) * 0.2 * bpMax;
 
     // move all the spare stuff into currentEffects so it's nice and organized
     for (const x of ['spawnedSuper','rare','blueCombo']) {

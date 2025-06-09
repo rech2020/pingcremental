@@ -7,14 +7,14 @@ module.exports = {
     },
     getDetails() {
         return {
-            description: "gain __+2,500__ max bp",
+            description: "increase your max bp by __x1.2__",
             name: "Stellar Strength",
             emoji: getEmoji('ponder_storage', "🪐"),
             flavor: "carry the weight of the stars.",
         }
     },
     getEffectString(level) {
-        return `+${(level*2.5).toFixed(1)}K`
+        return `x${((level * 0.2) + 1).toFixed(2)}`;
     },
     getEffect(level, context) {
         return {}
