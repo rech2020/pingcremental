@@ -20,8 +20,8 @@ module.exports = {
         let clicks = context.slumberClicks;
         if (Date.now() - context.lastPing >= 1000 * 60 * (21 - level)) {
             clicks += Math.floor((Date.now() - context.lastPing) / (1000 * 60 * (21 - level)));
-            clicks = Math.min(context.slumberClicks, Math.round((2 * 24 * 60) / (21 - level))); // max of 2 days
-            clicks = Math.max(context.slumberClicks, 0); // no negative
+            clicks = Math.min(clicks, Math.round((2 * 24 * 60) / (21 - level))); // max of 2 days
+            clicks = Math.max(clicks, 0); // no negative (should be impossible)
         }
 
         if (clicks > 0) {
