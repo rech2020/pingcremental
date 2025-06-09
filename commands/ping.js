@@ -121,7 +121,7 @@ async function pingResponse(interaction, isSuper = false) {
         playerProfile.bluePings += 1;
         const superPing = new ButtonBuilder()
             .setCustomId('ping:super')
-            .setLabel(`blue ping!${isSuper ? ` x${currentEffects.blueCombo}` : ''}`)
+            .setLabel(`blue ping!${isSuper ? ` x${currentEffects.blueCombo + 1}` : ''}`)
             .setStyle(ButtonStyle.Primary);
         rowComponents.push(superPing);
     }
@@ -139,6 +139,7 @@ async function pingResponse(interaction, isSuper = false) {
     playerProfile.totalClicks += 1;
     if (playerProfile.clicks > playerProfile.totalClicks) playerProfile.totalClicks = playerProfile.clicks; // make sure total clicks is always higher than clicks
     if (currentEffects.rare) playerProfile.luckyPings += 1;
+    if (currentEffects.blueCombo > playerProfile.highestBlueStreak) playerProfile.highestBlueStreak = currentEffects.blueCombo;
     if (!isSuper) {
         let missed = false;
         for (const messageButton of interaction.message.components[0].components) { // check every button in the first row
