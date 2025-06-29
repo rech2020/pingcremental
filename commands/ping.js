@@ -1,10 +1,23 @@
-const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, InteractionContextType, MessageFlags } = require('discord.js');
+const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, InteractionContextType, MessageFlags, EmbedBuilder } = require('discord.js');
 const pingMessages = require('./../helpers/pingMessage.js')
 const { ownerId } = require('./../config.json');
 const formatNumber = require('./../helpers/formatNumber.js')
 const ping = require('./../helpers/pingCalc.js');
 const awardBadge = require('../helpers/awardBadge.js');
 const database = require('../helpers/database.js');
+
+let recentPingCache = {};
+let shutoutList = {};
+
+// don't leak memory! isn't that smart
+setInterval(() => {
+    const tenMinutesAgo = Date.now() - (10 * 60 * 1000);
+    for (const [userId, lastPingTime] of Object.entries(recentPingCache)) {
+        if (lastPingTime < tenMinutesAgo) {
+            delete recentPingCache[userId];
+        }
+    }
+}, 10 * 60 * 1000);
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -39,7 +52,20 @@ module.exports = {
         }),
         "unknown": (async interaction => {
             await interaction.reply({ content: "unknown ping occurs when the bot just restarted. either something has gone horribly wrong, or something was changed! maybe some new stuff was added, maybe a bug was fixed. you can check the [github](<https://github.com/MonkeysWithPie/pingcremental/>) if you're curious. if you wait a few seconds, the ping will come back to normal.", flags: MessageFlags.Ephemeral })
-        })
+        }),
+        "alive": (async interaction => {
+            if (Date.now() > shutoutList[interaction.user.id]) {
+                return await interaction.update({
+                    content: "bad news... you were too slow. check the ping message for more details.",
+                    components: [],
+                    embeds: [],
+                });
+            }
+            delete shutoutList[interaction.user.id]; 
+            recentPingCache[interaction.user.id] = 0;
+
+            await interaction.update({ content: "thanks for checking in!", components: [], embeds: [] });
+        }),
     }
 };
 
@@ -63,6 +89,35 @@ async function pingResponse(interaction, isSuper = false) {
         })
     }
 
+    if (shutoutList[interaction.user.id] && Date.now() > shutoutList[interaction.user.id]) {
+        const allowTime = shutoutList[interaction.user.id] + 1000 * 60 * 60 * 2; // 2h block time
+        if (allowTime < Date.now()) { // blockout is over
+            delete shutoutList[interaction.user.id];
+            recentPingCache[interaction.user.id] = 0;
+        } else {
+            return await interaction.update({
+                components: [new ActionRowBuilder().addComponents(
+                    new ButtonBuilder()
+                        .setCustomId('ping:again')
+                        .setLabel('again...?')
+                        .setStyle(ButtonStyle.Secondary)
+                )],
+                embeds: [new EmbedBuilder()
+                    .setColor("#ff0000")
+                    .setTitle('autoclicking detected...')
+                    .setDescription(`
+sorry, but looks like you were autoclicking, which is **strictly disallowed**. 
+if this was a mistake, it's best to wait it out, but if you really want to, contact the developer (@monkeyswithpie).
+otherwise, use this cooldown to think about what you've done. autoclicking really defeats the point of the game, and i really thought better of you... 
+
+you can ping again in **<t:${Math.floor(allowTime/1000)}:R>**.`
+                    )
+                ],
+                content: ""
+            })   
+        }
+    }
+
     let againId = 'ping:again';
     const again = new ButtonBuilder()
         .setCustomId(againId)
@@ -77,7 +132,8 @@ async function pingResponse(interaction, isSuper = false) {
             .setStyle(ButtonStyle.Secondary));
         return await interaction.update({ // return early 
             content: `${pingMessages(interaction.client.ws.ping, { user: interaction.user })}`,
-            components: [row]
+            components: [row],
+            embeds: [],
         })
     }
 
@@ -169,7 +225,8 @@ async function pingResponse(interaction, isSuper = false) {
             content:
                 `${pingMessage}
 you have a lot of pts... why don't you go spend them over in </upgrade:1360377407109861648>?`, // TODO: change to dynamically use ID
-            components: [disabledRow]
+            components: [disabledRow],
+            embeds: [],
         })
     }
 
@@ -210,7 +267,8 @@ you have a lot of pts... why don't you go spend them over in </upgrade:136037740
             content:
                 `${pingMessage}
 \`${formatNumber(playerProfile.score, true, 4)} pts\` (**\`+${formatNumber(score, true, 3)}\`**)\n-# ${displayDisplay}`,
-            components: [row]
+            components: [row],
+            embeds: [],
         });
     } catch (error) {
         // automod error, since it doesn't like some messages
@@ -219,11 +277,62 @@ you have a lot of pts... why don't you go spend them over in </upgrade:136037740
                 content:
                     `this ping message is non-offensive, and contains nothing that will anger AutoMod! (${ping}ms)
 \`${formatNumber(playerProfile.score, true, 4)} pts\` (**\`+${formatNumber(score, true, 3)}\`**)\n-# ${displayDisplay}`,
-                components: [row]
+                components: [row],
+                embeds: [],
             });
         } else {
             throw error; // rethrow if not automod 
         }
+    }
+
+    // autoclicker check
+    const last = playerProfile.lastPing || 0;
+    if (last > 0 && Date.now() - last < 2500) { // pinged recently
+        recentPingCache[interaction.user.id] = (recentPingCache[interaction.user.id] || 0) + 1;
+        const recentPings = recentPingCache[interaction.user.id];
+
+        if (recentPings >= 65 && (Math.random() < recentPings/1000) && !shutoutList[interaction.user.id]) {
+            shutoutList[interaction.user.id] = Date.now() + 1000 * 60 * 2; // disallow pings in 2 mins
+
+            const userAliveEmbed = new EmbedBuilder()
+                .setColor("#ff0000")
+                .setTitle('you still there?')
+                .setDescription(
+`just making sure you're still paying attention! 
+you have until **<t:${Math.floor((shutoutList[interaction.user.id] / 1000))}:R>** to respond to this message by clicking the button below.
+
+-# autoclicking is not allowed. this is a game about clicking, after all! 
+-# don't worry if you've come across this normally, there's no punishment unless you don't respond!`)
+
+            const row = new ActionRowBuilder()
+            const leftPad = Math.floor((Math.random() * 4) + 1); // random left padding
+            for (let i = 0; i < leftPad; i++) {
+                row.addComponents(new ButtonBuilder()
+                    .setCustomId(`ping:align${i}`)
+                    .setLabel('-->')
+                    .setStyle(ButtonStyle.Secondary)
+                    .setDisabled(true));
+            }
+            row.addComponents(new ButtonBuilder()
+                .setCustomId('ping:alive')
+                .setLabel('yep!')
+                .setStyle(ButtonStyle.Secondary));
+            for (let i = leftPad + 1; i < 5; i++) {
+                row.addComponents(new ButtonBuilder()
+                    .setCustomId(`ping:align${i}`)
+                    .setLabel('<--')
+                    .setStyle(ButtonStyle.Secondary)
+                    .setDisabled(true));
+            }
+
+            await interaction.followUp({
+                embeds: [userAliveEmbed],
+                components: [row],
+                flags: MessageFlags.Ephemeral
+            })
+        }
+    } else {
+        recentPingCache[interaction.user.id] = 0;
     }
 
     if (currentEffects.rare) {
