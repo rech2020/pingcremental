@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, InteractionContextType, MessageFlags, flatten } = require('discord.js');
+const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, InteractionContextType, MessageFlags, flatten, ModalBuilder, TextInputAssertions, TextInputBuilder, TextInputStyle } = require('discord.js');
 const { upgrades } = require('./../helpers/upgrades.js')
 const database = require('./../helpers/database.js');
 const { UpgradeTypes } = require('./../helpers/upgradeEnums.js');
@@ -73,6 +73,21 @@ module.exports = {
             }
 
             await interaction.update(await getEditMessage(interaction, category, buySetting));
+        }),
+        custommb: (async interaction => {
+            const modal = new ModalBuilder()
+                .setCustomId('upgrade:custommb')
+                .setTitle('custom multi-buy')
+                .addComponents(
+                    new ActionRowBuilder().addComponents(
+                        new TextInputBuilder()
+                            .setCustomId('value')
+                            .setLabel('upgrade amount')
+                            .setStyle(TextInputStyle.Short)
+                            .setPlaceholder('enter a number or "MAX"...')
+                    )
+                );
+            await interaction.showModal(modal);
         })
     },
     dropdowns: {
@@ -167,6 +182,21 @@ module.exports = {
                 })
             }
             
+        })
+    },
+    modals: {
+        custommb: (async interaction => {
+            const newBuySetting = interaction.fields.getTextInputValue('value');
+            if (newBuySetting !== 'MAX' && isNaN(parseInt(newBuySetting))) {
+                return await interaction.reply({ content: 'invalid multi-buy amount! must be a number or "MAX"', flags: MessageFlags.Ephemeral });
+            }
+            if (parseInt(newBuySetting) >= 1e6) {
+                return await interaction.reply({ content: 'that\'s a bit too much for me to do... try something lower than a million?', flags: MessageFlags.Ephemeral });
+            }
+
+            const catButtonRow = interaction.message.components[0];
+            const category = catButtonRow.components.find(button => button.disabled === true).customId.split('-')[1];
+            return await interaction.update(await getEditMessage(interaction, category, newBuySetting));
         })
     }
 }
@@ -266,6 +296,12 @@ async function getEditMessage(interaction, category, buySetting) {
             .setDisabled(multiBuy === buySetting)
         multiBuyButtons.push(button)
     }
+    multiBuyButtons.push(
+        new ButtonBuilder()
+            .setCustomId('upgrade:custommb')
+            .setLabel('custom...')
+            .setStyle(ButtonStyle.Secondary)
+    )
     const multiBuyRow = new ActionRowBuilder()
         .addComponents(multiBuyButtons)
 
