@@ -115,24 +115,16 @@ async function ping(interaction, isSuper = false, overrides = {}) {
         } else if (pingFormat === "compact") {
             displays.mult.push(`${getEmoji('upgrade_blue')}`)
         }
-    }
-    if (Math.random() * 1000 < (currentEffects.blue * 10) && currentEffects.specials.blueping) {
-        context.spawnedSuper = true;
-        
-        let combo = false;
-        if (isSuper) {
-            combo = 1;
-            for (const messageButton of interaction.message.components[0].components) { // check every button in the first row
-                if (messageButton.data.custom_id === 'ping:super') {
-                    combo = (parseInt(messageButton.data.label.split('x')[1]) || 1) + 1; // get the current combo
-                }
+
+        for (const messageButton of interaction.message.components[0].components) { // check every button in the first row
+            if (messageButton.data.custom_id === 'ping:super') {
+                context.blueCombo = (parseInt(messageButton.data.label.split('x')[1]) || 1); // get the current combo
             }
         }
+    }
 
-        if (combo && combo > playerProfile.highestBlueStreak) {
-            playerProfile.highestBlueStreak = combo;
-        }
-        context.blueCombo = combo;
+    if (Math.random() * 1000 < (currentEffects.blue * 10) && currentEffects.specials.blueping) {
+        context.spawnedSuper = true;
     }
     if ((Math.random() * 1000 < 1 * currentEffects.RNGmult)) {
         context.rare = true;
