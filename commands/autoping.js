@@ -9,30 +9,12 @@ module.exports = {
         .setDescription("ping a ton for you, automatically"),
     
     async execute(interaction) {
-        const [player, _created] = await database.Player.findOrCreate({ where: { userId: interaction.user.id } })
-
-        const embed = new EmbedBuilder()
-            .setTitle("autoping!")
-            .setDescription(`
-autoping pings for you automatically and quickly! all you need is some APT to run it. some upgrades will allow you to find APT while pinging.
-autoping will always press the simulated **left-most** button.
-
-you currently have **${formatNumber(player.apt)} APT**.`)
-            .setColor("#46b019")
-        
-        const button = new ButtonBuilder()
-            .setCustomId("autoping:run")
-            .setLabel("autoping")
-            .setDisabled(player.apt < 1)
-            .setStyle(player.apt < 1 ? ButtonStyle.Secondary : ButtonStyle.Success);
-        
-
-        await interaction.reply({
-            embeds: [embed],
-            components: [new ActionRowBuilder().addComponents(button)],
-        });
+        await interaction.reply(await getAutopingEmbed(interaction));
     },
     buttons: {
+        refresh: async (interaction) => {
+            await interaction.update(await getAutopingEmbed(interaction));
+        },
         run: async (interaction) => {
             const player = await database.Player.findByPk(interaction.user.id);
             if (player.apt < 1) {
@@ -105,6 +87,7 @@ you currently have **${formatNumber(player.apt)} APT**.`)
                 score: 0,
                 highestScore: 0,
                 bp: 0,
+                apt: 0,
 
                 rares: 0,
                 blues: 0,
@@ -129,6 +112,7 @@ you currently have **${formatNumber(player.apt)} APT**.`)
                 pingDataTotal.score += score;
                 pingDataTotal.highestScore = Math.max(pingDataTotal.highestScore, score);
                 pingDataTotal.bp += currentEffects.bp || 0;
+                pingDataTotal.apt += currentEffects.apt || 0;
 
                 if (currentEffects.spawnedSuper && currentEffects.specials.budge) {
                     currentChain++;
@@ -144,23 +128,6 @@ you currently have **${formatNumber(player.apt)} APT**.`)
                     finalEffects = currentEffects;
                 }
             }
-            
-            let finalDescription =
-`**${formatNumber(pings)}** pings completed, which...
-
-__gained **${formatNumber(pingDataTotal.score)}** pts__
-got **${formatNumber(pingDataTotal.highestScore)}** pts in a single ping`
-
-            if (pingDataTotal.bp > 0) finalDescription += `\ngained **${formatNumber(pingDataTotal.bp)}** BP`
-            
-            if (pingDataTotal.blues > 0 || pingDataTotal.bluesMissed > 0) {
-                finalDescription += `
-clicked **${pingDataTotal.blues}** blue pings
-found a **${pingDataTotal.highestBlueCombo}** blue ping chain
-missed **${pingDataTotal.bluesMissed}** blue pings`
-            }
-
-            if (pingDataTotal.rares > 0) finalDescription += `\nfound **${pingDataTotal.rares}** rare pings`
 
             // wow that's a lot of stats
             player.apt -= pings;
@@ -181,6 +148,31 @@ missed **${pingDataTotal.bluesMissed}** blue pings`
 
             await player.save();
 
+            
+            let finalDescription =
+`**${formatNumber(pings)}** pings completed, which...
+
+__gained **${formatNumber(pingDataTotal.score)}** pts__
+got **${formatNumber(pingDataTotal.highestScore)}** pts in a single ping`
+
+            if (pingDataTotal.bp > 0) { 
+                if (player.bp >= finalEffects.bpMax) {
+                    finalDescription += `\ngained **${formatNumber(pingDataTotal.bp)}** BP (hit MAX of ${formatNumber(finalEffects.bpMax)})`;
+                } else {
+                    finalDescription += `\ngained **${formatNumber(pingDataTotal.bp)}** BP`
+                }
+            }
+            if (pingDataTotal.apt > 0) finalDescription += `\nwould've found **${formatNumber(pingDataTotal.apt)}** APT`
+            
+            if (pingDataTotal.blues > 0 || pingDataTotal.bluesMissed > 0) {
+                finalDescription += `
+clicked **${pingDataTotal.blues}** blue pings
+found a **${pingDataTotal.highestBlueCombo}** blue ping chain
+missed **${pingDataTotal.bluesMissed}** blue pings`
+            }
+
+            if (pingDataTotal.rares > 0) finalDescription += `\nfound **${pingDataTotal.rares}** rare pings`
+
             const finalEmbed = new EmbedBuilder()
                 .setTitle("autoping finished!")
                 .setDescription(finalDescription)
@@ -197,9 +189,43 @@ missed **${pingDataTotal.bluesMissed}** blue pings`
                         .setCustomId("autoping:run")
                         .setLabel(player.apt < 1 ? "out of APT..." : "autoping again!")
                         .setStyle(player.apt < 1 ? ButtonStyle.Secondary : ButtonStyle.Success)
-                        .setDisabled(player.apt < 1)
+                        .setDisabled(player.apt < 1),
+                    // only show refresh with no APT
+                    player.apt > 0 ? null : new ButtonBuilder()
+                        .setCustomId("autoping:refresh")
+                        .setLabel("refresh")
+                        .setStyle(ButtonStyle.Secondary),
             )],
             });
         }
     }
+}
+
+async function getAutopingEmbed(interaction) {
+    const [player, _created] = await database.Player.findOrCreate({ where: { userId: interaction.user.id } })
+
+    const embed = new EmbedBuilder()
+        .setTitle("autoping!")
+        .setDescription(`
+autoping pings for you automatically and quickly! all you need is some APT to run it. some upgrades will allow you to find APT while pinging.
+autoping will always press the simulated **left-most** button.
+ATP **cannot** be gained through autopinging, so you'll need to find it on your own.
+
+you currently have **${formatNumber(player.apt)} APT**.`)
+        .setColor("#46b019")
+
+    const button = new ButtonBuilder()
+        .setCustomId("autoping:run")
+        .setLabel("autoping")
+        .setDisabled(player.apt < 1)
+        .setStyle(player.apt < 1 ? ButtonStyle.Secondary : ButtonStyle.Success);
+    const refreshButton = new ButtonBuilder()
+        .setCustomId("autoping:refresh")
+        .setLabel("refresh")
+        .setStyle(ButtonStyle.Secondary);
+
+    return {
+        embeds: [embed],
+        components: [new ActionRowBuilder().addComponents(button, refreshButton)],
+    };
 }
