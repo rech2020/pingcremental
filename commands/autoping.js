@@ -137,7 +137,6 @@ module.exports = {
             player.clicks += pings;
             player.totalClicks += pings;
             player.bp = Math.min(player.bp + pingDataTotal.bp, finalEffects.bpMax);
-            player.clicks += pings;
             player.rares += pingDataTotal.rares;
             player.bluePings += pingDataTotal.blues;
             player.bluePingsMissed += pingDataTotal.bluesMissed;
@@ -209,7 +208,7 @@ async function getAutopingEmbed(interaction) {
         .setDescription(`
 autoping pings for you automatically and quickly! all you need is some APT to run it. some upgrades will allow you to find APT while pinging.
 autoping will always press the simulated **left-most** button.
-ATP **cannot** be gained through autopinging, so you'll need to find it on your own.
+APT **cannot** be gained through autopinging, so you'll need to find it on your own.
 
 you currently have **${formatNumber(player.apt)} APT**.`)
         .setColor("#46b019")
