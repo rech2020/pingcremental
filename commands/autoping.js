@@ -24,7 +24,7 @@ you currently have **${formatNumber(player.apt)} APT**.`)
             .setCustomId("autoping:run")
             .setLabel("autoping")
             .setDisabled(player.apt < 1)
-            .setStyle(ButtonStyle.Success);
+            .setStyle(player.apt < 1 ? ButtonStyle.Secondary : ButtonStyle.Success);
         
 
         await interaction.reply({
@@ -98,7 +98,8 @@ you currently have **${formatNumber(player.apt)} APT**.`)
             })
 
             let updateEmbedEvery = Math.ceil(pings / (5 + (Math.random() * Math.log2(pings))));
-            if (updateEmbedEvery === 1) updateEmbedEvery = pings;
+            if (updateEmbedEvery <= 1) updateEmbedEvery = pings;
+            if (updateEmbedEvery > 100) updateEmbedEvery = 100;
 
             let pingDataTotal = {
                 score: 0,
@@ -113,11 +114,13 @@ you currently have **${formatNumber(player.apt)} APT**.`)
             let nextPingBlue = false;
             let currentChain = 0;
             let finalEffects;
+            let nextUpdate = updateEmbedEvery;
 
             for (let i = 0; i < pings; i++) {
-                if (i % updateEmbedEvery === 0) {
+                if (i === nextUpdate) {
                     embed.setDescription(`autoping is running!\n**${formatNumber(i)}**/${formatNumber(pings)}...`);
                     await interaction.editReply({ embeds: [embed] });
+                    nextUpdate += updateEmbedEvery + Math.ceil(Math.random() - 0.5 * pings / 1000);
                 }
 
                 const {score, currentEffects} = await ping(interaction, nextPingBlue);
@@ -129,12 +132,13 @@ you currently have **${formatNumber(player.apt)} APT**.`)
 
                 if (currentEffects.spawnedSuper && currentEffects.specials.budge) {
                     currentChain++;
-                    pingDataTotal.rares++;
+                    pingDataTotal.blues++;
                     pingDataTotal.highestBlueCombo = Math.max(pingDataTotal.highestBlueCombo, currentChain);
                 } else {
                     currentChain = 0;
                 }
                 pingDataTotal.bluesMissed += currentEffects.spawnedSuper && !currentEffects.specials.budge ? 1 : 0;
+                pingDataTotal.rares += currentEffects.specials.rare ? 1 : 0;
 
                 if (i === pings - 1) {
                     finalEffects = currentEffects;
@@ -182,9 +186,19 @@ missed **${pingDataTotal.bluesMissed}** blue pings`
                 .setDescription(finalDescription)
                 .setColor("#18c4bf");
             
+            if (player.apt > 0) {
+                finalEmbed.setFooter({ text: `${formatNumber(player.apt)} APT remaining` });
+            }
+            
             await interaction.editReply({
                 embeds: [finalEmbed],
-                components: [],
+                components: [new ActionRowBuilder().addComponents(
+                    new ButtonBuilder()
+                        .setCustomId("autoping:run")
+                        .setLabel(player.apt < 1 ? "out of APT..." : "autoping again!")
+                        .setStyle(player.apt < 1 ? ButtonStyle.Secondary : ButtonStyle.Success)
+                        .setDisabled(player.apt < 1)
+            )],
             });
         }
     }
