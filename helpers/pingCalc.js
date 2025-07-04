@@ -61,6 +61,7 @@ async function ping(interaction, isSuper = false, overrides = {}) {
         blueStrength: 1,
         specials: {},
         bp: 0,
+        apt: 0,
         RNGmult: overrides.forceNoRNG ? 0 : 1,
         // add more if needed
         
@@ -73,6 +74,7 @@ async function ping(interaction, isSuper = false, overrides = {}) {
         exponents: [],
         extra: [],
         bp: [],
+        apt: [],
     }
     const pingFormat = playerProfile.settings.pingFormat || "expanded";
     if (pingFormat === "expanded") {
@@ -173,6 +175,11 @@ async function ping(interaction, isSuper = false, overrides = {}) {
             effectString += ` \`+${effect.bp} bp\``
         }
 
+        if (effect.apt) {
+            currentEffects.apt += effect.apt;
+            effectString += ` \`+${effect.apt} APT\``
+        }
+
         if (pingFormat === "compact" && effectString !== upgradeClass.getDetails().emoji) {
             effectString = `${upgradeClass.getDetails().emoji}~`;
         }
@@ -198,6 +205,8 @@ async function ping(interaction, isSuper = false, overrides = {}) {
                 displays.exponents.push(effectString);
             } else if (effect.bp) {
                 displays.bp.push(effectString);
+            } else if (effect.apt) {
+                displays.apt.push(effectString);
             } else if (effect.message) {
                 displays.extra.push(effectString);
             }

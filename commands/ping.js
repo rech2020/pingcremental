@@ -141,6 +141,7 @@ async function pingResponse(interaction, isSuper = false) {
 
     // etc
     playerProfile.bp = Math.min(currentEffects.bp + playerProfile.bp, currentEffects.bpMax);
+    playerProfile.apt += currentEffects.apt || 0;
     playerProfile.lastPing = Date.now();
 
 
@@ -200,9 +201,22 @@ you have a lot of pts... why don't you go spend them over in </upgrade:136037740
     }
     displayDisplay = displayDisplay.substring(2); // remove first comma and space
     
+    if (currentEffects.apt) {
+        displayDisplay += `\n-# \`${formatNumber(playerProfile.apt)} APT\` `
+        if (pingFormat === "expanded") {
+            displayDisplay += displays.apt.join(', ');
+        } else if (pingFormat === "compact") {
+            displayDisplay += displays.apt.join(' ');
+        }
+    }
+
     if (currentEffects.bp) {
         displayDisplay += `\n-# \`${formatNumber(Math.ceil(playerProfile.bp))}/${formatNumber(currentEffects.bpMax)} bp\`${playerProfile.bp >= currentEffects.bpMax ? " **(MAX)**" : ""} `
-        displayDisplay += displays.bp.join(', ');
+        if (pingFormat === "expanded") {
+            displayDisplay += displays.bp.join(', ');
+        } else if (pingFormat === "compact") {
+            displayDisplay += displays.bp.join(' ');
+        }
     }
 
     try {
