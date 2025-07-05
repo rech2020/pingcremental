@@ -13,7 +13,14 @@ const PipUpgradeTypes = {
     PRESTIGE: 'Repeat',
 }
 
+const PingCalculationStates = {
+    RNG_AND_SPECIAL: 0,
+    SCORING: 1,
+    POST_SCORING: 2,
+}
+
 Object.freeze(UpgradeTypes);
 Object.freeze(PipUpgradeTypes);
+Object.freeze(PingCalculationStates);
 
-module.exports = { UpgradeTypes, PipUpgradeTypes };
+module.exports = { UpgradeTypes, PipUpgradeTypes, PingCalculationStates };

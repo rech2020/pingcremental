@@ -3,6 +3,7 @@ const { rawUpgrades } = require('./upgrades.js')
 const formatNumber = require('./formatNumber.js')
 const { getEmoji } = require('./emojis.js');
 const getLatestVersion = require('./versions.js');
+const { PingCalculationStates } = require('./commonEnums.js');
 const MAX_PING_OFFSET = 5;
 
 async function ping(interaction, isSuper = false, overrides = {}) {
@@ -40,6 +41,7 @@ async function ping(interaction, isSuper = false, overrides = {}) {
         specials: {},
         RNGmult: 1,
         blueCombo: 0,
+        state: PingCalculationStates.RNG_AND_SPECIAL
     }
 
     let iterateUpgrades = {}
@@ -143,6 +145,7 @@ async function ping(interaction, isSuper = false, overrides = {}) {
     /* PTS CALCULATION */
 
     
+    context.state = PingCalculationStates.SCORING;
     for (const [upgradeId, level] of Object.entries(iterateUpgrades)) {
         const upgradeClass = rawUpgrades[upgradeId];
         effect = upgradeClass.getEffect(level,context);
@@ -175,11 +178,6 @@ async function ping(interaction, isSuper = false, overrides = {}) {
             }
         }
 
-        if (effect.bp) { 
-            currentEffects.bp += effect.bp;
-            effectString += ` \`+${effect.bp} bp\``
-        }
-
         if (pingFormat === "compact" && effectString !== upgradeClass.getDetails().emoji) {
             effectString = `${upgradeClass.getDetails().emoji}~`;
         }
@@ -203,21 +201,11 @@ async function ping(interaction, isSuper = false, overrides = {}) {
                 displays.mult.push(effectString);
             } else if (effect.exponent) {
                 displays.exponents.push(effectString);
-            } else if (effect.bp) {
-                displays.bp.push(effectString);
             } else if (effect.message) {
                 displays.extra.push(effectString);
             }
         }
     }
-
-    if (pingFormat !== "expanded") {
-        displays.add.push(`\`+${formatNumber(score)}\``);
-        if (currentEffects.bp) {
-            displays.bp.push(`\`+${formatNumber(currentEffects.bp)} bp\``);
-        }
-    }
-
 
     score = Math.max(score, 1); // prevent negative scores
 
@@ -245,6 +233,32 @@ async function ping(interaction, isSuper = false, overrides = {}) {
     score = Math.round(score);
     if (score === Infinity) score = 0; // prevent infinite score (and fuck you; you get nothing)
     context.score = score; // update context for later effects
+
+
+    /* POST-PTS CALCULATION */
+    // this is done for things that require pt values after most calculation is already done
+    
+
+    context.state = PingCalculationStates.POST_SCORING;
+    for (const [upgradeId, level] of Object.entries(iterateUpgrades)) {
+        const upgradeClass = rawUpgrades[upgradeId];
+        effect = upgradeClass.getEffect(level, context);
+
+        if (effect.bp) { 
+            currentEffects.bp += effect.bp;
+            effectString = `\`+${effect.bp} bp\``;
+            displays.bp.push(effectString);
+        }
+    }
+
+
+
+    if (pingFormat !== "expanded") {
+        displays.add.push(`\`+${formatNumber(score)}\``);
+        if (currentEffects.bp) {
+            displays.bp.push(`\`+${formatNumber(currentEffects.bp)} bp\``);
+        }
+    }
     
     let bpMax = ((playerProfile.upgrades.limit || 0) + 1) * 10000;
     bpMax += (playerProfile.prestigeUpgrades.storage || 0) * 0.2 * bpMax;
