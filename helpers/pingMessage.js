@@ -457,7 +457,7 @@ function get(ping, context) {
         "there is no deeper meaning, only milliseconds",
         "you want answers? all i’ve got is this ping",
         "just a ping. nothing behind it. nothing at all. probably.",
-        "this ping is right behind you, watch out"
+        "this ping is right behind you, watch out",
 
 
 
@@ -595,7 +595,7 @@ function get(ping, context) {
     }
 
     //new years
-    if (new Date.getMonth() === 0 && new Date.getDate() <= 5) {
+    if (new Date().getMonth() === 0 && new Date().getDate() <= 5) {
         messagesList.push(
             "new year, same ping",
             "resolution: reduce latency (no promises)",
