@@ -1,8 +1,13 @@
+const { AttachmentBuilder } = require('discord.js');
 const { ownerId } = require('./../config.json');
+const fs = require('fs');
 
 module.exports = async (error, client, rawError) => {
     console.log(`[ERROR] ${error}`, rawError)
-    await client.users.fetch(ownerId).then(user => {
-        user.send(`[ERROR] ${error}\n\`\`\`${rawError ? rawError.stack : "no raw error info"}\`\`\``)
-    })
+
+    fs.appendFileSync('errorLog.txt', `${rawError ? rawError.stack : ""}`);
+    const attachment = new AttachmentBuilder('errorLog.txt');
+    const user = await client.users.fetch(ownerId);
+    await user.send({ content: `[ERROR] ${error}${rawError ? "" : "no stack trace!"}`, files: [attachment] })
+    fs.rmSync('errorLog.txt');
 }
