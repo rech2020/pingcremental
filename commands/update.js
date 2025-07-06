@@ -76,7 +76,11 @@ module.exports = {
                 return;
             }
 
-            const choices = versions.map(v => v.verNum).filter(v => v.includes(focusedValue));
+            let choices = versions.map(v => v.verNum).filter(v => v.includes(focusedValue));
+            if (choices.length > 25) {
+                choices = choices.slice(0, 25);
+            }
+
             await interaction.respond(choices.map(choice => ({ name: choice, value: choice })));
         }
     },
