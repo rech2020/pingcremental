@@ -2,6 +2,7 @@ const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, Strin
 const { upgrades } = require('./../helpers/upgrades.js')
 const database = require('./../helpers/database.js');
 const { UpgradeTypes } = require('./../helpers/upgradeEnums.js');
+const awardBadge = require('./../helpers/awardBadge.js');
 const formatNumber = require('./../helpers/formatNumber.js');
 
 module.exports = {
@@ -158,13 +159,14 @@ module.exports = {
             playerData.upgrades[upgradeId] = playerUpgradeLevel + levels;
             playerData.changed('upgrades', true) // this is a hacky way to set the upgrades field, but it works
             await playerData.save();
+            let followupType = playerData.settings.upgradeFollowup;
 
             const msg = ['sweet!', 'nice!', 'sick!', 'cool!', 'neat!', 'nifty!', 'yippee!', 'awesome!'];
-
             let pickedMsg = msg[Math.floor(Math.random() * msg.length)];
-
             if (pickedMsg === 'awesome!' && Math.random() < 0.001) {
                 pickedMsg = 'awesome sauce 🐴';
+                followupType = 'regular'; // force regular followup since it's rare
+                await awardBadge(interaction.user.id, 'awesome sauce :horse:', interaction.client);
             }
 
             const button = new ButtonBuilder()
@@ -174,7 +176,7 @@ module.exports = {
 
             await interaction.update(await getEditMessage(interaction, upgradeClass.type(), buySetting));
 
-            if (playerData.settings.upgradeFollowup !== 'none') {
+            if (followupType !== 'none') {
                 return await interaction.followUp({
                     content: `upgraded **${upgradeClass.getDetails().name}** to level ${playerUpgradeLevel + levels}! you've \`${formatNumber(playerData.score, true, 4)} pts\` left.`,
                     components: [new ActionRowBuilder().addComponents(button)],
