@@ -344,7 +344,7 @@ async function getShowcaseDisplay(interaction) {
             value: `${badge.dbId}`,
             // emoji: getEmoji(badge.emoji),
         });
-        description += `${badgeDisplay(badge,true)} (${displayedBadges.includes(badge.dbId.toString()) ? 'displayed' : 'not displayed'})\n`;
+        description += `${badgeDisplay(badge,true)} ${displayedBadges.includes(badge.dbId.toString()) ? '🟢' : ''}\n`;
     }
 
     const row = new ActionRowBuilder().addComponents(dropdown);
