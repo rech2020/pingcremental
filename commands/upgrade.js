@@ -96,8 +96,10 @@ module.exports = {
             const upgradeId = interaction.values[0];
             if (upgradeId === 'none') return await interaction.reply({ content: 'you already got everything!', tags: MessageFlags.Ephemeral });
             const playerData = await database.Player.findByPk(`${interaction.user.id}`);
-            const buySetting = getBuySetting(interaction);
-            
+            let buySetting = getBuySetting(interaction);
+            let displaySetting = buySetting;
+            if (buySetting < 1 && buySetting !== 'MAX') buySetting = 1;
+
             const playerUpgradeLevel = playerData.upgrades[upgradeId] ?? 0;
             const upgradeClass = upgrades['pts'][upgradeId];
             let price = 1;
@@ -122,7 +124,7 @@ module.exports = {
                     .setLabel(msg[Math.floor(Math.random() * msg.length)]) // random sad message
                     .setStyle(ButtonStyle.Secondary)
 
-                await interaction.update(await getEditMessage(interaction, upgradeClass.type(), buySetting)); // fix dropdown remaining after failed upgrade
+                await interaction.update(await getEditMessage(interaction, upgradeClass.type(), displaySetting)); // fix dropdown remaining after failed upgrade
                 return await interaction.followUp({
                     content: `you dont have enough \`pts\` to afford that! (missing \`${formatNumber(price - playerData.score, true)} pts\`)`,
                     components: [new ActionRowBuilder().addComponents(button)],
@@ -131,7 +133,7 @@ module.exports = {
             }
 
             if (upgradeId === 'eternity') {
-                await interaction.update(await getEditMessage(interaction, upgradeClass.type(), buySetting)); 
+                await interaction.update(await getEditMessage(interaction, upgradeClass.type(), displaySetting)); 
                 if (playerData.bp < 10000) { return await interaction.followUp({ content: `*you shouldn't be here, yet.*`, flags: MessageFlags.Ephemeral }) }
                 const mult = upgrades['pip']['telepathy'].getEffect(playerData.prestigeUpgrades.telepathy).special.pip;
                 return await interaction.followUp({
@@ -174,7 +176,7 @@ module.exports = {
                 .setLabel(pickedMsg) // random happy message
                 .setStyle(ButtonStyle.Success)
 
-            await interaction.update(await getEditMessage(interaction, upgradeClass.type(), buySetting));
+            await interaction.update(await getEditMessage(interaction, upgradeClass.type(), displaySetting));
 
             if (followupType !== 'none') {
                 return await interaction.followUp({
@@ -188,16 +190,26 @@ module.exports = {
     },
     modals: {
         custommb: (async interaction => {
-            const newBuySetting = interaction.fields.getTextInputValue('value');
+            let newBuySetting = interaction.fields.getTextInputValue('value');
+
             if (newBuySetting !== 'MAX' && isNaN(parseInt(newBuySetting))) {
                 return await interaction.reply({ content: 'invalid multi-buy amount! must be a number or "MAX"', flags: MessageFlags.Ephemeral });
             }
             if (parseInt(newBuySetting) >= 1e6) {
                 return await interaction.reply({ content: 'that\'s a bit too much for me to do... try something lower than a million?', flags: MessageFlags.Ephemeral });
             }
+            if (newBuySetting.length > 10 && parseInt(newBuySetting) < 0) {
+                return await interaction.reply({ content: 'look, i respect the bit, but maybe a bit shorter of a number?', flags: MessageFlags.Ephemeral });
+            }
 
             const catButtonRow = interaction.message.components[0];
             const category = catButtonRow.components.find(button => button.disabled === true).customId.split('-')[1];
+
+            if (newBuySetting === 'MAX') {
+                newBuySetting = 'MAX';
+            } else {
+                newBuySetting = parseInt(newBuySetting);
+            }
             return await interaction.update(await getEditMessage(interaction, category, newBuySetting));
         })
     }
@@ -217,7 +229,7 @@ function getBuySetting(interaction) {
         }
     }
 
-    if ((!buySetting || isNaN(buySetting) || buySetting < 1) && buySetting !== 'MAX') {
+    if (isNaN(buySetting) && buySetting !== 'MAX') {
         buySetting = 1;
     }
 
@@ -306,6 +318,11 @@ async function getEditMessage(interaction, category, buySetting) {
     )
     const multiBuyRow = new ActionRowBuilder()
         .addComponents(multiBuyButtons)
+
+    // still display as <= 1 but act as 1
+    if (parseInt(buySetting) < 1 && buySetting !== 'MAX') {
+        buySetting = 1;
+    }
 
     for (const [upgradeId, upgrade] of Object.entries(upgrades['pts'])) {
         // go through each upgrade and check if should be displayed
