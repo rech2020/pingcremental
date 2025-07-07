@@ -105,7 +105,7 @@ module.exports = {
             let price = 1;
             let levels = 1;
 
-            const ephemeral = playerData.settings.upgradeFollowup === 'ephemeral' || playerData.settings.upgradeFollowup === 'none' ? MessageFlags.Ephemeral : null;
+            let ephemeral = playerData.settings.upgradeFollowup === 'ephemeral' || playerData.settings.upgradeFollowup === 'none' ? MessageFlags.Ephemeral : null;
 
             // skip multi-buy on eternity so it doesn't pointlessly loop millions of times
             if (upgradeId !== 'eternity') {
@@ -167,8 +167,11 @@ module.exports = {
             let pickedMsg = msg[Math.floor(Math.random() * msg.length)];
             if (pickedMsg === 'awesome!' && Math.random() < 0.001) {
                 pickedMsg = 'awesome sauce 🐴';
-                followupType = 'regular'; // force regular followup since it's rare
                 await awardBadge(interaction.user.id, 'awesome sauce :horse:', interaction.client);
+
+                // force regular followup since it's rare
+                followupType = 'regular';
+                ephemeral = null;
             }
 
             const button = new ButtonBuilder()
