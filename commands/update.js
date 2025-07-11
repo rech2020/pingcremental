@@ -1,8 +1,8 @@
 const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, InteractionContextType, MessageFlags, EmbedBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
 const database = require('./../helpers/database.js');
-const { ownerId } = require('./../config.json');
 const sequelize = require('sequelize');
 const getLatestVersion = require('./../helpers/versions.js');
+const ownerId = process.env.OWNER_ID;
 
 module.exports = {
     data: new SlashCommandBuilder()

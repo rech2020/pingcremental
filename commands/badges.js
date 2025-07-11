@@ -1,9 +1,9 @@
 const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, InteractionContextType, MessageFlags, EmbedBuilder, StringSelectMenuBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
 const database = require('./../helpers/database.js');
 const { getEmoji } = require('./../helpers/emojis.js')
-const { ownerId } = require('./../config.json');
 const { Op } = require('sequelize');
 const BADGES_PER_PAGE = 10;
+const ownerId = process.env.OWNER_ID;
 
 module.exports = {
     data: new SlashCommandBuilder()

@@ -1,5 +1,5 @@
 const { AttachmentBuilder } = require('discord.js');
-const { ownerId } = require('./../config.json');
+const ownerId = process.env.OWNER_ID
 const fs = require('fs');
 
 module.exports = async (error, client, rawError) => {

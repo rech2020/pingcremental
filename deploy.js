@@ -1,7 +1,13 @@
+require('dotenv').config();
 const { REST, Routes } = require('discord.js');
-const { clientId, token } = require('./config.json');
 const fs = require('node:fs');
 const path = require('node:path');
+
+const token = process.env.DISCORD_TOKEN;
+if (!token) throw new Error('variable in .env missing: DISCORD_TOKEN');
+
+const clientId = process.env.DISCORD_CLIENT_ID;
+if (!clientId) throw new Error('variable in .env missing: DISCORD_CLIENT_ID');
 
 const commands = [];
 // Grab all the command folders from the commands directory you created earlier
