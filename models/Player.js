@@ -142,6 +142,71 @@ module.exports = (sequelize) => {
 			defaultValue: 0,
 			allowNull: false,
 		},
+		totalPip: {
+			type: DataTypes.NUMBER,
+			defaultValue: 0,
+			allowNull: false,
+		},
+		eternities: {
+			type: DataTypes.NUMBER,
+			defaultValue: 0,
+			allowNull: false,
+		},
+		totalEternities: {
+			type: DataTypes.NUMBER,
+			defaultValue: 0,
+			allowNull: false,
+		},
+
+		// fabric data
+		tears: {
+			type: DataTypes.NUMBER,
+			defaultValue: 0,
+			allowNull: false,
+		},
+		totalTears: {
+			type: DataTypes.NUMBER,
+			defaultValue: 0,
+			allowNull: false,
+		},
+		thread: {
+			type: DataTypes.NUMBER,
+			defaultValue: 0,
+			allowNull: false,
+		},
+		totalThread: {
+			type: DataTypes.NUMBER,
+			defaultValue: 0,
+			allowNull: false,
+		},
+		ownedFabrics: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			defaultValue: '',
+			get() {
+				return this.getDataValue('ownedFabrics')
+					.split(',')
+					.filter(x => x !== '');
+			},
+			set(value) {
+				this.setDataValue('ownedFabrics', value.join(','));
+			}
+		},
+		cloakModificationsAllowed: {
+			type: DataTypes.INTEGER,
+			defaultValue: 1,
+			allowNull: false,
+		},
+		equippedFabrics: {
+			/* minor hack alert!
+			 * since sequelize doesn't support arrays directly, we could use something like 
+			 * above, but some parts of the code expect JSONs. all values stored
+			 * here should be truthy at least, but otherwise can be anything.
+			 */
+			type: DataTypes.JSON,
+			allowNull: false,
+			defaultValue: {},
+		},
 
 		// slumber upgrade
 		lastPing: {

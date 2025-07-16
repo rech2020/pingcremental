@@ -33,12 +33,15 @@ module.exports = {
 
             playerData.upgrades = {};
             playerData.score = 0;
-            // TODO: reset upgrade data bits (e.g. slumber clicks)
-            playerData.pip += Math.floor(playerData.bp * mult); // give pip for eternity
             playerData.bp = 0;
             playerData.clicks = 0;
             playerData.glimmerClicks = 0;
             playerData.slumberClicks = 0;
+
+            playerData.pip += Math.floor(playerData.bp * mult);
+            playerData.totalPip += playerData.pip;
+            playerData.eternities++;
+            playerData.totalEternities++;
 
             // memory effects
             if (playerData.prestigeUpgrades.memory) {
