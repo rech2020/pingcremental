@@ -81,7 +81,7 @@ module.exports = {
     dropdowns: {
         buy: (async interaction => {
             const upgradeId = interaction.values[0];
-            if (upgradeId === 'none') return await interaction.reply({ content: 'you already got everything!', tags: MessageFlags.Ephemeral });
+            if (upgradeId === 'none') return await interaction.reply({ content: 'you already got everything!', flags: MessageFlags.Ephemeral });
             const playerData = await database.Player.findByPk(`${interaction.user.id}`);
             const buySetting = getBuySetting(interaction);
             
