@@ -1,8 +1,9 @@
 const formatNumber = require("../helpers/formatNumber");
-const { rawUpgrades } = require("../helpers/upgrades");
-const { SlashCommandBuilder, EmbedBuilder, MessageFlags, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js");
+const { rawUpgrades, upgrades } = require("../helpers/upgrades");
+const { SlashCommandBuilder, EmbedBuilder, MessageFlags, ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } = require("discord.js");
 const database = require("../helpers/database");
-
+const { FabricUpgradeTypes } = require("../helpers/upgradeEnums.js");
+const { Rand } = require("rand-seed");
 
 const WEAVE_SECTION = {
     Tear: 'tear',
@@ -37,6 +38,8 @@ module.exports = {
             player.thread += getGainedThread();
             player.totalThread += getGainedThread();
             player.cloakModificationsAllowed = 1;
+            player.shopSeed = getNewSeed();
+            player.shopEmptySlots = [];
 
             playerData.upgrades = {};
             playerData.score = 0;
@@ -68,6 +71,65 @@ module.exports = {
             }
 
             // TODO: actually implement this
+        },
+        delete: async (interaction) => {
+            await interaction.update({ content: "(vwoop!)", components: [] });
+            await interaction.deleteReply(interaction.message);
+        }
+    },
+    dropdowns: {
+        buy: async (interaction) => {
+            const fabricName = interaction.values[0];
+            if (fabricName === "none") return await interaction.reply({ content: 'you already got everything!', flags: MessageFlags.Ephemeral });
+
+            if (!rawUpgrades[fabricName]) {
+                return await interaction.reply({
+                    content: `this fabric doesn't exist?`,
+                    flags: MessageFlags.Ephemeral
+                });
+            }
+
+            const fabricUpgrade = rawUpgrades[fabricName];
+            const player = await database.Player.findByPk(interaction.user.id);
+
+            if (player.thread < fabricUpgrade.getPrice()) {
+                const msg = ['dang it!', 'oh noes!', 'oopsies!', 'shoot!']
+
+                return await interaction.reply({
+                    content: `you don't have enough thread for this fabric!`,
+                    components: [new ActionRowBuilder().addComponents(
+                        new ButtonBuilder()
+                            .setCustomId(`weave:delete`)
+                            .setLabel(msg[Math.floor(Math.random() * msg.length)])
+                            .setStyle(ButtonStyle.Secondary)
+                    )],
+                });
+            }
+
+            // because sequelize doesn't like modifying lists directly
+            const currentFabrics = player.ownedFabrics || [];
+            currentFabrics.push(fabricName);
+            const currentEmpty = player.shopEmptySlots || [];
+            currentEmpty.push(getShopStock(player.shopSeed).indexOf(fabricName));
+
+            player.thread -= fabricUpgrade.getPrice();
+            player.ownedFabrics = currentFabrics;
+            player.shopEmptySlots = currentEmpty;
+
+            await player.save();
+
+            await interaction.update(await getEmbed(interaction, WEAVE_SECTION.Shop));
+
+            const msg = ['hell yeah!', 'woo!', 'okay!']
+            await interaction.followUp({
+                content: `you got **${fabricUpgrade.getDetails().name}** in exchange for **${formatNumber(fabricUpgrade.getPrice())}** thread!`,
+                components: [new ActionRowBuilder().addComponents(
+                    new ButtonBuilder()
+                        .setCustomId(`weave:delete`)
+                        .setLabel(msg[Math.floor(Math.random() * msg.length)])
+                        .setStyle(ButtonStyle.Secondary)
+                )]
+            })
         }
     }
 }
@@ -137,20 +199,94 @@ unfortunately, it wants everything you have in return.
     }
 
     if (section === WEAVE_SECTION.Shop) {
-        // TODO: implement shop
+        const stock = getShopStock(player.shopSeed);
+        const ownedFabrics = player.ownedFabrics;
+        const emptySlots = player.shopEmptySlots;
+        const select = new StringSelectMenuBuilder()
+            .setCustomId(`weave:buy`)
+            .setPlaceholder("choose a fabric")
+            .setMinValues(1)
+            .setMaxValues(1)
+
+        let desc = `you have **${formatNumber(player.thread)}** thread. the following fabrics are craftable right now:`;
+        embed.setFooter({ text: `a new rotation of fabrics will be available after tearing the universe again.` })
+        embed.setTitle("")
+
+        for (const fabricName of stock) {
+            const fabricUpgrade = rawUpgrades[fabricName];
+            if (!fabricUpgrade) continue;
+
+            let isBuyable = true;
+
+            desc += `\n\n**${fabricUpgrade.getDetails().name}**`;
+
+            if (fabricUpgrade.isUnique() && ownedFabrics.includes(fabricName)) {
+                desc += `\n*unique* ~ you already own this one-of-a-kind fabric`;
+                isBuyable = false;
+            } else if (fabricUpgrade.isUnique()) {
+                desc += `\n*unique* ~ you can only own one of this fabric`;
+            }
+            
+            if (emptySlots.includes(stock.indexOf(fabricName)) && isBuyable) {
+                isBuyable = false;
+                desc += `\nalready bought!`;
+            } else if (isBuyable) {
+                desc += `\ncosts ${formatNumber(fabricUpgrade.getPrice())} thread`;
+
+                if (ownedFabrics.includes(fabricName)) {
+                    desc += `\nyou already own **${ownedFabrics.filter(f => f === fabricName).length}** of this fabric`;
+                }
+            }
+
+            desc += `\n${fabricUpgrade.getDetails().description}`;
+
+            if (isBuyable) {
+                select.addOptions([
+                    new StringSelectMenuOptionBuilder()
+                        .setLabel(fabricUpgrade.getDetails().name)
+                        .setValue(fabricName)
+                ])
+            }
+        }
+
+        if (select.options.length === 0) {
+            select.addOptions([
+                new StringSelectMenuOptionBuilder()
+                    .setLabel("all sold out!")
+                    .setValue("none")
+                    .setDefault(true)
+            ])
+            select.setDisabled(true);
+        }
+
+        embed.setDescription(desc);
+        extraRow.addComponents(select);
     }
 
     if (section === WEAVE_SECTION.Cloths) {
         embed.setTitle("fabrics")
             .setDescription(`you have **${player.ownedFabrics.length}** total fabrics.`);
 
+        const seenFabrics = [];
+        
         for (const fabricName of player.ownedFabrics) {
+            if (seenFabrics.includes(fabricName)) continue;
+            seenFabrics.push(fabricName);
+
             const fabricUpgrade = rawUpgrades[fabricName];
-            if (!fabricUpgrade) continue; // somehow invalid
+            if (!fabricUpgrade) continue;
+
+            let nameDisplay = fabricUpgrade.getDetails().name;
+            if (fabricUpgrade.isUnique()) {
+                nameDisplay += ` (unique)`;
+            }
+            if (player.ownedFabrics.filter(f => f === fabricName).length > 1) {
+                nameDisplay += ` (x${player.ownedFabrics.filter(f => f === fabricName).length})`;
+            }
 
             embed.addFields({
-                name: fabricUpgrade.name,
-                value: `${fabricUpgrade.description}`,
+                name: nameDisplay,
+                value: fabricUpgrade.description,
                 inline: true
             });
         }
@@ -190,7 +326,35 @@ unfortunately, it wants everything you have in return.
     return { embeds: [embed], components: [row, extraRow] };
 }
 
-export function getGainedThread() {
+function getNewSeed() {
+    return Math.random().toString(36).substring(2, 15);
+}
+
+function getShopStock(seed) {
+    const rand = new Rand(seed);
+    const stock = [];
+    const fabrics = upgrades['fabrics'];
+    
+    while (stock.length < 3) {
+        // very specific case where all registered fabrics are unique but there's not enough to fill stock
+        if (fabrics.every(f => rawUpgrades[f].isUnique()) 
+            && stock.every(f => rawUpgrades[f].isUnique()) 
+            && stock.length === fabrics.length) { break; }
+
+        const fabricIndex = Math.floor(rand.next() * fabrics.length);
+        const fabric = fabrics[fabricIndex];
+
+        if (rawUpgrades[fabric].isUnique() && stock.some(x => x === fabric)) {
+            continue;
+        }
+
+        stock.push(fabric);
+    }
+
+    return stock;
+}
+
+function getGainedThread() {
     return 100; // probably change later
 }
 

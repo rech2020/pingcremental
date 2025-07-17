@@ -21,5 +21,6 @@ clicking the same symbol twice in a row will result in a **^0.7** debuff, with n
         }
     },
     sortOrder() { return 1000 },
-    type() { return FabricUpgradeTypes.SKILL_BASED }
+    type() { return FabricUpgradeTypes.SKILL_BASED },
+    isUnique() { return true; }
 }

@@ -179,6 +179,25 @@ module.exports = (sequelize) => {
 			defaultValue: 0,
 			allowNull: false,
 		},
+		shopSeed: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			defaultValue: '',
+		},
+		shopEmptySlots: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			defaultValue: '',
+			get() {
+				return this.getDataValue('shopBoughtSlots')
+					.split(',')
+					.filter(x => x !== '')
+					.map(x => parseInt(x));
+			},
+			set(value) {
+				this.setDataValue('shopBoughtSlots', value.join(','));
+			}
+		},
 		ownedFabrics: {
 			type: DataTypes.STRING,
 			allowNull: false,

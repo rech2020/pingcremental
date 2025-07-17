@@ -21,5 +21,6 @@ module.exports = {
         }
     },
     sortOrder() { return 1000 },
-    type() { return FabricUpgradeTypes.MISC }
+    type() { return FabricUpgradeTypes.MISC },
+    isUnique() { return false; } // if true, only one of this fabric can be owned
 }
