@@ -1,5 +1,4 @@
 const { FabricUpgradeTypes } = require('../../../helpers/upgradeEnums.js');
-const { getEmoji } = require('../../../helpers/emojis.js');
 
 module.exports = {
     getPrice() {
