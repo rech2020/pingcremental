@@ -11,11 +11,12 @@ module.exports = {
     },
     getDetails() {
         return {
-            description: `
-2 additional ping buttons are created, and each ping button will have a unique symbol attached to it.
+            description: 
+`2 additional ping buttons are created, and each ping button will have a unique symbol attached to it.
 clicking grants a scaling bonus as no mistakes are made, up to **^1.15** (at 50 clicks in a row).
 clicking the same symbol twice in a row will result in a **^0.7** debuff, and resets the bonus to nothing.`,
             name: "Fabric of the Artisan",
+            emoji: "✒️",
         }
     },
     getEffect(_level, context) {
@@ -40,7 +41,6 @@ clicking the same symbol twice in a row will result in a **^0.7** debuff, and re
             message: `(${context.artisanClickedSymbol || "?"})`,
         }
     },
-    sortOrder() { return 1000 },
     type() { return FabricUpgradeTypes.SKILL_BASED },
     isUnique() { return true; }
 }

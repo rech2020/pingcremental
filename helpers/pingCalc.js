@@ -20,6 +20,7 @@ async function ping(interaction, isSuper = false, overrides = {}) {
         ping: ping,
         isSuper: isSuper,
         versionNumber: await getLatestVersion(),
+        interactionTimestamp: interaction.createdAt,
 
         // player profile bits
         score: playerProfile.score,

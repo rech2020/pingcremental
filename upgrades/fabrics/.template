@@ -8,10 +8,8 @@ module.exports = {
         return {
             description: "",
             name: "",
+            emoji: "",
         }
-    },
-    getEffectString() {
-        return ""
     },
     getEffect(_level, context) {
         return {
@@ -19,7 +17,6 @@ module.exports = {
             multiply: 1,
         }
     },
-    sortOrder() { return 1000 },
     type() { return FabricUpgradeTypes.MISC },
     isUnique() { return false; } // if true, only one of this fabric can be owned
 }
