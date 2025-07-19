@@ -17,9 +17,8 @@ const FabricUpgradeTypes = {
     BLUE_PING: 'Blue Modification',
     PURE_RANDOM: 'Random Chance',
     SKILL_BASED: 'Skill-Based',
-    ETERNITY_BONUS: 'Eternity Bonus',
     MISC: 'Miscellaneous',
-}
+}   
 
 Object.freeze(UpgradeTypes);
 Object.freeze(PipUpgradeTypes);

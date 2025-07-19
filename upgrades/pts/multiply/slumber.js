@@ -18,19 +18,25 @@ module.exports = {
     },
     getEffect(level, context) {
         let clicks = context.slumberClicks;
-        const intervalMs = 1000 * 60 * (21 - level);
+        let intervalMs = 1000 * 60 * (21 - level);
+        let maxClicks = Math.round((2 * 24 * 60) / (21 - level));
+        if (context.specials.superSlumber) {
+            intervalMs = 1000 * 60;
+            maxClicks = 600;
+        }
+
         const timeSinceLastPing = Date.now() - context.lastPing;
 
         if (timeSinceLastPing >= intervalMs) {
             const earnedClicks = Math.floor(timeSinceLastPing / intervalMs);
             clicks += earnedClicks;
-            clicks = Math.min(clicks, Math.round((2 * 24 * 60) / (21 - level)));
+            clicks = Math.min(clicks, maxClicks);
             clicks = Math.max(clicks, 0);
         }
 
         if (clicks > 0) {
             return {
-                multiply: 1 + (level * 0.1),
+                multiply: (1 + (level * 0.1)) * (context.specials.superSlumber ? 15 : 1),
                 special: { "slumber": clicks - context.slumberClicks - 1 },
                 message: `(${clicks} left)`,
             }

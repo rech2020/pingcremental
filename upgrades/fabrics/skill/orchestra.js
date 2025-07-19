@@ -11,12 +11,12 @@ const PURE_WINDOW = 10;
 
 module.exports = {
     getPrice() {
-        return 90;
+        return 150;
     },
     getDetails() {
         return {
             description:
-`clicking in a rhythm will grant a scaling bonus up to **^1.25**.
+`clicking in a rhythm will grant a scaling bonus up to **^1.2**.
 clicking too far off rhythm will break the combo. 
 skipping one beat is okay, but more will break the combo.`,
             name: "Fabric of the Orchestra",
@@ -110,6 +110,6 @@ function addBonus(userId, amount) {
     if (!bonusCache[userId]) {
         bonusCache[userId] = 1;
     }
-    bonusCache[userId] = Math.min(bonusCache[userId] + amount, 1.25);
+    bonusCache[userId] = Math.min(bonusCache[userId] + amount, 1.2);
     comboCache[userId] = (comboCache[userId] || 0) + 1;
 }
