@@ -364,7 +364,7 @@ unfortunately, it wants everything you have in return.
                 nameDisplay += ` (unique)`;
             }
             if (count > 1) {
-                nameDisplay += ` (x${count}})`;
+                nameDisplay += ` (x${count})`;
             }
 
             embed.addFields({
