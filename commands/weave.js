@@ -40,6 +40,7 @@ module.exports = {
             player.cloakModificationsAllowed = 1;
             player.shopSeed = getNewSeed();
             player.shopEmptySlots = [];
+            player.shopRerolls = 0;
 
             player.upgrades = {};
             player.score = 0;
@@ -84,6 +85,7 @@ module.exports = {
             const equippedFabrics = getEquippedFromSewMessage(interaction.message);
 
             player.equippedFabrics = equippedFabrics;
+            player.changed('equippedFabrics', true);
             player.cloakModificationsAllowed--;
 
             await player.save();
@@ -112,6 +114,24 @@ module.exports = {
 
             await new Promise(resolve => setTimeout(resolve, 4000));
             await interaction.deleteReply(interaction.message);
+        },
+        shopReroll: async (interaction) => {
+            const player = await database.Player.findByPk(interaction.user.id);
+
+            if (player.thread < 5 ** player.shopRerolls * 20) {
+                return await interaction.reply({
+                    content: `you don't have enough thread to reroll the shop!`,
+                    flags: MessageFlags.Ephemeral
+                });
+            }
+
+            player.thread -= 5 ** player.shopRerolls * 20;
+            player.shopRerolls++;
+            player.shopSeed = getNewSeed();
+            player.shopEmptySlots = [];
+            await player.save();
+
+            await interaction.update(await getEmbed(interaction, WEAVE_SECTION.Shop));
         }
     },
     dropdowns: {
@@ -143,14 +163,13 @@ module.exports = {
                 });
             }
 
-            // because sequelize doesn't like modifying lists/json directly
+            // because sequelize doesn't like modifying lists directly
             const currentEmpty = player.shopEmptySlots || [];
             currentEmpty.push(getShopStock(player.shopSeed).indexOf(fabricName));
-            let currentOwned = player.ownedFabrics;
-            currentOwned[fabricName] = (currentOwned[fabricName] || 0) + 1;
 
             player.thread -= fabricUpgrade.getPrice();
-            player.ownedFabrics = currentOwned;
+            player.ownedFabrics[fabricName] = (player.ownedFabrics[fabricName] || 0) + 1;
+            player.changed('ownedFabrics', true); // actually make it get saved because... json objects
             player.shopEmptySlots = currentEmpty;
 
             await player.save();
@@ -321,6 +340,14 @@ unfortunately, it wants everything you have in return.
 
         embed.setDescription(desc);
         extraRows.push(new ActionRowBuilder().addComponents(select));
+        
+        const rerollButton = new ButtonBuilder()
+            .setCustomId(`weave:shopReroll`)
+            .setLabel(`reroll (${5 ** player.shopRerolls * 20} thread) (${player.shopRerolls}/3)`)
+            .setStyle(ButtonStyle.Secondary)
+            .setDisabled(player.shopRerolls >= 3);
+        
+        extraRows.push(new ActionRowBuilder().addComponents(rerollButton));
     }
 
     if (section === WEAVE_SECTION.Cloths) {
@@ -546,7 +573,7 @@ function getShopStock(seed) {
         const fabricIndex = Math.floor(rng.next() * fabrics.length);
         const fabric = fabrics[fabricIndex];
 
-        if (rawUpgrades[fabric].isUnique() && stock.some(x => x === fabric)) {
+        if (stock.some(x => x === fabric)) {
             continue;
         }
 

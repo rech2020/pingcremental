@@ -24,6 +24,8 @@ skipping one beat is okay, but more will break the combo.`,
         }
     },
     getEffect(_level, context) {
+        // TODO: return early unless on the pts calculation step
+
         if (!context.interactionTimestamp) return {};
         if (!recentPingTimes[context.user.id]) {
             recentPingTimes[context.user.id] = [];
@@ -55,7 +57,7 @@ skipping one beat is okay, but more will break the combo.`,
             : intervals[Math.floor(intervals.length / 2)];
         
         const targetTime = medianInterval;
-        const timeDiff = targetTime - timeSinceLast;
+        let timeDiff = targetTime - timeSinceLast;
         
         if (Math.abs(timeDiff - targetTime) < Math.abs(timeDiff)) {
             // skipped a beat, probably

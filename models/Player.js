@@ -198,6 +198,11 @@ module.exports = (sequelize) => {
 				this.setDataValue('shopEmptySlots', value.join(','));
 			}
 		},
+		shopRerolls: {
+			type: DataTypes.INTEGER,
+			defaultValue: 0,
+			allowNull: false,
+		},
 		cloakModificationsAllowed: {
 			type: DataTypes.INTEGER,
 			defaultValue: 1,
