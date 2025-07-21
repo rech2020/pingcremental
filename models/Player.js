@@ -189,13 +189,13 @@ module.exports = (sequelize) => {
 			allowNull: false,
 			defaultValue: '',
 			get() {
-				return this.getDataValue('shopBoughtSlots')
+				return this.getDataValue('shopEmptySlots')
 					.split(',')
 					.filter(x => x !== '')
 					.map(x => parseInt(x));
 			},
 			set(value) {
-				this.setDataValue('shopBoughtSlots', value.join(','));
+				this.setDataValue('shopEmptySlots', value.join(','));
 			}
 		},
 		cloakModificationsAllowed: {

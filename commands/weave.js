@@ -3,7 +3,7 @@ const { rawUpgrades, upgrades } = require("../helpers/upgrades");
 const { SlashCommandBuilder, EmbedBuilder, MessageFlags, ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } = require("discord.js");
 const database = require("../helpers/database");
 const { FabricUpgradeTypes } = require("../helpers/upgradeEnums.js");
-const { Rand } = require("rand-seed");
+const RandSeed = require("rand-seed").default;
 
 const WEAVE_SECTION = {
     Tear: 'tear',
@@ -41,16 +41,16 @@ module.exports = {
             player.shopSeed = getNewSeed();
             player.shopEmptySlots = [];
 
-            playerData.upgrades = {};
-            playerData.score = 0;
-            playerData.clicks = 0;
-            playerData.glimmerClicks = 0;
-            playerData.slumberClicks = 0;
+            player.upgrades = {};
+            player.score = 0;
+            player.clicks = 0;
+            player.glimmerClicks = 0;
+            player.slumberClicks = 0;
 
-            playerData.bp = 0;
-            playerData.pip = 0;
-            playerData.prestigeUpgrades = {};
-            playerData.eternities = 0;
+            player.bp = 0;
+            player.pip = 0;
+            player.prestigeUpgrades = {};
+            player.eternities = 0;
 
             await player.save();
 
@@ -88,18 +88,30 @@ module.exports = {
 
             await player.save();
 
-            const oldConfirmButton = interaction.message.components[2].components[0];
-            oldConfirmButton.setCustomId(`weave:sewFinish`).setLabel("re-sew your cloak").setStyle(ButtonStyle.Success);
-            oldConfirmButton.setDisabled(player.cloakModificationsAllowed <= 0);
+            const resewButton = new ButtonBuilder()
+                .setCustomId(`weave:sew`)
+                .setLabel("re-sew your cloak")
+                .setStyle(ButtonStyle.Primary)
+                .setDisabled(player.cloakModificationsAllowed <= 0);
             
             await interaction.update({
-                components: [ new ActionRowBuilder().addComponents(oldConfirmButton) ],
+                components: [ new ActionRowBuilder().addComponents(resewButton) ],
                 embeds: [interaction.message.embeds[0]]
             })
             return await interaction.followUp({
                 content: `your cloak has been sewn with the selected fabrics!`,
                 flags: MessageFlags.Ephemeral
             });
+        },
+        sewCancel: async (interaction) => {
+            await interaction.update({
+                content: "the sewing has been cancelled.",
+                components: [],
+                embeds: []
+            })
+
+            await new Promise(resolve => setTimeout(resolve, 4000));
+            await interaction.deleteReply(interaction.message);
         }
     },
     dropdowns: {
@@ -131,12 +143,14 @@ module.exports = {
                 });
             }
 
-            // because sequelize doesn't like modifying lists directly
+            // because sequelize doesn't like modifying lists/json directly
             const currentEmpty = player.shopEmptySlots || [];
             currentEmpty.push(getShopStock(player.shopSeed).indexOf(fabricName));
+            let currentOwned = player.ownedFabrics;
+            currentOwned[fabricName] = (currentOwned[fabricName] || 0) + 1;
 
             player.thread -= fabricUpgrade.getPrice();
-            player.ownedFabrics[fabricName] = (player.ownedFabrics[fabricName] || 0) + 1;
+            player.ownedFabrics = currentOwned;
             player.shopEmptySlots = currentEmpty;
 
             await player.save();
@@ -196,7 +210,7 @@ async function getEmbed(interaction, section = WEAVE_SECTION.Shop) {
         .setColor('#120830')
 
     const row = new ActionRowBuilder();
-    const extraRow = new ActionRowBuilder();
+    let extraRows = [];
     
     if (player.tears > 0) {
         availableSections.push(WEAVE_SECTION.Shop);
@@ -219,7 +233,7 @@ async function getEmbed(interaction, section = WEAVE_SECTION.Shop) {
     if (section === WEAVE_SECTION.Tear) {
         let desc = `do you want to tear a bit of the universe?`;
 
-        if (player.tears < 0) {
+        if (player.tears <= 0) {
             desc = 
 `to weave, you first need thread.
 fortunately, the universe is ready to give you some.
@@ -236,12 +250,12 @@ unfortunately, it wants everything you have in return.
     
         embed.setTitle("tear the universe?")
         embed.setDescription(desc);
-        extraRow.addComponents(new ButtonBuilder()
+        extraRows.push(new ActionRowBuilder().addComponents(new ButtonBuilder()
             .setCustomId(`weave:reset`)
             .setLabel("time to tear!")
             .setStyle(ButtonStyle.Danger)
             .setDisabled(player.eternities < getTearRequirement(player.tears))
-        );
+        ));
     }
 
     if (section === WEAVE_SECTION.Shop) {
@@ -256,7 +270,7 @@ unfortunately, it wants everything you have in return.
 
         let desc = `you have **${formatNumber(player.thread)}** thread. the following fabrics are craftable right now:`;
         embed.setFooter({ text: `a new rotation of fabrics will be available after tearing the universe again.` })
-        embed.setTitle("")
+        embed.setTitle("fabric weaving")
 
         for (const fabricName of stock) {
             const fabricUpgrade = rawUpgrades[fabricName];
@@ -306,7 +320,7 @@ unfortunately, it wants everything you have in return.
         }
 
         embed.setDescription(desc);
-        extraRow.addComponents(select);
+        extraRows.push(new ActionRowBuilder().addComponents(select));
     }
 
     if (section === WEAVE_SECTION.Cloths) {
@@ -328,23 +342,23 @@ unfortunately, it wants everything you have in return.
 
             embed.addFields({
                 name: nameDisplay,
-                value: fabricUpgrade.description,
+                value: fabricUpgrade.getDetails().description,
                 inline: true
             });
         }
 
-        embed.setDescription(`you have **${total}** total fabrics.`);
+        embed.setDescription(`you have **${total}** total fabric${total === 1 ? "" : "s"}.`);
     }
 
     if (section === WEAVE_SECTION.Cloak) {
         embed.setTitle("your cloak")
         
-        let desc = `your cloak currently has the following effects:`;
-        for (const fabricName of Object.values(player.equippedFabrics)) {
+        let desc = `your cloak has the following fabrics equipped:`;
+        for (const fabricName of Object.keys(player.equippedFabrics)) {
             const fabricUpgrade = rawUpgrades[fabricName];
             if (!fabricUpgrade) continue;
 
-            desc += `\n\n${fabricUpgrade.description}`.repeat(player.equippedFabrics[fabricName] || 1);
+            desc += `\n\n**${fabricUpgrade.getDetails().name}**\n${fabricUpgrade.getDetails().description}`.repeat(player.equippedFabrics[fabricName] || 1);
         }
 
         if (player.cloakModificationsAllowed <= 0) {
@@ -354,20 +368,28 @@ unfortunately, it wants everything you have in return.
         }
 
 
-        if (Object.values(player.equippedFabrics).length === 0) {
+        if (Object.keys(player.equippedFabrics).length === 0) {
             desc = `you don't have a cloak yet! you can sew one now using the fabrics you own.`
         }
 
         embed.setDescription(desc);
-        extraRow.addComponents(new ButtonBuilder()
+        extraRows.push(new ActionRowBuilder().addComponents(new ButtonBuilder()
             .setCustomId(`weave:sew`)
             .setLabel(`${Object.values(player.equippedFabrics).length === 0 ? "" : "re-"}sew your cloak`)
             .setStyle(ButtonStyle.Primary)
             .setDisabled(player.cloakModificationsAllowed <= 0)
-        );
+        ));
     }
 
-    return { embeds: [embed], components: [row, extraRow] };
+    const components = [];
+    components.push(row);
+    if (extraRows.length > 0) {
+        for (const extraRow of extraRows) {
+            components.push(extraRow);
+        }
+    }
+
+    return { embeds: [embed], components: components };
 }
 
 async function getSewEmbed(interaction, equippedFabrics) {
@@ -423,14 +445,14 @@ async function getSewEmbed(interaction, equippedFabrics) {
         .setMaxValues(1);
 
     let totalEquipped = 0;
-    let desc = `your new cloak will have the following effects:`;
+    let desc = `the fabrics you selected have the following effects:`;
     for (const [fabricName, count] of Object.entries(equippedFabrics)) {
         if (count <= 0) continue;
 
         const fabricUpgrade = rawUpgrades[fabricName];
         if (!fabricUpgrade) continue;
 
-        desc += `\n\n${fabricUpgrade.description}`.repeat(count);
+        desc += `\n\n${fabricUpgrade.getDetails().description}`.repeat(count);
         totalEquipped += count;
         removeMenu.addOptions([
             new StringSelectMenuOptionBuilder()
@@ -446,6 +468,7 @@ async function getSewEmbed(interaction, equippedFabrics) {
                 .setDefault(true)
         ]);
         removeMenu.setDisabled(true);
+        desc = `you don't have any fabrics selected. choose some below.`
     }
 
     const finishButton = new ButtonBuilder()
@@ -466,19 +489,31 @@ async function getSewEmbed(interaction, equippedFabrics) {
         .setDescription(desc)
         .setFooter({ text: `you can re-sew your cloak ${player.cloakModificationsAllowed} more time${player.cloakModificationsAllowed === 1 ? "" : "s"} before having to tear the universe.` });
 
+    const cancelButton = new ButtonBuilder()
+        .setCustomId(`weave:sewCancel`)
+        .setLabel("cancel")
+        .setStyle(ButtonStyle.Secondary);
+
     return {
         embeds: [sewEmbed],
         components: [
             new ActionRowBuilder().addComponents(addMenu),
             new ActionRowBuilder().addComponents(removeMenu),
-            new ActionRowBuilder().addComponents(finishButton)
+            new ActionRowBuilder().addComponents(finishButton, cancelButton)
         ]
     }
 }
 
 function getEquippedFromSewMessage(message) {
     let equippedFabrics = {};
-    const removeComponent = message.components.find(c => c.customId === 'weave:sewRemove');
+    let removeComponent;
+
+    for (const row of message.components) {
+        if (row.components.some(c => c.customId === 'weave:sewRemove')) {
+            removeComponent = row.components.find(c => c.customId === 'weave:sewRemove');
+            break;
+        }
+    }
     if (!removeComponent) return equippedFabrics;
 
     for (const option of removeComponent.options) {
@@ -498,9 +533,9 @@ function getNewSeed() {
 }
 
 function getShopStock(seed) {
-    const rand = new Rand(seed);
+    const rng = new RandSeed(seed);
     const stock = [];
-    const fabrics = upgrades['fabrics'];
+    const fabrics = Object.keys(upgrades['fabrics']);
     
     while (stock.length < 3) {
         // very specific case where all registered fabrics are unique but there's not enough to fill stock
@@ -508,7 +543,7 @@ function getShopStock(seed) {
             && stock.every(f => rawUpgrades[f].isUnique()) 
             && stock.length === fabrics.length) { break; }
 
-        const fabricIndex = Math.floor(rand.next() * fabrics.length);
+        const fabricIndex = Math.floor(rng.next() * fabrics.length);
         const fabric = fabrics[fabricIndex];
 
         if (rawUpgrades[fabric].isUnique() && stock.some(x => x === fabric)) {
@@ -525,6 +560,6 @@ function getGainedThread() {
     return 100; // probably change later
 }
 
-export function getTearRequirement(tears) {
+function getTearRequirement(tears) {
     return tears * 2 + 3; // TODO: placeholder calculation
 }

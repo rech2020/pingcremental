@@ -48,7 +48,7 @@ async function ping(interaction, isSuper = false, overrides = {}) {
     }
 
     let iterateUpgrades = {}
-    for (const upgradeTypeList of [playerProfile.upgrades, playerProfile.prestigeUpgrades]) {
+    for (const upgradeTypeList of [playerProfile.upgrades, playerProfile.prestigeUpgrades, playerProfile.equippedFabrics]) {
         if (!upgradeTypeList) continue;
         for (const [upg, lv] of Object.entries(upgradeTypeList)) iterateUpgrades[upg] = lv;
     }

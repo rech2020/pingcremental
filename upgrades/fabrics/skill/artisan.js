@@ -1,6 +1,6 @@
 const { FabricUpgradeTypes } = require('../../../helpers/upgradeEnums.js');
 
-export const artisanSymbols = ["✿", "✦", "⁂"]
+const artisanSymbols = ["✿", "✦", "⁂"]
 
 let lastClickedSymbolCache = {}
 let bonusCache = {}
@@ -42,5 +42,6 @@ clicking the same symbol twice in a row will result in a **^0.7** debuff, and re
         }
     },
     type() { return FabricUpgradeTypes.SKILL_BASED },
-    isUnique() { return true; }
+    isUnique() { return true; },
+    artisanSymbols
 }
