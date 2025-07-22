@@ -3,6 +3,7 @@ const { upgrades } = require('./../helpers/upgrades.js')
 const database = require('./../helpers/database.js');
 const { UpgradeTypes } = require('./../helpers/upgradeEnums.js');
 const formatNumber = require('./../helpers/formatNumber.js');
+const { getTearRequirement } = require('./weave.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -63,6 +64,17 @@ module.exports = {
 *i suppose you're wondering why you want to be here.*
 *how about... </ponder:1371248161309593651>? try it out.*
 *good luck, pinger.*`, flags: MessageFlags.Ephemeral });
+            }
+
+            if (tears < 1 && getTearRequirement(playerData.tears) === playerData.eternities) {
+                await interaction.followUp({
+                    content: 
+`*you've been looking for something more, haven't you...?*
+*there may not be much more eternity can give you, but there's always another way to obtain power.*
+*heed the universe's call. tear it apart and weave it anew.*
+*</weave:[HARDCODEDID]>*`, // TODO: hardcoded id
+                    flags: MessageFlags.Ephemeral
+                });
             }
         }),
         multibuy: (async (interaction, buySetting) => {

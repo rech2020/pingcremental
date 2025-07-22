@@ -35,8 +35,8 @@ module.exports = {
 
             player.tears++;
             player.totalTears++;
-            player.thread += getGainedThread();
-            player.totalThread += getGainedThread();
+            player.thread += getGainedThread(player);
+            player.totalThread += getGainedThread(player);
             player.cloakModificationsAllowed = 1;
             player.shopSeed = getNewSeed();
             player.shopEmptySlots = [];
@@ -57,7 +57,7 @@ module.exports = {
 
             await interaction.update(await getEmbed(interaction, WEAVE_SECTION.Tear));
             return await interaction.followUp({
-                content: `you tear the universe, and gained **${formatNumber(getGainedThread())}** thread (now ${formatNumber(player.thread)} total).`,
+                content: `you tear the universe, and gained **${formatNumber(getGainedThread(player))}** thread (now ${formatNumber(player.thread)} total).`,
                 flags: MessageFlags.Ephemeral
             });
         },
@@ -210,7 +210,8 @@ module.exports = {
 
             await interaction.update(await getSewEmbed(interaction, equippedFabrics));
         }
-    }
+    },
+    getTearRequirement,
 }
 
 async function getEmbed(interaction, section = WEAVE_SECTION.Shop) {
@@ -261,7 +262,7 @@ unfortunately, it wants everything you have in return.
         }
 
         desc += `\nthis will reset ALL of your progress (with the exception of Total stats), including pip, bp, pts, and all of their associated upgrades.`
-        desc += `\nyou will gain **${formatNumber(getGainedThread())} thread** for tearing the universe.`;
+        desc += `\nyou will gain **${formatNumber(getGainedThread(player))} thread** for tearing the universe.`;
         
         if (player.eternities < getTearRequirement(player.tears)) {
             desc = `the universe isn't quite ready to be torn again yet. you need ${player.eternities}/**${getTearRequirement(player.tears)}** eternities to tear the universe again.`
@@ -288,7 +289,7 @@ unfortunately, it wants everything you have in return.
             .setMaxValues(1)
 
         let desc = `you have **${formatNumber(player.thread)}** thread. the following fabrics are craftable right now:`;
-        embed.setFooter({ text: `a new rotation of fabrics will be available after tearing the universe again.` })
+        embed.setFooter({ text: `fabrics in stock and reroll prices will be reset after tearing the universe.` })
         embed.setTitle("fabric weaving")
 
         for (const fabricName of stock) {
@@ -346,12 +347,14 @@ unfortunately, it wants everything you have in return.
             .setLabel(`reroll (${5 ** player.shopRerolls * 20} thread) (${player.shopRerolls}/3)`)
             .setStyle(ButtonStyle.Secondary)
             .setDisabled(player.shopRerolls >= 3);
+        if (player.shopRerolls >= 3) rerollButton.setLabel(`reroll (3/3)`)
         
         extraRows.push(new ActionRowBuilder().addComponents(rerollButton));
     }
 
     if (section === WEAVE_SECTION.Cloths) {
         embed.setTitle("fabrics")
+        let desc = "";
         
         let total = 0;
         for (const [fabricName, count] of Object.entries(player.ownedFabrics)) {
@@ -367,14 +370,14 @@ unfortunately, it wants everything you have in return.
                 nameDisplay += ` (x${count})`;
             }
 
-            embed.addFields({
-                name: nameDisplay,
-                value: fabricUpgrade.getDetails().description,
-                inline: true
-            });
+            desc += 
+`
+
+**${nameDisplay}**
+${fabricUpgrade.getDetails().description}`;
         }
 
-        embed.setDescription(`you have **${total}** total fabric${total === 1 ? "" : "s"}.`);
+        embed.setDescription(`you have **${total}** total fabric${total === 1 ? "" : "s"}.${desc}`);
     }
 
     if (section === WEAVE_SECTION.Cloak) {
@@ -505,6 +508,11 @@ async function getSewEmbed(interaction, equippedFabrics) {
     if (totalEquipped > 3) {
         finishButton.setDisabled(true).setStyle(ButtonStyle.Danger).setLabel(`${totalEquipped}/3 selected!`);
     }
+    // allow going slightly over for QoL but max at 5 so embed length isn't too long
+    if (totalEquipped > 5) {
+        addMenu.setDisabled(true);
+    }
+    
     if (totalEquipped < 3) {
         desc += `\n\nyou can select up to **${3 - totalEquipped}** more fabric${3 - totalEquipped === 1 ? "" : "s"}.`
     }
@@ -514,7 +522,12 @@ async function getSewEmbed(interaction, equippedFabrics) {
 
     sewEmbed.setTitle("sew your cloak")
         .setDescription(desc)
-        .setFooter({ text: `you can re-sew your cloak ${player.cloakModificationsAllowed} more time${player.cloakModificationsAllowed === 1 ? "" : "s"} before having to tear the universe.` });
+
+    if (player.cloakModificationsAllowed > 1) {
+        sewEmbed.setFooter({ text: `you can re-sew your cloak ${player.cloakModificationsAllowed - 1} more time${player.cloakModificationsAllowed - 1 === 1 ? "" : "s"} after this before having to tear the universe again.` });
+    } else {
+        sewEmbed.setFooter({ text: `you won't be able to re-sew your cloak without tearing the universe again!` });
+    }
 
     const cancelButton = new ButtonBuilder()
         .setCustomId(`weave:sewCancel`)
@@ -583,8 +596,8 @@ function getShopStock(seed) {
     return stock;
 }
 
-function getGainedThread() {
-    return 100; // probably change later
+function getGainedThread(player) {
+    return 100; // TODO: probably change later
 }
 
 function getTearRequirement(tears) {

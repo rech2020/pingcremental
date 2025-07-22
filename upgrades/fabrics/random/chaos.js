@@ -35,8 +35,9 @@ module.exports = {
             }
         }
         else {
+            const msg = [`nah`, `not feelin it`, `forget it`, `no thanks`, `not today`, `nuh uh`, `ehh`, `maybe later`, `nope`, `not right now`]
             return {
-                message: [`nah`, `not feelin it`, `forget it`, `no thanks`, `not today`, `nuh uh`, `ehh`, `maybe later`, `nope`, `not right now`][Math.floor(Math.random() * 10)],
+                message: msg[Math.floor(Math.random() * msg.length)],
             }
         }
     },

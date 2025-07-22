@@ -4,10 +4,10 @@ let recentPingTimes = {}
 let bonusCache = {}
 let comboCache = {}
 
-const COMBO_WINDOW = 350;
-const GREAT_WINDOW = 180;
-const PERFECT_WINDOW = 80;
-const PURE_WINDOW = 10;
+const COMBO_WINDOW = 160;
+const GREAT_WINDOW = 90;
+const PERFECT_WINDOW = 50;
+const PURE_WINDOW = 15;
 
 module.exports = {
     getPrice() {

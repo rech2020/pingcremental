@@ -22,7 +22,7 @@ module.exports = {
         let maxClicks = Math.round((2 * 24 * 60) / (21 - level));
         if (context.specials.superSlumber) {
             intervalMs = 1000 * 60;
-            maxClicks = 600;
+            maxClicks = 300;
         }
 
         const timeSinceLastPing = Date.now() - context.lastPing;

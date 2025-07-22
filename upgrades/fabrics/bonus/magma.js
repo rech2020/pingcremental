@@ -6,7 +6,7 @@ module.exports = {
     },
     getDetails() {
         return {
-            description: "grants a **^1.25** bonus after a **x0.4** debuff.",
+            description: "gives a **x0.4** debuff, then grants a **^1.25** bonus.",
             name: "Magmatic Fabric",
             emoji: "🌋",
         }
