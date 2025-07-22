@@ -42,6 +42,7 @@ async function ping(interaction, isSuper = false, overrides = {}) {
         rare: false,
         blue: 0,
         blueStrength: 1,
+        blueCap: 35,
         specials: {},
         RNGmult: 1,
         blueCombo: 0,
@@ -63,6 +64,7 @@ async function ping(interaction, isSuper = false, overrides = {}) {
         exponents: [],
         blue: 0,
         blueStrength: 1,
+        blueCap: 35,
         specials: {},
         bp: 0,
         RNGmult: overrides.forceNoRNG ? 0 : 1,
@@ -103,13 +105,17 @@ async function ping(interaction, isSuper = false, overrides = {}) {
             currentEffects.blueStrength += effect.blueStrength; 
             context.blueStrength = currentEffects.blueStrength; 
         }
+        if (effect.blueCap) {
+            currentEffects.blueCap += effect.blueCap; 
+            context.blueCap = currentEffects.blueCap;
+        }
         if (effect.RNGmult) { 
             currentEffects.RNGmult += effect.RNGmult; 
             context.RNGmult = currentEffects.RNGmult; 
         }
     }
 
-    currentEffects.blue = Math.min(currentEffects.blue, 35 + (currentEffects.specials.blueCap || 0)); // cap blue at 35%
+    currentEffects.blue = Math.min(currentEffects.blue, currentEffects.blueCap);
 
     if (isSuper) {
         let blueStrength = (currentEffects.blueStrength) * 15;

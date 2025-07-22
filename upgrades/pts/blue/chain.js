@@ -20,7 +20,7 @@ module.exports = {
         if (context.isSuper) {
             return {
                 blue: level * 5,
-                special: { "blueCap": level * 5 },
+                blueCap: level * 5,
             }
         }
         return {}
