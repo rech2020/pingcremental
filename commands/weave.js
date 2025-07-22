@@ -475,6 +475,7 @@ async function getSewEmbed(interaction, equippedFabrics) {
         .setMaxValues(1);
 
     let totalEquipped = 0;
+    let maxEquipped = 3;
     let desc = `the fabrics you selected have the following effects:`;
     for (const [fabricName, count] of Object.entries(equippedFabrics)) {
         if (count <= 0) continue;
@@ -482,7 +483,12 @@ async function getSewEmbed(interaction, equippedFabrics) {
         const fabricUpgrade = rawUpgrades[fabricName];
         if (!fabricUpgrade) continue;
 
-        desc += `\n\n${fabricUpgrade.getDetails().description}`.repeat(count);
+        const increasesMax = fabricUpgrade.getEffect(0, {}).special?.extraFabricSlots;
+        if (increasesMax) {
+            maxEquipped += increasesMax;
+        }
+
+        desc += `\n\n**${fabricUpgrade.getDetails().name}**\n${fabricUpgrade.getDetails().description}`.repeat(count);
         totalEquipped += count;
         removeMenu.addOptions([
             new StringSelectMenuOptionBuilder()
@@ -505,16 +511,16 @@ async function getSewEmbed(interaction, equippedFabrics) {
         .setCustomId(`weave:sewFinish`)
         .setLabel("finish sewing")
         .setStyle(ButtonStyle.Success)
-    if (totalEquipped > 3) {
-        finishButton.setDisabled(true).setStyle(ButtonStyle.Danger).setLabel(`${totalEquipped}/3 selected!`);
+    if (totalEquipped > maxEquipped) {
+        finishButton.setDisabled(true).setStyle(ButtonStyle.Danger).setLabel(`${totalEquipped}/${maxEquipped} selected!`);
     }
-    // allow going slightly over for QoL but max at 5 so embed length isn't too long
-    if (totalEquipped > 5) {
-        addMenu.setDisabled(true);
+    // allow going slightly over for QoL but disable so embed doesn't get too long 
+    if (totalEquipped >= maxEquipped + 2) {
+        addMenu.setDisabled(true).setPlaceholder(`too many selected!`);
     }
     
-    if (totalEquipped < 3) {
-        desc += `\n\nyou can select up to **${3 - totalEquipped}** more fabric${3 - totalEquipped === 1 ? "" : "s"}.`
+    if (totalEquipped < maxEquipped) {
+        desc += `\n\nyou can select up to **${maxEquipped - totalEquipped}** more fabric${maxEquipped - totalEquipped === 1 ? "" : "s"}.`
     }
     if (totalEquipped <= 0) {
         finishButton.setDisabled(true).setStyle(ButtonStyle.Secondary).setLabel("no fabrics selected!");
