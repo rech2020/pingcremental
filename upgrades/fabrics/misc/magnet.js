@@ -13,7 +13,14 @@ module.exports = {
         }
     }, 
     getEffect(_level, context) {
-        // NOTE/TODO: this effect has to be implemented when merged with the autoping system
+        if (!context.interactionTimestamp) return {};
+
+        const timeSinceLastPing = Date.now() - context.lastPing;
+        const aptGain = Math.min(Math.floor(timeSinceLastPing / (2 * 60 * 1000)), 720);
+        
+        return {
+            apt: aptGain
+        };
     },
     type() { return FabricUpgradeTypes.MISC },
     isUnique() { return false; }

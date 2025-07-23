@@ -1,4 +1,4 @@
-const { FabricUpgradeTypes } = require('../../../helpers/commonEnums.js');
+const { FabricUpgradeTypes, PingCalculationStates } = require('../../../helpers/commonEnums.js');
 
 let recentPingTimes = {}
 let bonusCache = {}
@@ -24,7 +24,7 @@ skipping one beat is okay, but more will break the combo.`,
         }
     },
     getEffect(_level, context) {
-        // TODO: return early unless on the pts calculation step
+        if (context.state !== PingCalculationStates.SCORING) return {};
 
         if (!context.interactionTimestamp) return {};
         if (!recentPingTimes[context.user.id]) {

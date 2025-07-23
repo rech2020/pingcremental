@@ -6,6 +6,7 @@ const { UpgradeTypes } = require('./../helpers/commonEnums.js');
 const awardBadge = require('./../helpers/awardBadge.js');
 const formatNumber = require('./../helpers/formatNumber.js');
 const { getTearRequirement } = require('./weave.js');
+const { getEmbeddedCommand } = require('./../helpers/embedCommand.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -74,7 +75,7 @@ module.exports = {
 `*you've been looking for something more, haven't you...?*
 *there may not be much more eternity can give you, but there's always another way to obtain power.*
 *heed the universe's call. tear it apart and weave it anew.*
-*</weave:[HARDCODEDID]>*`, // TODO: hardcoded id
+*${getEmbeddedCommand("weave")}*`,
                     flags: MessageFlags.Ephemeral
                 });
             }

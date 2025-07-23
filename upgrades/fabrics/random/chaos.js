@@ -29,12 +29,16 @@ module.exports = {
                 exponent: 1 + (Math.random() * 0.15) ** level,
             }
         }
-        else if (roll < 75) {
+        else if (roll < 70) {
             return {
-                bp: Math.round(Math.random() * 3000) * level,
+                bp: Math.round(Math.random() * 3000 * level),
             }
         }
-        // TODO: probably also add APT chance when done merging
+        else if (roll < 76) {
+            return {
+                apt: Math.round(Math.random() * 40 * level),
+            }
+        }
         else {
             const msg = [`nah`, `not feelin it`, `forget it`, `no thanks`, `not today`, `nuh uh`, `ehh`, `maybe later`, `nope`, `not right now`]
             return {
