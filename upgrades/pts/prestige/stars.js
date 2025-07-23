@@ -16,7 +16,7 @@ module.exports = {
         return `${level*4} bp`
     },
     getEffect(level, context) {
-        if (context.PingCalculationStates !== PingCalculationStates.POST_SCORING) return {};
+        if (context.state !== PingCalculationStates.POST_SCORING) return {};
 
         return {
             bp: level * 4,

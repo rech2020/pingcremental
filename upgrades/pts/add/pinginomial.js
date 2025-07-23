@@ -7,7 +7,7 @@ module.exports = {
     },
     getDetails() {
         return {
-            description: "gain the __(level+1)__th number in the fibbonacci sequence (1, 2, 3, 5, 8, etc.) as `pts`",
+            description: "gain the __(level+1)__th number in the fibonacci sequence (1, 2, 3, 5, 8, etc.) as `pts`",
             name: "pinginacci",
             emoji: getEmoji('upgrade_pinginomial', "📈"),
         }
