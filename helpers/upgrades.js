@@ -26,7 +26,13 @@ var sortedList = {}; // sorted list of all upgrades
 for (const folder of Object.keys(list)) {
     sortedList[folder] = {}; // Initialize the folder in the sorted list
     sortedList[folder] = Object.entries(list[folder])
-        .sort(([, a], [, b]) => a.sortOrder() - b.sortOrder())
+        .sort(([, a], [, b]) => {
+            if (!a.sortOrder || !b.sortOrder) { // some upgrades (e.g. fabrics) don't sort
+                return 0;
+            }
+
+            return a.sortOrder() - b.sortOrder()
+        })
         .reduce((acc, [key, value]) => {
             acc[key] = value;
             return acc;

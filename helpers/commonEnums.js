@@ -18,9 +18,15 @@ const PingCalculationStates = {
     SCORING: 1,
     POST_SCORING: 2,
 }
+const FabricUpgradeTypes = {
+    FLAT_BONUS: 'Flat Bonus',
+    BLUE_PING: 'Blue Modification',
+    PURE_RANDOM: 'Random Chance',
+    SKILL_BASED: 'Skill-Based',
+    MISC: 'Miscellaneous',
+}   
 
 Object.freeze(UpgradeTypes);
 Object.freeze(PipUpgradeTypes);
-Object.freeze(PingCalculationStates);
 
-module.exports = { UpgradeTypes, PipUpgradeTypes, PingCalculationStates };
+module.exports = { UpgradeTypes, PipUpgradeTypes };
