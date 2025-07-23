@@ -153,10 +153,7 @@ async function ping(interaction, isSuper = false, overrides = {}) {
         if (effect.multiply && effect.multiply !== 1) {
             currentEffects.mults.push(effect.multiply);
 
-            // prevent floating point jank
-            const formattedMultiplier = effect.multiply.toFixed(2)
-
-            effectString += ` __\`x${formattedMultiplier}\`__`
+            effectString += ` __\`x${formatNumber(Math.floor(effect.multiply))}${(effect.multiply % 1).toFixed(2)}\`__`
         }
 
         if (effect.exponent && effect.exponent !== 1) {
@@ -172,12 +169,12 @@ async function ping(interaction, isSuper = false, overrides = {}) {
 
         if (effect.bp) { 
             currentEffects.bp += effect.bp;
-            effectString += ` \`+${effect.bp} bp\``
+            effectString += ` \`+${formatNumber(effect.bp)} bp\``
         }
 
         if (effect.apt) {
             currentEffects.apt += effect.apt;
-            effectString += ` \`+${effect.apt} APT\``
+            effectString += ` \`+${formatNumber(effect.apt)} APT\``
         }
 
         if (pingFormat === "compact" && effectString !== upgradeClass.getDetails().emoji) {
@@ -231,7 +228,7 @@ async function ping(interaction, isSuper = false, overrides = {}) {
     }
 
     if (totalMult > 1 && pingFormat !== "expanded") {
-        displays.mult.push(`__\`x${totalMult.toFixed(2)}\`__`);
+        displays.mult.push(`__\`x${formatNumber(totalMult)}${(totalMult % 1).toFixed(2)}\`__`);
     }
 
     let totalExp = 1;
