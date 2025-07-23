@@ -10,6 +10,10 @@ const database = require('../helpers/database.js');
 let recentPingCache = {};
 let shutoutList = {};
 
+const RECENT_PING_THRESHOLD = 2500;
+const VERIFICATION_TIMEOUT = 1000 * 60 * 2; // 2 mins
+const BLOCK_DURATION = 1000 * 60 * 60 * 2; // 2 hours
+
 // don't leak memory! isn't that smart
 setInterval(() => {
     const tenMinutesAgo = Date.now() - (10 * 60 * 1000);
@@ -63,7 +67,7 @@ module.exports = {
                 });
             }
             delete shutoutList[interaction.user.id]; 
-            recentPingCache[interaction.user.id] = 0;
+            delete recentPingCache[interaction.user.id];
 
             await interaction.update({ content: "thanks for checking in!", components: [], embeds: [] });
         }),
@@ -91,10 +95,10 @@ async function pingResponse(interaction, isSuper = false) {
     }
 
     if (shutoutList[interaction.user.id] && Date.now() > shutoutList[interaction.user.id]) {
-        const allowTime = shutoutList[interaction.user.id] + 1000 * 60 * 60 * 2; // 2h block time
+        const allowTime = shutoutList[interaction.user.id] + BLOCK_DURATION;
         if (allowTime < Date.now()) { // blockout is over
             delete shutoutList[interaction.user.id];
-            recentPingCache[interaction.user.id] = 0;
+            delete recentPingCache[interaction.user.id];
         } else {
             return await interaction.update({
                 components: [new ActionRowBuilder().addComponents(
@@ -111,7 +115,7 @@ sorry, but looks like you were autoclicking, which is **strictly disallowed**.
 if this was a mistake, it's best to wait it out, but if you really want to, contact the developer (@monkeyswithpie).
 otherwise, use this cooldown to think about what you've done. autoclicking really defeats the point of the game, and i really thought better of you... 
 
-you can ping again in **<t:${Math.floor(allowTime/1000)}:R>**.`
+you can ping again **<t:${Math.floor(allowTime/1000)}:R>**.`
                     )
                 ],
                 content: ""
@@ -303,12 +307,12 @@ you have a lot of \`pts\`... why don't you go spend them over in ${await getEmbe
 
     // autoclicker check
     const last = playerProfile.lastPing || 0;
-    if (last > 0 && Date.now() - last < 2500) { // pinged recently
+    if (last > 0 && Date.now() - last < RECENT_PING_THRESHOLD) { 
         recentPingCache[interaction.user.id] = (recentPingCache[interaction.user.id] || 0) + 1;
         const recentPings = recentPingCache[interaction.user.id];
 
         if (recentPings >= 65 && (Math.random() < recentPings/1000) && !shutoutList[interaction.user.id]) {
-            shutoutList[interaction.user.id] = Date.now() + 1000 * 60 * 2; // disallow pings in 2 mins
+            shutoutList[interaction.user.id] = Date.now() + VERIFICATION_TIMEOUT;
 
             const userAliveEmbed = new EmbedBuilder()
                 .setColor("#ff0000")
@@ -348,7 +352,7 @@ you have until **<t:${Math.floor((shutoutList[interaction.user.id] / 1000))}:R>*
             })
         }
     } else {
-        recentPingCache[interaction.user.id] = 0;
+        delete recentPingCache[interaction.user.id];
     }
 
     if (currentEffects.rare) {
