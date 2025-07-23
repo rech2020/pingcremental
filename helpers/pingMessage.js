@@ -221,7 +221,7 @@ function get(ping, context) {
         `thats a few pings!`,
         "pingn't. wait, nope",
         'you just pinged. pung?',
-        "shoutout to gay foxgirls!", //idk if you want to make that gay foxgirls but
+        "shoutout to gay foxgirls!",
         "hey, its not a 404",
         "this ping message was brought to you by... uh, me. hi",
         "just a humble ping doing its best",
@@ -478,10 +478,9 @@ function get(ping, context) {
     // only if player was clicking (can't appear with /ping, only on button press)
     if (context.score) {
         if (Math.random() * 100 <= 7) messagesList = [
-            `what if you had \`${context.score + 182} pts\`? or \`${context.score + 31415} pts\`? no, that's unreasonable`,
             `i don't know if i made this clicking too addictive. sorry in advance`,
             `number go up!`,
-            context.score >= 1e6 ? `you have... a megapt? why?` : `did you know \`1,000,000 pts\` is called a megapt?`,
+            `did you know \`1,000,000 pts\` is called a megapt?`,
             `if you keep clicking like this, you'll be the next clicker extraordinaire`,
             "i'm glad it's a button and not a command",
             context.totalClicks >= 150 ? `there's no... upgrades...? oh, wait` : `there's no upgrades for this, by the way`,
@@ -500,21 +499,14 @@ function get(ping, context) {
             context.totalClicks >= 1000 ? `is the carpal tunnel setting in yet? with your ${context.totalClicks} pings?` : `you've pinged me ${context.totalClicks} times`,
             `points and \`pts\` are not the same, do NOT confuse them`,
             `"\`pts\`" is pronounced like "points" but remember they're not the same`,
-            `you've got \`${context.score} pts\`. now what?`,
-            `at \`${context.score} pts\`, you've officially out-clicked my expectations`,
-            `what if i gave you \`${context.score * 2} pts\`? no, i won't, but what if`,
-            `you've accumulated \`${context.score} pts\`, which is like, a lot. probably`,
-            context.score >= 1e5 ? `you have entered Ultra Ping Territory™` : `keep going. Ultra Ping Territory™ starts at 100,000 \`pts\``,
-            context.score >= 250000 ? `you now qualify for our totally imaginary platinum tier` : `click more. platinum tier requires 250k \`pts\``,
-            `based on your current score of ${context.score}, i diagnose you with: terminal pinging`,
-            context.score >= 1e6 ? `thats like, more than a megapt` : `keep going! you're only ${1e6 - context.score} away from a megapt`,
+            `that ping scored you a full \`${context.score} pts\`.`,
+            `what if i gave you another \`${context.score * 2} pts\`? you can probably get that by just clicking a bit more`,
+            `you got \`${context.score} pts\` just then, which is like, a lot. probably`,
             context.totalClicks >= 500 ? `you've clicked ${context.totalClicks} times. is your mouse okay?` : `you've clicked ${context.totalClicks} times. that's like, medium pinger level`,
-            `at this rate, you'll hit ${context.score + 10000} in no time. probably`,
-            `fun fact: you've earned \`${context.score} pts\` and not a single one was a tax write-off`,
-            context.score >= 2e6 ? `two megapts? ok, now you're just showing off` : (context.score >=1e6? `approaching the legendary double megapt threshold...`:`you're approaching one megapt (probably)`),
+            `you've earned \`${context.score} pts\` from this one ping, and not a single one was a tax write-off`,
             `click count: ${context.totalClicks}. you should probably stretch your fingers`,
         ]
-        if (context.score % 1000 === 0) messagesList.push(`your score is a very satisfying multiple of 1000. good job`)
+        if (context.score % 1000 === 0) messagesList = [`your score is a very satisfying multiple of 1000. good job`]
     }
 
     if (context.slumberClicks && Math.random() * 100 <= 12) {
@@ -595,7 +587,7 @@ function get(ping, context) {
         `ping is out for lunch. back soon?`,
         `by the time this ping finishes, Stardew crops will have regrown`,
         `warning: ping is thinking about life choices`,
-        ping>=300?`ping is moving at glacial speeds, but it got here`:`okay, so like, its trying its best`,
+        `okay, so like, i'm trying my best`,
         `this ping made a wrong turn at albuquerque`,
         `i tried to send a ping, but it got emotionally overwhelmed`,
         `ping got distracted halfway here`,
