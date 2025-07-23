@@ -53,5 +53,8 @@ const rest = new REST().setToken(token);
 		console.log(`Successfully reloaded ${data.length} application (/) commands.`);
 	} catch (error) {
 		console.error(error);
+	} finally {
+		await database.CachedCommand.sequelize.close();
+		process.exit(0);
 	}
 })();
