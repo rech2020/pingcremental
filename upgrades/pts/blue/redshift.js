@@ -7,13 +7,13 @@ module.exports = {
     },
     getDetails() {
         return {
-            description: "__-0.3%__ chance to spawn a blue ping (additive), but __x1.08__ all pts",
+            description: "__-0.3%__ chance to spawn a blue ping (additive), but __x1.08__ all `pts`",
             name: "redshift",
             emoji: getEmoji('upgrade_redshift', "🔴"),
         }
     },
     getEffectString(level) {
-        return `-${(0.3*level).toFixed(1)}% chance, x${(1+level*0.08).toFixed(2)} pts`
+        return `-${(0.3*level).toFixed(1)}% chance, x${(1+level*0.08).toFixed(2)} \`pts\``
     },
     getEffect(level, context) {
         return {

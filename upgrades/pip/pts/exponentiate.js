@@ -7,7 +7,7 @@ module.exports = {
     },
     getDetails() {
         return {
-            description: "gain __^1.02__ pts",
+            description: "gain __^1.02__ `pts`",
             name: "Exponentiate",
             emoji: getEmoji('ponder_exponentiate', "^"),
             flavor: "they only way out is up.",

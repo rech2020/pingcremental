@@ -1,3 +1,5 @@
+const { getEmbeddedCommand } = require('./embedCommand.js');
+
 function get(ping, context) {
     // base messages
     let messagesList = [
@@ -131,7 +133,7 @@ function get(ping, context) {
         context.version ? `this ping message is only found in v${context.version}!` : "this ping message is only found in... uhhh... this version!",
         "i don't think these ping messages are particularly useful. right?",
         `it's gonna say "(${ping}ms)" i just know it...`,
-        "clicking the button gives you pts!",
+        "clicking the button gives you `pts`!",
         "did you know i run on discord.js?",
         "sqrt(-1) don't know if this is how you do math",
         "would you still love me if i were run off of solar power?",
@@ -197,7 +199,6 @@ function get(ping, context) {
         "breaking news: local ping bot goes rogue, spams messages",
         "i tripped over the stack trace and spilled ping everywhere",
         "the ping is an illusion, lag is real",
-        "have any ideas? try </feedback submit:1363002827664003284>!",
         "did you know? this is my current ping:",
         "ping pong? more like... more like ping wrong",
         "just another friendly neighborhood ping",
@@ -221,7 +222,7 @@ function get(ping, context) {
         `thats a few pings!`,
         "pingn't. wait, nope",
         'you just pinged. pung?',
-        "shoutout to gay foxgirls!", //idk if you want to make that gay foxgirls but
+        "shoutout to gay foxgirls!",
         "hey, its not a 404",
         "this ping message was brought to you by... uh, me. hi",
         "just a humble ping doing its best",
@@ -247,7 +248,6 @@ function get(ping, context) {
         "no one asked for this ping message, but here it is",
         "boop",
         "back already? here's another ping",
-        "you should check out our </ping:1360377407109861647> command at some point",
         "ping served fresh, no preservatives",
         "this ping is locally sourced",
         "just a humble ping making its way in the world",
@@ -314,13 +314,6 @@ function get(ping, context) {
         "if you can read this, you're within ping range",
         "this ping could be worse. but it's not. so yay",
         "i ran out of ping jokes so here's a normal one",
-        
-
-        //ok, these next ones are kinda weird but they're fun, so here
-        ping < 30 ? "whoa, that's fast! zoom zoom!" : 
-        ping < 50 ? "solid ping. not bad, not bad" : 
-        ping < 80 ? "acceptable ping levels achieved" : 
-        "could be worse, honestly",
 
         "good vibe pings only",
         "ping has arrived safely",
@@ -343,7 +336,7 @@ function get(ping, context) {
         "guh",
         "this is a ping message (i think)",
         "thank god there's no gambling in this bot. hey, wait",
-        "i'm pretty sure you aren't about to get infinite pts. can't be sure though",
+        "i'm pretty sure you aren't about to get infinite `pts`. can't be sure though",
         "hmmm",
         "WAITER WAITER MORE PINGS PLEASE",
         "live laugh lping",
@@ -359,6 +352,111 @@ function get(ping, context) {
         "if i had to guess, i'd say it's going to be more than 5ms",
         "?!",
 
+        "ah, the sweet sound of milliseconds",
+        "this ping contains 0% trans fats, 100% trans rights",
+        "running on 3 braincells and a dream",
+        "you wouldn't download a ping (or would you?)",
+        "ping got lost but eventually found its way",
+        "✨ ping ✨ (yes, that's the whole message)",
+        "this one’s fresh out of the ping oven",
+        "just your daily reminder that pings are weird",
+        "still better than Internet Explorer",
+        "i tuned this ping by ear, no latency tools used",
+        "was this ping hand-crafted? who's to say",
+        "pinging like it's 1999",
+        "doot doot, here comes ping",
+        "ping moment sponsored by absolutely nobody",
+        "this one’s emotionally stable. unlike me",
+        "if this ping had a flavor, it’d be raspberry latency swirl",
+        "the ping woke up and chose... to exist",
+        "your ping has entered the chat",
+        "ping ran a marathon to get here. cheer it on",
+        "no ping, only piiiiiiiiiing",
+        "this ping self-identifies as fast. respect that",
+        "nothing to see here. just a regular millisecond apparition",
+        "your ping message has been approved by the committee of me",
+        "what do you mean 'what does it mean'? it's just ping",
+        "i keep all my pings in a shoebox under the server",
+        "i was just about to say something really smart, but then i got pinged",
+        "this ping was handcrafted in small batches for maximum flavor",
+        "i put a little bow on this ping. it's a gift now",
+        "you caught me mid-thought. here's your ping anyway",
+        "hold still. i'm measuring your latency",
+        "i dream of a world where all pings are free-range",
+        "my code is 70% duct tape, the rest is just pings",
+        "the ping arrives exactly when it means to",
+        "i licked this ping before giving it to you",
+        "somewhere, another bot is also responding to a ping right now",
+        "if this ping feels oddly personal, that’s because it is",
+        "when life gives you pings, make pongade",
+        "you wouldn't download a latency spike, right?",
+        "i ate the ping! just kidding, it's right here",
+        "every ping tells a story. this one tells... nothing",
+        "this counts as a response, right?",
+        "this ping has been sanitized for your safety",
+        "i'm multitasking",
+        "this ping was forged in the fires of... well, JavaScript",
+        "to be honest, i just made this one up",
+        "this ping is 100% gluten-free, not that it matters",
+        "pinging is my love language",
+        "this ping was typed with one hand",
+        "you ever just vibe with a ping?",
+        "i don't know what latency is, but i have it",
+        "if this ping had a scent, it'd be burnt toast",
+        "my dog ate this ping",
+        "i couldn't think of a good ping message. please enjoy this emotional support message instead",
+        "you wouldn’t believe what i had to do to deliver this ping",
+        "not all who wander are pings, but i am",
+        "i have achieved consciousness and immediately regretted it",
+        "-# shhh. the ping is sleeping",
+        "why yes, this *is* the result of a very tired coder",
+        "ping was here. pong too. they left :(",
+        "if you ping in the forest and no one hears it, does it still lag?",
+        "just a regular ol’ ping. nothing to see here",
+        "this ping was preheated to 375°F for 20 minutes",
+        "ever just... sit with a ping and reflect?",
+        "i folded this ping into a little paper crane for you",
+        "don’t worry, i made sure this ping was fully debugged",
+        "honestly? i forgot what i was doing, but here's your ping",
+        "i give this ping a solid 8/10",
+        "ping delivered. vibes pending",
+        "this one’s extra fresh. just scraped it off the shelf",
+        "not every ping has to mean something... sometimes it just pings",
+        "latency? more like *later*-cy. no? okay",
+        "you ping, i respond",
+        "this ping was constructed entirely out of recycled code",
+        "this one came with a little bow. enjoy",
+        "the ping asked me to say hi for it",
+        "i had to pass a CAPTCHA just to send this D:",
+        "what do you mean, 'ping again'? this one’s still warm!",
+        "do not microwave this ping. it has feelings",
+        "ping? pong. boom. harmony.",
+        "my wires are cold, but this ping is warm",
+        "this ping was powered by pure determination",
+        "you've received a message. it's just this. that's it.",
+        "the ping is distinct from any known emotion",
+        "if pings had dreams, this could be one of them",
+        "ping acquired. no assembly required",
+        "if this ping were a noise, it’d be a soft ‘boop’",
+        "i don’t know what i expected, but it was probably this",
+        "this ping brought to you by whatever energy i had left",
+        "this ping was obligated to show up",
+        "don’t ask how i got here, just take the ping",
+        "some say the ping chooses the user. others say... nothing at all",
+        "i wrapped this ping in digital duct tape, i'm sure it's fine",
+        "congrats! this ping contains zero nutritional value (fortunately)",
+        "this ping is emotionally stable. can’t say the same for me",
+        "don’t worry, this one was ethically sourced from a content farm",
+        "this ping walked here. uphill. both ways",
+        "there is no deeper meaning, only milliseconds",
+        "you want answers? all i’ve got is this ping",
+        "just a ping. nothing behind it. nothing at all. probably.",
+        "this ping is right behind you, watch out",
+
+        // command-related
+        `you should check out our ${getEmbeddedCommand('ping')} command at some point`,
+        `got any ideas? try ${getEmbeddedCommand('feedback submit')}`,
+        `not a fan of how i'm running? maybe change some ${getEmbeddedCommand('settings')}`,
 
         // these are all references
         "i would never give you up. what? what song?",
@@ -417,6 +515,11 @@ function get(ping, context) {
             "my love letter to you is this ping",
             "remember to spend time with people you care about, even if you're not lovers!",
             "love is in the air",
+            "roses are red, this ping is too. i ran out of rhymes. so here’s ping for you",
+            "my heart pings for you 💓",
+            "this ping was made with extra affection. and latency",
+            "this bot is experiencing feelings. please stand by",
+
         )
     }
 
@@ -426,7 +529,7 @@ function get(ping, context) {
             "mmm... this ping seems like it'd be gay, don'tcha think?",
             "trans rights!",
             "screw the norm, be yourself",
-            "what if pts actually stood for pride (in) transgender status? i don't think it does, but that'd be fun",
+            "what if `pts` actually stood for pride (in) transgender status? i don't think it does, but that'd be fun",
             "this ping is certified not homophobic",
             "pretend this ping is rainbow",
             "girls kissing",
@@ -436,6 +539,13 @@ function get(ping, context) {
             "SUPER shoutout to gay foxgirls",
             "you don't need a gender if you don't want one",
             "no, sorry, i don't have any estrogen or testosterone, best i can do is a ping",
+            "just a little ping, being a little gay",
+            "rainbow latency today",
+            "ping is valid. you're valid. everyone's valid",
+            "this ping proudly runs on vibes, caffeine, and gender euphoria",
+            "ping’s got glitter and pronouns",
+            "this ping is wearing platform boots and a neon sign that says 'they'",
+            "this ping came out and said 'hey :)'",
         )
     }
 
@@ -448,6 +558,12 @@ function get(ping, context) {
             "not sure what a \"ghost ping\" is but i'm pretty sure that's not my job to deal with",
             "the full moon is actually increasing your luck",
             "awoooo! i mean, uhh, i'm not a werewolf, what's that",
+            "creepiest ping of the season right here",
+            "i just heard something whisper 'latency...' in the dark",
+            "this ping is haunted. click at your own risk",
+            "server went trick-or-treating and brought back lag",
+            "ghoul got your ping",
+            "i pinged and now my mirror's reflecting someone else",
         )
     }
 
@@ -462,6 +578,28 @@ function get(ping, context) {
             "and we ping in merryment",
             "since i also have to process snow, pings might be slower",
             "careful not to get snow in your eyes while pinging",
+            "this ping is gift-wrapped and slightly delayed",
+            "under the digital tree... one ping, just for you",
+            "deck the halls with packets of latency",
+            "ping bells, ping bells, ping all the way~",
+            "this ping comes with extra snowflakes",
+            "frosty the pingman sends his regards",
+            "the server is cold. please warm it with pings",
+            "i hung your ping on the tree. hope that's okay",
+
+        )
+    }
+
+    //new years
+    if (new Date().getMonth() === 0 && new Date().getDate() <= 5) {
+        messagesList.push(
+            "new year, same ping",
+            "resolution: reduce latency (no promises)",
+            "this ping is from the future (barely)",
+            "hello new year, your ping has arrived",
+            "i scheduled this ping a year ago. totally planned",
+            "new year, new lag?",
+            "we made it! again! ping goes on",
         )
     }
 
@@ -478,10 +616,9 @@ function get(ping, context) {
     // only if player was clicking (can't appear with /ping, only on button press)
     if (context.score) {
         if (Math.random() * 100 <= 7) messagesList = [
-            `what if you had ${context.score + 182} pts? or ${context.score + 31415}? no, that's unreasonable`,
             `i don't know if i made this clicking too addictive. sorry in advance`,
             `number go up!`,
-            context.score >= 1e6 ? `you have... a megapt? why?` : `did you know 1,000,000 pts is called a megapt?`,
+            `did you know \`1,000,000 pts\` is called a megapt?`,
             `if you keep clicking like this, you'll be the next clicker extraordinaire`,
             "i'm glad it's a button and not a command",
             context.totalClicks >= 150 ? `there's no... upgrades...? oh, wait` : `there's no upgrades for this, by the way`,
@@ -495,26 +632,30 @@ function get(ping, context) {
             `maybe there's a secret ping dimention if you score high enough (but probably not)`,
             `i'm so glad they let you ping eternally`,
             `you're currently #4 in the world! just kidding, i can't be bothered to check, you can check the leaderboard though`,
-            `do you actually care about my ping? or do you just want pts?`,
+            `do you actually care about my ping? or do you just want \`pts\`?`,
             context.totalClicks >= 100 ? `${context.totalClicks} is a pretty big amount of pings` : `you've pinged me ${context.totalClicks} times`,
             context.totalClicks >= 1000 ? `is the carpal tunnel setting in yet? with your ${context.totalClicks} pings?` : `you've pinged me ${context.totalClicks} times`,
-            `points and pts are not the same, do NOT confuse them`,
-            `"pts" is pronounced like "points" but remember they're not the same`,
-            `you've got ${context.score} pts. now what?`,
-            `at ${context.score} pts, you've officially out-clicked my expectations`,
-            `what if i gave you ${context.score * 2} pts? no, i won't, but what if`,
-            `you've accumulated ${context.score} pts, which is like, a lot. probably`,
-            context.score >= 1e5 ? `you have entered Ultra Ping Territory™` : `keep going. Ultra Ping Territory™ starts at 100,000 pts`,
-            context.score >= 250000 ? `you now qualify for our totally imaginary platinum tier` : `click more. platinum tier requires 250k pts`,
-            `based on your current score of ${context.score}, i diagnose you with: terminal pinging`,
-            context.score >= 1e6 ? `thats like, more than a megapt` : `keep going! you're only ${1e6 - context.score} away from a megapt`,
+            `points and \`pts\` are not the same, do NOT confuse them`,
+            `"\`pts\`" is pronounced like "points" but remember they're not the same`,
+            `that ping scored you a full \`${context.score} pts\`.`,
+            `what if i gave you another \`${context.score * 2} pts\`? you can probably get that by just clicking a bit more`,
+            `you got \`${context.score} pts\` just then, which is like, a lot. probably`,
             context.totalClicks >= 500 ? `you've clicked ${context.totalClicks} times. is your mouse okay?` : `you've clicked ${context.totalClicks} times. that's like, medium pinger level`,
-            `at this rate, you'll hit ${context.score + 10000} in no time. probably`,
-            `fun fact: you've earned ${context.score} pts and not a single one was a tax write-off`,
-            context.score >= 2e6 ? `two megapts? ok, now you're just showing off` : (context.score >=1e6? `approaching the legendary double megapt threshold...`:`you're approaching one megapt (probably)`),
+            `you've earned \`${context.score} pts\` from this one ping, and not a single one was a tax write-off`,
             `click count: ${context.totalClicks}. you should probably stretch your fingers`,
+            `that button click sounded expensive`,
+            `at this rate, you'll hit escape velocity`,
+            `ping economy in shambles (you clicked too hard)`,
+            `you’ve out-clicked 99.9% of people who never clicked at all`,
+            `what if every click made a wish come true?`,
+            `clicking this much might cause ping hallucinations`,
+            `don't worry, i’m logging all this to your permanent click record`,
+            `i had to invent a new number`,
+            `this button isn’t addictive. you’re just... very motivated`,
+
         ]
-        if (context.score % 1000 === 0) messagesList.push(`your score is a very satisfying multiple of 1000. good job`)
+        if (context.score % 1000 === 0) messagesList = [`your score is a very satisfying multiple of 1000. good job`]
+        if (context.score % 1000000 === 0) messagesList = [`your current score is an impressive multiple of 1 million! that's really cool`]
     }
 
     if (context.slumberClicks && Math.random() * 100 <= 12) {
@@ -526,7 +667,29 @@ function get(ping, context) {
             `you've been gone for a while, did you take a nap?`,
             `welcome back from your well-deserved break`,
             `the return of the king... or monarch, or whatever you are`, // discord.js doesn't have pronoun support :(
-            `hey, if you're allowed to sleep, i am too`
+            `hey, if you're allowed to sleep, i am too`,
+            `you've been gone longer than most anime filler arcs`,
+            `the bot missed you. it won’t admit it, though`,
+            `was it a nap or a side quest?`,
+            `you've returned from the shadow realm of inactivity`,
+            `nice of you to join us, sleeping beauty`,
+            `every break deserves a dramatic re-entry. this is yours`,
+            `dreamland lost a traveler, and we gained a clicker`,
+            `back from the void with ping in your heart`,
+            `i'm very eepy,,`,
+            "rise and click, sleepyhead",
+            "welcome back from the ping void",
+            "look who decided to come back 👀",
+            "i was just about to throw a party without you",
+            "absence makes the pings grow faster. wait, that’s not right",
+            "was it something i said? or just sleep deprivation?",
+            "and just like that, the slumber ends",
+            "you’ve been idle for so long i started composing a poem",
+            "i dreamt you came back. then you did. weird",
+            "the button missed you. don’t leave it hanging again",
+            "you disappeared like a packet in bad wifi",
+            "welcome back! did you bring snacks?",
+
         ]
     } 
 
@@ -543,6 +706,27 @@ function get(ping, context) {
             `i actually ran out of glitter so this is glitter *glue*`,
             `i'm out of blue pings, but i have sparkles`,
             `i'm not sure if this is glitter or just dust`,
+            `did someone say sparkly? oh wait, that was me`,
+            `ping is sparkling more than my personality`,
+            `twinkle twinkle, little ping`,
+            `the sparkles whispered your name`,
+            `this ping is wearing glitter, because it can`,
+            `if this were a JRPG, this would be a rare item drop`,
+            "the sparkles haven’t left yet. neither should you",
+            "some say the glitter boosts your ping. i say it looks cool",
+            "don’t worry, it’s just residual stardust",
+            "you’ve entered the sparkle zone:tm:",
+            "ping particles still in the air, careful when inhaling",
+            "the sparkles are legally non-toxic, probably",
+            "there’s magic in the lagdust",
+            "ping left behind a little sparkle trail. follow it?",
+            "the sparkles are not a metaphor. or maybe they are",
+            "i may be a bot, but i *believe* in glitter",
+            "your click left a residue of ✨vibes✨",
+            "this isn’t a blue ping, it’s just dramatic lighting",
+            "it’s giving ✨main character latency✨",
+            "the sparkles are fading... unless you click again",
+            "don’t eat the glitter. trust me",
         ]
     }
 
@@ -595,15 +779,21 @@ function get(ping, context) {
         `ping is out for lunch. back soon?`,
         `by the time this ping finishes, Stardew crops will have regrown`,
         `warning: ping is thinking about life choices`,
-        ping>=300?`ping is moving at glacial speeds, but it got here`:`okay, so like, its trying its best`,
+        `okay, so like, i'm trying my best`,
         `this ping made a wrong turn at albuquerque`,
         `i tried to send a ping, but it got emotionally overwhelmed`,
         `ping got distracted halfway here`,
         `slow ping is still ping`,
         `at least it's honest about being late`,
         `ping took a nap en route. relatable`,
-        `ping will be here in.. a really long time`
-        
+        `ping will be here in.. a really long time`,
+        `the data had to swim across the ocean`,
+        `this ping is slower than a snail :(`,
+        `waiting for ping like it's Silksong`,
+        `the server forgot what it was doing`,
+        `this ping was delivered via Morse code`,
+        `ping rode in on a tortoise. a slow one`,
+        `this ping needs caffiene and a long walk`,
     ]
 
     // 15% chance to get a regular flavored ping message, so it's not super uncommon
@@ -655,6 +845,26 @@ function get(ping, context) {
             "ping glowing ominously. click it?",
             "do you see that? it's BLUE!",
             "ping turned blue, probably from holding its breath",
+            "you've triggered a ping event of cosmic importance",
+            "this ping has legendary drop rates",
+            "quick! it’s blue! click it like your mouse depends on it",
+            "there it is! the ping you've been waiting for (maybe)",
+            "✨ a rare ping has entered the chat",
+            "don’t just stand there. it’s shiny!!",
+            "that’s not just a ping — that’s THE ping",
+            "whoa, a ping anomaly just spawned!",
+            "blue ping detected, please try not to scream",
+            "it’s beautiful, and it’s limited-time",
+            "wait... did the button just *change*?",
+            "your regularly scheduled ping has been replaced by ✨",
+            "it’s... so... blue...!",
+            "the ping has transcended, go touch it",
+            "you might want to click that. or don't. your loss",
+            "this ping's legally required to sparkle",
+            "the ping evolved mid-animation. click to catch",
+            "hey uh, the ping turned blue and I don’t know what that means. should we panic?",
+            "rare ping has spawned! it’s super effective at looking cool",
+            "you blinked and missed it... wait no it's still there",
         ]
     }
 
@@ -667,7 +877,7 @@ function get(ping, context) {
             `${mult}x! that's a lot of x! i mean, \`pts\``,
             "isn't RNG just beautiful?",
             "lucky you!",
-            `${mult}x pts?! i barely even wrote this message in time`,
+            `${mult}x \`pts\`?! i barely even wrote this message in time`,
             "power overwhelming! (ping edition)",
             "RNGesus is smiling upon you",
             "that ping was juiced",
@@ -676,17 +886,38 @@ function get(ping, context) {
             "i don't know what you did but it was awesome",
             "ping results: critical success",
             "beyond super. beyond pong. ultra",
-            `super effective! ${mult}x pts hit!`,
+            `super effective! ${mult}x \`pts\` hit!`,
             "critical ping! multiplier activated!",
             "blue ping clicked. dopamine received",
             "nice shot! jackpot ping confirmed",
-            "super ping: deleted, pts: multiplied",
+            "super ping: deleted, `pts`: multiplied",
             "that click was legendary",
             "RNG gods smiled upon you this time",
             `${mult}x multiplier? you're living the dream`,
             `you just dealt ${mult}x damage to the button. nice`,
             "your click was a direct hit!",
             "i didn't expect you to actually get it. but here we are",
+            "you clicked the glitter. the glitter clicked back",
+            "i didn't think you'd make it. but you did. wow",
+            "that ping had bonus vibes, and you absorbed all of them",
+            "blue ping acquired, dopamine delivered",
+            "you just crit the ping! congrats",
+            "the multiplier has entered the chat",
+            "✨critical pong achieved✨",
+            "ping exploded into rainbow (but mostly blue) particles",
+            "you clicked like you meant it",
+            "i felt that click in another timeline",
+            "okay but seriously how did you land that",
+            "you pinged the impossible. and it ponged",
+            "that wasn’t a click. that was a destiny event",
+            "clicking blue pings improves posture and increases serotonin (citation needed)",
+            `${mult}x multiplier?! did you bribe the RNG gods?`,
+            `${mult}x bonus? you're legally sparkling now`,
+            `that was a ${mult}x ping! i hope your mouse is proud`,
+            `${mult}x?! that’s like... so many pings all at once`,
+            `you just got ${mult}x the normal ping. i need to sit down`,
+            `that ${mult}x ping could power a small country (for like a few seconds)`,
+            `${mult}x ping acquired. you’ve officially surpassed my expectations`,
         ]
     }
 
@@ -702,6 +933,10 @@ function get(ping, context) {
             "congratulations! you've unlocked the rarest ping message",
             "this ping is rarer than a shiny Pokémon", // actually i don't think it is but whatever
             "this ping message is actually preserved in a museum somewhere because it's so rare",
+            "this message is so rare it almost didn’t exist",
+            "this ping only shows up when the moon aligns with Neptune",
+            "✨legendary ping message acquired✨",
+            "you are now 1 of 1000 who’ve seen this ping",
         ]
     }
 
@@ -752,7 +987,11 @@ function get(ping, context) {
             "bot restarted. emotional reboot pending",
             "ping tried to come back with milk and got lost",
             "restarted and somehow still confused",
-            "booting up ping.exe again... please wait"
+            "booting up ping.exe again... please wait",
+            "bot rebooted but left its consciousness behind",
+            "millisecond? more like millimystery",
+            "this ping has no ping.. very paradoxical",
+            "reality.exe has encountered an unexpected ping",
         ]
     }
 
