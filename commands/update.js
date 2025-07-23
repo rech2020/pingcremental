@@ -26,6 +26,10 @@ module.exports = {
         )
         .setContexts(InteractionContextType.BotDM, InteractionContextType.Guild, InteractionContextType.PrivateChannel),
     async execute(interaction) {
+        if (process.env.TEST_ENV && process.env.TEST_ENV === 'true') {
+            return await interaction.reply({ content: "versioning isn't available in beta or testing!", flags: MessageFlags.Ephemeral });
+        }
+
         if (interaction.options.getSubcommand() === 'view') {
             const version = interaction.options.getString('version') || 'latest';
             await interaction.reply(await getVersionMessage(version));
