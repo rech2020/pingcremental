@@ -25,6 +25,8 @@ there are three fields that should be mostly self-explainatory. these fields wil
 
 3. `OWNER_ID` - the discord snowflake of the owner user of the bot. technically optional, but some functionality will be disabled or work incorrectly.
 
+4. `TEST_ENV` - when set to "true", will enable special commands that **anyone can use to modify their profile freely**.
+
 ### running
 
 there are two ways to do this.
