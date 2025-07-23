@@ -3,6 +3,8 @@ const { rawUpgrades } = require('./upgrades.js')
 const formatNumber = require('./formatNumber.js')
 const { getEmoji } = require('./emojis.js');
 const getLatestVersion = require('./versions.js');
+const { artisanSymbols } = require('../upgrades/fabrics/skill/artisan.js');
+const { PingCalculationStates } = require('./commonEnums.js');
 const MAX_PING_OFFSET = 5;
 
 async function ping(interaction, isSuper = false, overrides = {}) {
@@ -12,13 +14,14 @@ async function ping(interaction, isSuper = false, overrides = {}) {
     }
     ping += Math.round(Math.random() * MAX_PING_OFFSET * 2) - MAX_PING_OFFSET; // randomize a bit since it only updates occasionally
 
-    const [playerProfile, _created] = await database.Player.findOrCreate({ where: { userId: overrides.userId || interaction.user.id } })
+    const [playerProfile, _created] = await database.Player.findOrCreate({ where: { userId: interaction.user.id } })
     let context = { // BIG LONG EVIL CONTEXT (will kill you if it gets the chance)
         // actual context
-        user: overrides.userId ? { id: overrides.userId } : interaction.user,
+        user: interaction.user,
         ping: ping,
         isSuper: isSuper,
         versionNumber: await getLatestVersion(),
+        interactionTimestamp: interaction.createdAt,
 
         // player profile bits
         score: playerProfile.score,
@@ -27,24 +30,27 @@ async function ping(interaction, isSuper = false, overrides = {}) {
         pip: playerProfile.pip,
         removedUpgrades: playerProfile.removedUpgrades,
         missedBluePings: playerProfile.bluePingsMissed,
-        lastPing: playerProfile.lastPing,
 
         // per-upgrade vars
         slumberClicks: playerProfile.slumberClicks,
         glimmerClicks: playerProfile.glimmerClicks,
+        artisanClickedSymbol: null,
+        artisanNextSymbols: [],
         
         // updated vars
         spawnedSuper: false,
         rare: false,
         blue: 0,
         blueStrength: 1,
+        blueCap: 35,
         specials: {},
         RNGmult: 1,
         blueCombo: 0,
+        state: PingCalculationStates.RNG_AND_SPECIAL
     }
 
     let iterateUpgrades = {}
-    for (const upgradeTypeList of [playerProfile.upgrades, playerProfile.prestigeUpgrades]) {
+    for (const upgradeTypeList of [playerProfile.upgrades, playerProfile.prestigeUpgrades, playerProfile.equippedFabrics]) {
         if (!upgradeTypeList) continue;
         for (const [upg, lv] of Object.entries(upgradeTypeList)) iterateUpgrades[upg] = lv;
     }
@@ -59,9 +65,9 @@ async function ping(interaction, isSuper = false, overrides = {}) {
         exponents: [],
         blue: 0,
         blueStrength: 1,
+        blueCap: 35,
         specials: {},
         bp: 0,
-        apt: 0,
         RNGmult: overrides.forceNoRNG ? 0 : 1,
         // add more if needed
         
@@ -74,7 +80,6 @@ async function ping(interaction, isSuper = false, overrides = {}) {
         exponents: [],
         extra: [],
         bp: [],
-        apt: [],
     }
     const pingFormat = playerProfile.settings.pingFormat || "expanded";
     if (pingFormat === "expanded") {
@@ -101,13 +106,17 @@ async function ping(interaction, isSuper = false, overrides = {}) {
             currentEffects.blueStrength += effect.blueStrength; 
             context.blueStrength = currentEffects.blueStrength; 
         }
+        if (effect.blueCap) {
+            currentEffects.blueCap += effect.blueCap; 
+            context.blueCap = currentEffects.blueCap;
+        }
         if (effect.RNGmult) { 
             currentEffects.RNGmult += effect.RNGmult; 
             context.RNGmult = currentEffects.RNGmult; 
         }
     }
 
-    currentEffects.blue = Math.min(currentEffects.blue, 35 + (currentEffects.specials.blueCap || 0)); // cap blue at 35%
+    currentEffects.blue = Math.min(currentEffects.blue, currentEffects.blueCap);
 
     if (isSuper) {
         let blueStrength = (currentEffects.blueStrength) * 15;
@@ -131,13 +140,34 @@ async function ping(interaction, isSuper = false, overrides = {}) {
     if ((Math.random() * 1000 < 1 * currentEffects.RNGmult)) {
         context.rare = true;
     }
+
+    if (context.specials.artisan) {
+        // extracts the symbol from the button label (looks gross though)
+        context.artisanClickedSymbol = interaction.component.label.match(new RegExp(`[${artisanSymbols.join('')}]`))[0];
+        
+        context.artisanNextSymbols = artisanSymbols;
+        // shuffle
+        for (let i = context.artisanNextSymbols.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [context.artisanNextSymbols[i], context.artisanNextSymbols[j]] = [context.artisanNextSymbols[j], context.artisanNextSymbols[i]];
+        }
+    }
     
     context.specials = currentEffects.specials; // update context for later effects
-    
+
+    // add slumber clicks if offline for long enough
+    if (currentEffects.specials.canGainSlumber && Date.now() - playerProfile.lastPing >= 1000 * 60 * (21 - playerProfile.upgrades.slumber)) {
+        playerProfile.slumberClicks += Math.floor((Date.now() - playerProfile.lastPing) / (1000 * 60 * (21 - playerProfile.upgrades.slumber)));
+        playerProfile.slumberClicks = Math.min(playerProfile.slumberClicks, Math.round((2 * 24 * 60) / (21 - playerProfile.upgrades.slumber))); // max of 2 days of slumber clicks
+        playerProfile.slumberClicks = Math.max(playerProfile.slumberClicks, 0); // no negative slumber clicks
+        context.slumberClicks = playerProfile.slumberClicks; // update context for later effects
+    }
+
     
     /* PTS CALCULATION */
 
     
+    context.state = PingCalculationStates.SCORING;
     for (const [upgradeId, level] of Object.entries(iterateUpgrades)) {
         const upgradeClass = rawUpgrades[upgradeId];
         effect = upgradeClass.getEffect(level,context);
@@ -153,7 +183,10 @@ async function ping(interaction, isSuper = false, overrides = {}) {
         if (effect.multiply && effect.multiply !== 1) {
             currentEffects.mults.push(effect.multiply);
 
-            effectString += ` __\`x${formatNumber(Math.floor(effect.multiply))}${(effect.multiply % 1).toFixed(2)}\`__`
+            // prevent floating point jank
+            const formattedMultiplier = effect.multiply.toFixed(2)
+
+            effectString += ` __\`x${formattedMultiplier}\`__`
         }
 
         if (effect.exponent && effect.exponent !== 1) {
@@ -165,16 +198,6 @@ async function ping(interaction, isSuper = false, overrides = {}) {
             for (const [special, value] of Object.entries(effect.special)) {
                 if (!currentEffects.specials[special]) currentEffects.specials[special] = value;
             }
-        }
-
-        if (effect.bp) { 
-            currentEffects.bp += effect.bp;
-            effectString += ` \`+${formatNumber(effect.bp)} bp\``
-        }
-
-        if (effect.apt) {
-            currentEffects.apt += effect.apt;
-            effectString += ` \`+${formatNumber(effect.apt)} APT\``
         }
 
         if (pingFormat === "compact" && effectString !== upgradeClass.getDetails().emoji) {
@@ -200,23 +223,11 @@ async function ping(interaction, isSuper = false, overrides = {}) {
                 displays.mult.push(effectString);
             } else if (effect.exponent) {
                 displays.exponents.push(effectString);
-            } else if (effect.bp) {
-                displays.bp.push(effectString);
-            } else if (effect.apt) {
-                displays.apt.push(effectString);
             } else if (effect.message) {
                 displays.extra.push(effectString);
             }
         }
     }
-
-    if (pingFormat !== "expanded") {
-        displays.add.push(`\`+${formatNumber(score)}\``);
-        if (currentEffects.bp) {
-            displays.bp.push(`\`+${formatNumber(currentEffects.bp)} bp\``);
-        }
-    }
-
 
     score = Math.max(score, 1); // prevent negative scores
 
@@ -228,7 +239,7 @@ async function ping(interaction, isSuper = false, overrides = {}) {
     }
 
     if (totalMult > 1 && pingFormat !== "expanded") {
-        displays.mult.push(`__\`x${formatNumber(totalMult)}${(totalMult % 1).toFixed(2)}\`__`);
+        displays.mult.push(`__\`x${totalMult.toFixed(2)}\`__`);
     }
 
     let totalExp = 1;
@@ -244,12 +255,38 @@ async function ping(interaction, isSuper = false, overrides = {}) {
     score = Math.round(score);
     if (score === Infinity) score = 0; // prevent infinite score (and fuck you; you get nothing)
     context.score = score; // update context for later effects
+
+
+    /* POST-PTS CALCULATION */
+    // this is done for things that require pt values after most calculation is already done
+    
+
+    context.state = PingCalculationStates.POST_SCORING;
+    for (const [upgradeId, level] of Object.entries(iterateUpgrades)) {
+        const upgradeClass = rawUpgrades[upgradeId];
+        effect = upgradeClass.getEffect(level, context);
+
+        if (effect.bp) { 
+            currentEffects.bp += effect.bp;
+            effectString = `\`+${effect.bp} bp\``;
+            displays.bp.push(effectString);
+        }
+    }
+
+
+
+    if (pingFormat !== "expanded") {
+        displays.add.push(`\`+${formatNumber(score)}\``);
+        if (currentEffects.bp) {
+            displays.bp.push(`\`+${formatNumber(currentEffects.bp)} bp\``);
+        }
+    }
     
     let bpMax = ((playerProfile.upgrades.limit || 0) + 1) * 10000;
-    bpMax += (playerProfile.prestigeUpgrades.storage || 0) * 2500;
+    bpMax *= (playerProfile.prestigeUpgrades.storage || 0) * 0.2 + 1;
 
     // move all the spare stuff into currentEffects so it's nice and organized
-    for (const x of ['spawnedSuper','rare','blueCombo']) {
+    for (const x of ['spawnedSuper', 'rare', 'blueCombo', 'artisanNextSymbols']) {
         currentEffects[x] = context[x]
     }
     currentEffects.bpMax = bpMax;

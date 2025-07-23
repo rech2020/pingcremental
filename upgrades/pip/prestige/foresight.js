@@ -1,4 +1,4 @@
-const { PipUpgradeTypes } = require('../../../helpers/upgradeEnums.js');
+const { PipUpgradeTypes, PingCalculationStates } = require('../../../helpers/commonEnums.js');
 const { getEmoji } = require('../../../helpers/emojis.js');
 
 module.exports = {
@@ -7,19 +7,20 @@ module.exports = {
     },
     getDetails() {
         return {
-            description: "start gaining `bp` before unlocking pingularity",
+            description: "gain 2.5 bp for every 1 million pts in your ping (rounded up)",
             name: "Foresight",
             emoji: getEmoji('ponder_foresight', "🔮"),
             flavor: "know before you go.",
         }
     },
     getEffectString(level) {
-        if (level === 0) return "+0 bp"
-        return `+${(level*2 + 6).toFixed(1)} bp`
+        return `+${(2.5*level).toFixed(1)} bp`
     },
     getEffect(level, context) {
+        if (context.state !== PingCalculationStates.POST_SCORING) return {};
+
         return {
-            bp: level*2 + 6
+            bp: Math.ceil(level * 2.5 * context.score / 1e6),
         }
     },
     upgradeRequirements() {

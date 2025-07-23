@@ -1,10 +1,10 @@
-const { PipUpgradeTypes } = require('../../../helpers/upgradeEnums.js');
+const { PipUpgradeTypes } = require('../../../helpers/commonEnums.js');
 const { getEmoji } = require('../../../helpers/emojis.js');
 
 module.exports = {
     getPrice(currentLevel) {
-        if (currentLevel >= 6) return null;
-        return 6**(currentLevel+4);
+        if (currentLevel > 7) return null;
+        return 5**(currentLevel+4);
     },
     getDetails() {
         return {

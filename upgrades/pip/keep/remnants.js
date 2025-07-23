@@ -1,9 +1,9 @@
-const { PipUpgradeTypes } = require('../../../helpers/upgradeEnums.js');
+const { PipUpgradeTypes } = require('../../../helpers/commonEnums.js');
 const { getEmoji } = require('../../../helpers/emojis.js');
 
 module.exports = {
     getPrice(currentLevel) {
-        return 12**(currentLevel+2) + 1111;
+        return 10**(currentLevel+2) + 1111;
     },
     getDetails() {
         return {

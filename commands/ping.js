@@ -123,18 +123,16 @@ you can ping again **<t:${Math.floor(allowTime/1000)}:R>**.`
         }
     }
 
-    let againId = 'ping:again';
-    const again = new ButtonBuilder()
-        .setCustomId(againId)
-        .setLabel('ping again!')
-        .setStyle(ButtonStyle.Secondary);
-    let row = new ActionRowBuilder();
-
     if (interaction.client.ws.ping === -1 && !developmentMode) { // bot just restarted
-        row.addComponents(again, new ButtonBuilder()
-            .setCustomId('ping:unknown')
-            .setLabel('unknown ms?')
-            .setStyle(ButtonStyle.Secondary));
+        const row = new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+                .setCustomId('ping:again')
+                .setLabel('ping again!')
+                .setStyle(ButtonStyle.Secondary),
+            new ButtonBuilder()
+                .setCustomId('ping:unknown')
+                .setLabel('unknown ms?')
+                .setStyle(ButtonStyle.Secondary));
         return await interaction.update({ // return early 
             content: `${pingMessages(interaction.client.ws.ping, { user: interaction.user })}`,
             components: [row],
@@ -142,7 +140,24 @@ you can ping again **<t:${Math.floor(allowTime/1000)}:R>**.`
         })
     }
 
-    const {score, displays, currentEffects, context} = await ping(interaction, isSuper, { developmentMode});
+    let {score, displays, currentEffects, context} = await ping(interaction, isSuper, { developmentMode });
+    if (currentEffects.specials.rerolls) {
+        if (Math.random() < currentEffects.specials.rerolls % 1) {
+            currentEffects.specials.rerolls++;
+        }
+        currentEffects.specials.rerolls = Math.floor(currentEffects.specials.rerolls);
+
+        for (let i = 0; i < currentEffects.specials.rerolls; i++) {
+            const reroll = await ping(interaction, isSuper, { developmentMode });
+            if (reroll.score > score) {
+                score = reroll.score;
+                displays = reroll.displays;
+                currentEffects = reroll.currentEffects;
+                context = reroll.context;
+            }
+        }
+    }
+
     const playerProfile = await database.Player.findByPk(`${interaction.user.id}`);
     const pingFormat = playerProfile.settings.pingFormat || "expanded";
 
@@ -153,24 +168,6 @@ you can ping again **<t:${Math.floor(allowTime/1000)}:R>**.`
     }
     if (currentEffects.specials.glimmer) {
         playerProfile.glimmerClicks += currentEffects.specials.glimmer;
-    }
-
-    const rowComponents = [];
-    // blue ping handling
-    if (!currentEffects.specials.budge) {
-        rowComponents.push(again);
-    }
-    // check if blue ping should trigger
-    if (currentEffects.spawnedSuper) {
-        playerProfile.bluePings += 1;
-        const superPing = new ButtonBuilder()
-            .setCustomId('ping:super')
-            .setLabel(`blue ping!${isSuper ? ` x${currentEffects.blueCombo + 1}` : ''}`)
-            .setStyle(ButtonStyle.Primary);
-        rowComponents.push(superPing);
-    }
-    if (currentEffects.specials.budge) {
-        if (!currentEffects.specials.bully) rowComponents.push(again);
     }
 
     /* SAVE STATS */
@@ -237,17 +234,16 @@ you have a lot of \`pts\`... why don't you go spend them over in ${await getEmbe
         })
     }
 
+    let components = getButtonRows(currentEffects);
+
     if (currentEffects.rare) {
-        row = new ActionRowBuilder()
+        components = [new ActionRowBuilder()
             .addComponents(new ButtonBuilder()
                 .setCustomId('ping:again')
                 .setLabel('whoa!')
                 .setStyle(ButtonStyle.Success)
                 .setDisabled(true),
-            );
-    } else {
-        row = new ActionRowBuilder()
-            .addComponents(rowComponents);
+            )];
     }
 
     let displayDisplay = ""
@@ -281,13 +277,15 @@ you have a lot of \`pts\`... why don't you go spend them over in ${await getEmbe
         }
     }
 
+
+
     try {
         // update ping
         await interaction.update({
             content:
                 `${pingMessage}
 \`${formatNumber(playerProfile.score, true, 4)} pts\` (**\`+${formatNumber(score, true, 3)}\`**)\n-# ${displayDisplay}`,
-            components: [row],
+            components: components,
             embeds: [],
         });
     } catch (error) {
@@ -297,7 +295,7 @@ you have a lot of \`pts\`... why don't you go spend them over in ${await getEmbe
                 content:
                     `this ping message is non-offensive, and contains nothing that will anger AutoMod! (${ping}ms)
 \`${formatNumber(playerProfile.score, true, 4)} pts\` (**\`+${formatNumber(score, true, 3)}\`**)\n-# ${displayDisplay}`,
-                components: [row],
+                components: components,
                 embeds: [],
             });
         } else {
@@ -358,7 +356,75 @@ you have until **<t:${Math.floor((shutoutList[interaction.user.id] / 1000))}:R>*
     if (currentEffects.rare) {
         await (new Promise(resolve => setTimeout(resolve, 2000))); // wait a bit
         await interaction.editReply({
-            components: [new ActionRowBuilder().addComponents(rowComponents)], // refresh buttons
+            components: [getButtonRows(currentEffects)], // refresh buttons
         })
     }
+}
+
+function getButtonRows(currentEffects) {
+    if (currentEffects.specials.artisan) {
+        const rows = [];
+        const againRow = new ActionRowBuilder();
+
+        let ind = 0;
+        for (const symbol of currentEffects.artisanNextSymbols) {
+            const artisanButton = new ButtonBuilder()
+                .setCustomId(`ping:again-${ind}`)
+                .setLabel(`${symbol} ping again!`)
+                .setStyle(ButtonStyle.Secondary);
+            againRow.addComponents(artisanButton);
+            ind++;
+        }
+
+        if (!currentEffects.specials.budge) {
+            rows.push(againRow);
+        }
+
+        if (currentEffects.spawnedSuper) {
+            const superRow = new ActionRowBuilder()
+            ind = 0;
+
+            for (const symbol of currentEffects.artisanNextSymbols.reverse()) {
+                const superPing = new ButtonBuilder()
+                    .setCustomId(`ping:super-${ind}`)
+                    .setLabel(`${symbol} blue ping! ${currentEffects.blueCombo > 0 ? ` x${currentEffects.blueCombo + 1}` : ''}`)
+                    .setStyle(ButtonStyle.Primary);
+                superRow.addComponents(superPing);
+                ind++;
+            }
+
+            rows.push(superRow);
+        }
+
+        if (currentEffects.spawnedSuper && currentEffects.specials.budge && !currentEffects.specials.bully) {
+            rows.push(againRow);
+        }
+
+        return rows;
+    }
+
+    const row = new ActionRowBuilder();
+
+    const again = new ButtonBuilder()
+        .setCustomId('ping:again')
+        .setLabel('ping again!')
+        .setStyle(ButtonStyle.Secondary);
+
+    if (!currentEffects.specials.budge) {
+        row.addComponents(again);
+    }
+    
+    if (currentEffects.spawnedSuper) {
+        const superPing = new ButtonBuilder()
+            .setCustomId('ping:super')
+            .setLabel(`blue ping!${currentEffects.blueCombo > 0 ? ` x${currentEffects.blueCombo + 1}` : ''}`)
+            .setStyle(ButtonStyle.Primary);
+        row.addComponents(superPing);
+    }
+
+    if (currentEffects.spawnedSuper && currentEffects.specials.budge && !currentEffects.specials.bully) {
+        row.addComponents(again);
+    }
+
+    return [row];
 }

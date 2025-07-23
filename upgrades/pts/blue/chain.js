@@ -1,4 +1,4 @@
-const { UpgradeTypes } = require('../../../helpers/upgradeEnums.js');
+const { UpgradeTypes } = require('../../../helpers/commonEnums.js');
 const { getEmoji } = require('../../../helpers/emojis.js');
 
 module.exports = {
@@ -20,7 +20,7 @@ module.exports = {
         if (context.isSuper) {
             return {
                 blue: level * 5,
-                special: { "blueCap": level * 5 },
+                blueCap: level * 5,
             }
         }
         return {}
