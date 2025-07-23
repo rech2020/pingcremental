@@ -22,7 +22,6 @@ clicking the same symbol twice in a row will result in a **^0.7** debuff, and re
     getEffect(_level, context) {
         if (!context.artisanClickedSymbol) return { special: { artisan: true } };
 
-        lastClickedSymbolCache[context.user.id] = context.artisanClickedSymbol;
         let exponent = 1;
         
         if (context.artisanClickedSymbol && context.artisanClickedSymbol === lastClickedSymbolCache[context.user.id]) {
@@ -32,6 +31,8 @@ clicking the same symbol twice in a row will result in a **^0.7** debuff, and re
 
             exponent = bonusCache[context.user.id];
         }
+
+        lastClickedSymbolCache[context.user.id] = context.artisanClickedSymbol;
 
         return {
             exponent: exponent,

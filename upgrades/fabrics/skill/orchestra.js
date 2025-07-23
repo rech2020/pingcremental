@@ -57,44 +57,44 @@ skipping one beat is okay, but more will break the combo.`,
             : intervals[Math.floor(intervals.length / 2)];
         
         const targetTime = medianInterval;
-        let timeDiff = targetTime - timeSinceLast;
+        let distFromTarget = timeSinceLast - targetTime;
         
-        if (Math.abs(timeDiff - targetTime) < Math.abs(timeDiff)) {
+        if (Math.abs(distFromTarget - targetTime) < Math.abs(distFromTarget)) {
             // skipped a beat, probably
-            timeDiff -= targetTime;
+            distFromTarget -= targetTime;
             msg += "SK"
         }
 
-        if (Math.abs(timeDiff) > COMBO_WINDOW) {
+        if (Math.abs(distFromTarget) > COMBO_WINDOW) {
             bonusCache[context.user.id] = 1;
             comboCache[context.user.id] = 0;
-            if (timeDiff > 0) {
+            if (distFromTarget > 0) {
                 msg += `EARLY!`;
             } else {
                 msg += `LATE!`;
             }
         }
 
-        if (Math.abs(timeDiff) >= COMBO_WINDOW * 2) {
+        if (Math.abs(distFromTarget) >= COMBO_WINDOW * 2) {
             recentPingTimes[context.user.id] = [];
         }
 
-        if (timeDiff > 0 && Math.abs(timeDiff) < COMBO_WINDOW) {
+        if (distFromTarget > 0 && Math.abs(distFromTarget) < COMBO_WINDOW) {
             msg += `L`
-        } else if (timeDiff < 0 && Math.abs(timeDiff) < COMBO_WINDOW) {
+        } else if (distFromTarget < 0 && Math.abs(distFromTarget) < COMBO_WINDOW) {
             msg += `E`
         }
 
-        if (Math.abs(timeDiff) < PURE_WINDOW) {
+        if (Math.abs(distFromTarget) < PURE_WINDOW) {
             addBonus(context.user.id, 3 / 100);
             msg = `PURE!`;
-        } else if (Math.abs(timeDiff) < PERFECT_WINDOW) {
+        } else if (Math.abs(distFromTarget) < PERFECT_WINDOW) {
             addBonus(context.user.id, 1 / 100);
             msg = `perfect!`;
-        } else if (Math.abs(timeDiff) < GREAT_WINDOW) {
+        } else if (Math.abs(distFromTarget) < GREAT_WINDOW) {
             addBonus(context.user.id, 0.4 / 100);
             msg += `great!`;
-        } else if (Math.abs(timeDiff) <= COMBO_WINDOW) {
+        } else if (Math.abs(distFromTarget) <= COMBO_WINDOW) {
             addBonus(context.user.id, 0); // only maintains combo
             msg += `okay!`;
         }
