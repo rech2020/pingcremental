@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, InteractionContextType } = require('discord.js');
 const { upgrades } = require('./../helpers/upgrades.js')
 const database = require('./../helpers/database.js');
-const { PipUpgradeTypes } = require('./../helpers/upgradeEnums.js');
+const { PipUpgradeTypes } = require('./../helpers/commonEnums.js');
 const formatNumber = require('../helpers/formatNumber.js');
 
 module.exports = {

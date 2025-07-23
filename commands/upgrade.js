@@ -2,7 +2,7 @@ const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, Strin
 const { upgrades } = require('./../helpers/upgrades.js')
 const { getEmbeddedCommand } = require('./../helpers/embedCommand.js');
 const database = require('./../helpers/database.js');
-const { UpgradeTypes } = require('./../helpers/upgradeEnums.js');
+const { UpgradeTypes } = require('./../helpers/commonEnums.js');
 const awardBadge = require('./../helpers/awardBadge.js');
 const formatNumber = require('./../helpers/formatNumber.js');
 const { getTearRequirement } = require('./weave.js');

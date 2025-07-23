@@ -80,7 +80,24 @@ async function pingResponse(interaction, isSuper = false) {
         })
     }
 
-    const {score, displays, currentEffects, context} = await ping(interaction, isSuper, { developmentMode});
+    let {score, displays, currentEffects, context} = await ping(interaction, isSuper, { developmentMode });
+    if (currentEffects.specials.rerolls) {
+        if (Math.random() < currentEffects.specials.rerolls % 1) {
+            currentEffects.specials.rerolls++;
+        }
+        currentEffects.specials.rerolls = Math.floor(currentEffects.specials.rerolls);
+
+        for (let i = 0; i < currentEffects.specials.rerolls; i++) {
+            const reroll = await ping(interaction, isSuper, { developmentMode });
+            if (reroll.score > score) {
+                score = reroll.score;
+                displays = reroll.displays;
+                currentEffects = reroll.currentEffects;
+                context = reroll.context;
+            }
+        }
+    }
+
     const playerProfile = await database.Player.findByPk(`${interaction.user.id}`);
     const pingFormat = playerProfile.settings.pingFormat || "expanded";
 

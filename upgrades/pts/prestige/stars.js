@@ -1,4 +1,4 @@
-const { UpgradeTypes } = require('../../../helpers/upgradeEnums.js');
+const { UpgradeTypes, PingCalculationStates } = require('../../../helpers/commonEnums.js');
 const { getEmoji } = require('../../../helpers/emojis.js');
 
 module.exports = {
@@ -16,6 +16,8 @@ module.exports = {
         return `${level*4} bp`
     },
     getEffect(level, context) {
+        if (context.state !== PingCalculationStates.POST_SCORING) return {};
+
         return {
             bp: level * 4,
         }

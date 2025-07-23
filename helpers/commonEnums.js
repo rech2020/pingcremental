@@ -12,6 +12,12 @@ const PipUpgradeTypes = {
     KEEP: 'Remember',
     PRESTIGE: 'Repeat',
 }
+
+const PingCalculationStates = {
+    RNG_AND_SPECIAL: 0,
+    SCORING: 1,
+    POST_SCORING: 2,
+}
 const FabricUpgradeTypes = {
     FLAT_BONUS: 'Flat Bonus',
     BLUE_PING: 'Blue Modification',
@@ -23,5 +29,6 @@ const FabricUpgradeTypes = {
 Object.freeze(UpgradeTypes);
 Object.freeze(PipUpgradeTypes);
 Object.freeze(FabricUpgradeTypes);
+Object.freeze(PingCalculationStates);
 
-module.exports = { UpgradeTypes, PipUpgradeTypes, FabricUpgradeTypes };
+module.exports = { UpgradeTypes, PipUpgradeTypes, FabricUpgradeTypes, PingCalculationStates };
