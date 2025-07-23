@@ -1,7 +1,9 @@
-const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, InteractionContextType, MessageFlags, flatten } = require('discord.js');
+const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, InteractionContextType, MessageFlags, flatten, ModalBuilder, TextInputAssertions, TextInputBuilder, TextInputStyle } = require('discord.js');
 const { upgrades } = require('./../helpers/upgrades.js')
+const { getEmbeddedCommand } = require('./../helpers/embedCommand.js');
 const database = require('./../helpers/database.js');
 const { UpgradeTypes } = require('./../helpers/upgradeEnums.js');
+const awardBadge = require('./../helpers/awardBadge.js');
 const formatNumber = require('./../helpers/formatNumber.js');
 const { getTearRequirement } = require('./weave.js');
 
@@ -62,7 +64,7 @@ module.exports = {
                 await interaction.followUp({ content: `
 *welcome to Eternity. congratulations on making it here.*
 *i suppose you're wondering why you want to be here.*
-*how about... </ponder:1371248161309593651>? try it out.*
+*how about... ${getEmbeddedCommand(`ponder`)}? try it out.*
 *good luck, pinger.*`, flags: MessageFlags.Ephemeral });
             }
 
@@ -88,6 +90,21 @@ module.exports = {
             }
 
             await interaction.update(await getEditMessage(interaction, category, buySetting));
+        }),
+        custommb: (async interaction => {
+            const modal = new ModalBuilder()
+                .setCustomId('upgrade:custommb')
+                .setTitle('custom multi-buy')
+                .addComponents(
+                    new ActionRowBuilder().addComponents(
+                        new TextInputBuilder()
+                            .setCustomId('value')
+                            .setLabel('upgrade amount')
+                            .setStyle(TextInputStyle.Short)
+                            .setPlaceholder('enter a number or "MAX"...')
+                    )
+                );
+            await interaction.showModal(modal);
         })
     },
     dropdowns: {
@@ -95,14 +112,16 @@ module.exports = {
             const upgradeId = interaction.values[0];
             if (upgradeId === 'none') return await interaction.reply({ content: 'you already got everything!', flags: MessageFlags.Ephemeral });
             const playerData = await database.Player.findByPk(`${interaction.user.id}`);
-            const buySetting = getBuySetting(interaction);
-            
+            let buySetting = getBuySetting(interaction);
+            let displaySetting = buySetting;
+            if (buySetting < 1 && buySetting !== 'MAX') buySetting = 1;
+
             const playerUpgradeLevel = playerData.upgrades[upgradeId] ?? 0;
             const upgradeClass = upgrades['pts'][upgradeId];
             let price = 1;
             let levels = 1;
 
-            const ephemeral = playerData.settings.upgradeFollowup === 'ephemeral' || playerData.settings.upgradeFollowup === 'none' ? MessageFlags.Ephemeral : null;
+            let ephemeral = playerData.settings.upgradeFollowup === 'ephemeral' || playerData.settings.upgradeFollowup === 'none' ? MessageFlags.Ephemeral : null;
 
             // skip multi-buy on eternity so it doesn't pointlessly loop millions of times
             if (upgradeId !== 'eternity') {
@@ -121,7 +140,7 @@ module.exports = {
                     .setLabel(msg[Math.floor(Math.random() * msg.length)]) // random sad message
                     .setStyle(ButtonStyle.Secondary)
 
-                await interaction.update(await getEditMessage(interaction, upgradeClass.type(), buySetting)); // fix dropdown remaining after failed upgrade
+                await interaction.update(await getEditMessage(interaction, upgradeClass.type(), displaySetting)); // fix dropdown remaining after failed upgrade
                 return await interaction.followUp({
                     content: `you dont have enough \`pts\` to afford that! (missing \`${formatNumber(price - playerData.score, true)} pts\`)`,
                     components: [new ActionRowBuilder().addComponents(button)],
@@ -130,14 +149,14 @@ module.exports = {
             }
 
             if (upgradeId === 'eternity') {
-                await interaction.update(await getEditMessage(interaction, upgradeClass.type(), buySetting)); 
+                await interaction.update(await getEditMessage(interaction, upgradeClass.type(), displaySetting)); 
                 if (playerData.bp < 10000) { return await interaction.followUp({ content: `*you shouldn't be here, yet.*`, flags: MessageFlags.Ephemeral }) }
                 const mult = upgrades['pip']['telepathy'].getEffect(playerData.prestigeUpgrades.telepathy).special.pip;
                 return await interaction.followUp({
                     content: 
 `*Eternity calls for you, but you must make sure you're ready.*
 ***are you?***
--# this will **reset** your current upgrades, pts, and clicks and give you __\`${formatNumber(Math.floor(playerData.bp*mult))} PIP\`__ from your __\`${formatNumber(playerData.bp)} BP\`__.`,
+-# this will **reset** your current upgrades, \`pts\`, and clicks and give you __${formatNumber(Math.floor(playerData.bp*mult))} PIP__ from your __\`${formatNumber(playerData.bp)} BP\`__.`,
                     components: [
                         new ActionRowBuilder().addComponents(
                             new ButtonBuilder()
@@ -158,13 +177,17 @@ module.exports = {
             playerData.upgrades[upgradeId] = playerUpgradeLevel + levels;
             playerData.changed('upgrades', true) // this is a hacky way to set the upgrades field, but it works
             await playerData.save();
+            let followupType = playerData.settings.upgradeFollowup;
 
             const msg = ['sweet!', 'nice!', 'sick!', 'cool!', 'neat!', 'nifty!', 'yippee!', 'awesome!'];
-
             let pickedMsg = msg[Math.floor(Math.random() * msg.length)];
-
             if (pickedMsg === 'awesome!' && Math.random() < 0.001) {
                 pickedMsg = 'awesome sauce 🐴';
+                await awardBadge(interaction.user.id, 'awesome sauce :horse:', interaction.client);
+
+                // force regular followup since it's rare
+                followupType = 'regular';
+                ephemeral = null;
             }
 
             const button = new ButtonBuilder()
@@ -172,9 +195,9 @@ module.exports = {
                 .setLabel(pickedMsg) // random happy message
                 .setStyle(ButtonStyle.Success)
 
-            await interaction.update(await getEditMessage(interaction, upgradeClass.type(), buySetting));
+            await interaction.update(await getEditMessage(interaction, upgradeClass.type(), displaySetting));
 
-            if (playerData.settings.upgradeFollowup !== 'none') {
+            if (followupType !== 'none') {
                 return await interaction.followUp({
                     content: `upgraded **${upgradeClass.getDetails().name}** to level ${playerUpgradeLevel + levels}! you've \`${formatNumber(playerData.score, true, 4)} pts\` left.`,
                     components: [new ActionRowBuilder().addComponents(button)],
@@ -182,6 +205,31 @@ module.exports = {
                 })
             }
             
+        })
+    },
+    modals: {
+        custommb: (async interaction => {
+            let newBuySetting = interaction.fields.getTextInputValue('value');
+
+            if (newBuySetting !== 'MAX' && isNaN(parseInt(newBuySetting))) {
+                return await interaction.reply({ content: 'invalid multi-buy amount! must be a number or "MAX"', flags: MessageFlags.Ephemeral });
+            }
+            if (parseInt(newBuySetting) >= 1e6) {
+                return await interaction.reply({ content: 'that\'s a bit too much for me to do... try something lower than a million?', flags: MessageFlags.Ephemeral });
+            }
+            if (newBuySetting.length > 10 && parseInt(newBuySetting) < 0) {
+                return await interaction.reply({ content: 'look, i respect the bit, but maybe a bit shorter of a number?', flags: MessageFlags.Ephemeral });
+            }
+
+            const catButtonRow = interaction.message.components[0];
+            const category = catButtonRow.components.find(button => button.disabled === true).customId.split('-')[1];
+
+            if (newBuySetting === 'MAX') {
+                newBuySetting = 'MAX';
+            } else {
+                newBuySetting = parseInt(newBuySetting);
+            }
+            return await interaction.update(await getEditMessage(interaction, category, newBuySetting));
         })
     }
 }
@@ -200,7 +248,7 @@ function getBuySetting(interaction) {
         }
     }
 
-    if ((!buySetting || isNaN(buySetting) || buySetting < 1) && buySetting !== 'MAX') {
+    if (isNaN(buySetting) && buySetting !== 'MAX') {
         buySetting = 1;
     }
 
@@ -281,8 +329,19 @@ async function getEditMessage(interaction, category, buySetting) {
             .setDisabled(multiBuy === buySetting)
         multiBuyButtons.push(button)
     }
+    multiBuyButtons.push(
+        new ButtonBuilder()
+            .setCustomId('upgrade:custommb')
+            .setLabel('custom...')
+            .setStyle(ButtonStyle.Secondary)
+    )
     const multiBuyRow = new ActionRowBuilder()
         .addComponents(multiBuyButtons)
+
+    // still display as <= 1 but act as 1
+    if (parseInt(buySetting) < 1 && buySetting !== 'MAX') {
+        buySetting = 1;
+    }
 
     for (const [upgradeId, upgrade] of Object.entries(upgrades['pts'])) {
         // go through each upgrade and check if should be displayed

@@ -1,12 +1,12 @@
 const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, InteractionContextType, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, MessageFlags, TextInputBuilder, ModalBuilder } = require('discord.js');
 const database = require('./../helpers/database.js')
-const { ownerId } = require('./../config.json')
 const feedbackCategories = [
     'bug',
     'upgrade',
     'balancing',
     'other'
 ]
+const ownerId = process.env.OWNER_ID;
 
 module.exports = {
     data: new SlashCommandBuilder()

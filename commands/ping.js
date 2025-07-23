@@ -1,9 +1,10 @@
 const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, InteractionContextType, MessageFlags } = require('discord.js');
 const pingMessages = require('./../helpers/pingMessage.js')
-const { ownerId } = require('./../config.json');
+const ownerId = process.env.OWNER_ID
 const formatNumber = require('./../helpers/formatNumber.js')
 const ping = require('./../helpers/pingCalc.js');
 const awardBadge = require('../helpers/awardBadge.js');
+const { getEmbeddedCommand } = require('../helpers/embedCommand.js');
 const database = require('../helpers/database.js');
 
 module.exports = {
@@ -121,6 +122,7 @@ async function pingResponse(interaction, isSuper = false) {
 
     // etc
     playerProfile.bp = Math.min(currentEffects.bp + playerProfile.bp, currentEffects.bpMax);
+    playerProfile.apt += currentEffects.apt || 0;
     playerProfile.lastPing = Date.now();
 
 
@@ -149,7 +151,7 @@ async function pingResponse(interaction, isSuper = false) {
         return await interaction.update({
             content:
                 `${pingMessage}
-you have a lot of pts... why don't you go spend them over in </upgrade:1360377407109861648>?`, // TODO: change to dynamically use ID
+you have a lot of \`pts\`... why don't you go spend them over in ${await getEmbeddedCommand(`upgrade`)}?`, 
             components: [disabledRow]
         })
     }
@@ -179,9 +181,22 @@ you have a lot of pts... why don't you go spend them over in </upgrade:136037740
     }
     displayDisplay = displayDisplay.substring(2); // remove first comma and space
     
+    if (currentEffects.apt) {
+        displayDisplay += `\n-# \`${formatNumber(playerProfile.apt)} APT\` `
+        if (pingFormat === "expanded") {
+            displayDisplay += displays.apt.join(', ');
+        } else if (pingFormat === "compact") {
+            displayDisplay += displays.apt.join(' ');
+        }
+    }
+
     if (currentEffects.bp) {
         displayDisplay += `\n-# \`${formatNumber(Math.ceil(playerProfile.bp))}/${formatNumber(currentEffects.bpMax)} bp\`${playerProfile.bp >= currentEffects.bpMax ? " **(MAX)**" : ""} `
-        displayDisplay += displays.bp.join(', ');
+        if (pingFormat === "expanded") {
+            displayDisplay += displays.bp.join(', ');
+        } else if (pingFormat === "compact") {
+            displayDisplay += displays.bp.join(' ');
+        }
     }
 
 

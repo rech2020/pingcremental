@@ -7,7 +7,7 @@ module.exports = {
     },
     getDetails() {
         return {
-            description: "gain __1.15x__ pts for each blue ping in the current combo",
+            description: "gain __1.15x__ `pts` for each blue ping in the current combo",
             name: "Chain Combo",
             emoji: getEmoji('ponder_combo', "🔗"),
             flavor: "a rare coincidence twisted to an incredible feat.",

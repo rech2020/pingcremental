@@ -67,6 +67,7 @@ async function ping(interaction, isSuper = false, overrides = {}) {
         blueCap: 35,
         specials: {},
         bp: 0,
+        apt: 0,
         RNGmult: overrides.forceNoRNG ? 0 : 1,
         // add more if needed
         
@@ -79,6 +80,7 @@ async function ping(interaction, isSuper = false, overrides = {}) {
         exponents: [],
         extra: [],
         bp: [],
+        apt: [],
     }
     const pingFormat = playerProfile.settings.pingFormat || "expanded";
     if (pingFormat === "expanded") {
@@ -173,10 +175,7 @@ async function ping(interaction, isSuper = false, overrides = {}) {
         if (effect.multiply && effect.multiply !== 1) {
             currentEffects.mults.push(effect.multiply);
 
-            // prevent floating point jank
-            const formattedMultiplier = effect.multiply.toFixed(2)
-
-            effectString += ` __\`x${formattedMultiplier}\`__`
+            effectString += ` __\`x${formatNumber(Math.floor(effect.multiply))}${(effect.multiply % 1).toFixed(2)}\`__`
         }
 
         if (effect.exponent && effect.exponent !== 1) {
@@ -192,7 +191,12 @@ async function ping(interaction, isSuper = false, overrides = {}) {
 
         if (effect.bp) { 
             currentEffects.bp += effect.bp;
-            effectString += ` \`+${effect.bp} bp\``
+            effectString += ` \`+${formatNumber(effect.bp)} bp\``
+        }
+
+        if (effect.apt) {
+            currentEffects.apt += effect.apt;
+            effectString += ` \`+${formatNumber(effect.apt)} APT\``
         }
 
         if (pingFormat === "compact" && effectString !== upgradeClass.getDetails().emoji) {
@@ -220,6 +224,8 @@ async function ping(interaction, isSuper = false, overrides = {}) {
                 displays.exponents.push(effectString);
             } else if (effect.bp) {
                 displays.bp.push(effectString);
+            } else if (effect.apt) {
+                displays.apt.push(effectString);
             } else if (effect.message) {
                 displays.extra.push(effectString);
             }
@@ -244,7 +250,7 @@ async function ping(interaction, isSuper = false, overrides = {}) {
     }
 
     if (totalMult > 1 && pingFormat !== "expanded") {
-        displays.mult.push(`__\`x${totalMult.toFixed(2)}\`__`);
+        displays.mult.push(`__\`x${formatNumber(totalMult)}${(totalMult % 1).toFixed(2)}\`__`);
     }
 
     let totalExp = 1;

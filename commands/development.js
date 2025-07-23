@@ -1,7 +1,8 @@
 const { SlashCommandBuilder, MessageFlags, InteractionContextType } = require('discord.js');
-const { ownerId } = require('./../config.json');
+const ownerId = process.env.OWNER_ID
 const database = require('./../helpers/database.js');
-const { initEmojis } = require('./../helpers/emojis.js')
+const { initEmojis } = require('./../helpers/emojis.js');
+const { cacheCommandIds } = require('../helpers/embedCommand.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -72,8 +73,9 @@ module.exports = {
             }
             await interaction.editReply({ content: `done! \`\`\`js\n${result}\n\`\`\``, flags: MessageFlags.Ephemeral });
         } else if (interaction.options.getSubcommand() === 'recache') {
-            await interaction.reply({ content: 'recaching emojis...', flags: MessageFlags.Ephemeral });
+            await interaction.reply({ content: 'recaching...', flags: MessageFlags.Ephemeral });
             await initEmojis(interaction.client);
+            await cacheCommandIds();
             await interaction.editReply({ content: 'done!', flags: MessageFlags.Ephemeral });
         }
     }

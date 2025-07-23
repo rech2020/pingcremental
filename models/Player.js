@@ -33,6 +33,12 @@ module.exports = (sequelize) => {
 			defaultValue: 0,
 			allowNull: false,
 		},
+		
+		apt: {
+			type: DataTypes.NUMBER,
+			defaultValue: 0,
+			allowNull: false,
+		},
 
 		clicks: {
 			type: DataTypes.NUMBER,

@@ -7,7 +7,7 @@ module.exports = {
     },
     getDetails() {
         return {
-            description: "gain __+15%__ pts for every digit of total upgrade levels removed by visiting Eternity",
+            description: "gain __+15%__ `pts` for every digit of total upgrade levels removed by visiting Eternity",
             name: "Vague Memories",
             emoji: getEmoji('ponder_vague', "☁️"),
             flavor: "sometimes all you can remember is that it happened.",

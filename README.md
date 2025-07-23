@@ -15,17 +15,15 @@ actually pretty simple; there's not a lot you need to do.
 2. select your method of choice.
 3. after setting up, ensure you have the correct packages installed by running `npm install`.
 
-### config
+### .env
 
-config.json is formatted as such:
+there are three fields that should be mostly self-explainatory. these fields will all be logged if not filled out.
 
-```json
-{
-    "token": "[bot's token here]",
-    "clientId": "[bot's discord user ID]",
-    "ownerId": "[your discord user ID]"
-}
-```
+1. `DISCORD_TOKEN` - the token for the bot
+
+2. `DISCORD_CLIENT_ID` - the discord snowflake of the bot
+
+3. `OWNER_ID` - the discord snowflake of the owner user of the bot. technically optional, but some functionality will be disabled or work incorrectly.
 
 ### running
 
@@ -55,7 +53,7 @@ to run the bot, simply run the `index.js` file. there are some flags for running
     this prevents the usage of /ping unless you are the owner.
     this additionally sets the ping to always be 5, in order to bypass the wait for `client.ws.ping` to update.
 
-3. `-v` or `--verbose` (not done yet)
+2. `-v` or `--verbose` (not done yet)
 
     this logs a lot of actions that occur, used for debugging.
 
