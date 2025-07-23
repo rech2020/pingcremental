@@ -16,6 +16,13 @@ module.exports = {
         return `+${(level*0.6).toFixed(1)} per ${maxClicks(level)} clicks`
     },
     getEffect(level, context) {
+        if (context.specials.superInpingity) {
+            return {
+                add: Math.round(level * (context.totalClicks/(maxClicks(level))) * 0.6,2),
+                multiply: 1 + (0.08 * level * (context.totalClicks / 888)),
+            }
+        }
+
         return {
             add: Math.round(level * (context.clicks/(maxClicks(level))) * 0.6,2),
         }

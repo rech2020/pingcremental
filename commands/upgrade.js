@@ -5,6 +5,7 @@ const database = require('./../helpers/database.js');
 const { UpgradeTypes } = require('./../helpers/upgradeEnums.js');
 const awardBadge = require('./../helpers/awardBadge.js');
 const formatNumber = require('./../helpers/formatNumber.js');
+const { getTearRequirement } = require('./weave.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -35,12 +36,15 @@ module.exports = {
 
             playerData.upgrades = {};
             playerData.score = 0;
-            // TODO: reset upgrade data bits (e.g. slumber clicks)
-            playerData.pip += Math.floor(playerData.bp * mult); // give pip for eternity
             playerData.bp = 0;
             playerData.clicks = 0;
             playerData.glimmerClicks = 0;
             playerData.slumberClicks = 0;
+
+            playerData.pip += Math.floor(playerData.bp * mult);
+            playerData.totalPip += playerData.pip;
+            playerData.eternities++;
+            playerData.totalEternities++;
 
             // memory effects
             if (playerData.prestigeUpgrades.memory) {
@@ -62,6 +66,17 @@ module.exports = {
 *i suppose you're wondering why you want to be here.*
 *how about... ${getEmbeddedCommand(`ponder`)}? try it out.*
 *good luck, pinger.*`, flags: MessageFlags.Ephemeral });
+            }
+
+            if (tears < 1 && getTearRequirement(playerData.tears) === playerData.eternities) {
+                await interaction.followUp({
+                    content: 
+`*you've been looking for something more, haven't you...?*
+*there may not be much more eternity can give you, but there's always another way to obtain power.*
+*heed the universe's call. tear it apart and weave it anew.*
+*</weave:[HARDCODEDID]>*`, // TODO: hardcoded id
+                    flags: MessageFlags.Ephemeral
+                });
             }
         }),
         multibuy: (async (interaction, buySetting) => {
@@ -95,7 +110,7 @@ module.exports = {
     dropdowns: {
         buy: (async interaction => {
             const upgradeId = interaction.values[0];
-            if (upgradeId === 'none') return await interaction.reply({ content: 'you already got everything!', tags: MessageFlags.Ephemeral });
+            if (upgradeId === 'none') return await interaction.reply({ content: 'you already got everything!', flags: MessageFlags.Ephemeral });
             const playerData = await database.Player.findByPk(`${interaction.user.id}`);
             let buySetting = getBuySetting(interaction);
             let displaySetting = buySetting;

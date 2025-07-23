@@ -3,6 +3,7 @@ const { rawUpgrades } = require('./upgrades.js')
 const formatNumber = require('./formatNumber.js')
 const { getEmoji } = require('./emojis.js');
 const getLatestVersion = require('./versions.js');
+const { artisanSymbols } = require('../upgrades/fabrics/skill/artisan.js');
 const MAX_PING_OFFSET = 5;
 
 async function ping(interaction, isSuper = false, overrides = {}) {
@@ -19,6 +20,7 @@ async function ping(interaction, isSuper = false, overrides = {}) {
         ping: ping,
         isSuper: isSuper,
         versionNumber: await getLatestVersion(),
+        interactionTimestamp: interaction.createdAt,
 
         // player profile bits
         score: playerProfile.score,
@@ -32,19 +34,22 @@ async function ping(interaction, isSuper = false, overrides = {}) {
         // per-upgrade vars
         slumberClicks: playerProfile.slumberClicks,
         glimmerClicks: playerProfile.glimmerClicks,
+        artisanClickedSymbol: null,
+        artisanNextSymbols: [],
         
         // updated vars
         spawnedSuper: false,
         rare: false,
         blue: 0,
         blueStrength: 1,
+        blueCap: 35,
         specials: {},
         RNGmult: 1,
         blueCombo: 0,
     }
 
     let iterateUpgrades = {}
-    for (const upgradeTypeList of [playerProfile.upgrades, playerProfile.prestigeUpgrades]) {
+    for (const upgradeTypeList of [playerProfile.upgrades, playerProfile.prestigeUpgrades, playerProfile.equippedFabrics]) {
         if (!upgradeTypeList) continue;
         for (const [upg, lv] of Object.entries(upgradeTypeList)) iterateUpgrades[upg] = lv;
     }
@@ -59,6 +64,7 @@ async function ping(interaction, isSuper = false, overrides = {}) {
         exponents: [],
         blue: 0,
         blueStrength: 1,
+        blueCap: 35,
         specials: {},
         bp: 0,
         apt: 0,
@@ -101,13 +107,17 @@ async function ping(interaction, isSuper = false, overrides = {}) {
             currentEffects.blueStrength += effect.blueStrength; 
             context.blueStrength = currentEffects.blueStrength; 
         }
+        if (effect.blueCap) {
+            currentEffects.blueCap += effect.blueCap; 
+            context.blueCap = currentEffects.blueCap;
+        }
         if (effect.RNGmult) { 
             currentEffects.RNGmult += effect.RNGmult; 
             context.RNGmult = currentEffects.RNGmult; 
         }
     }
 
-    currentEffects.blue = Math.min(currentEffects.blue, 35 + (currentEffects.specials.blueCap || 0)); // cap blue at 35%
+    currentEffects.blue = Math.min(currentEffects.blue, currentEffects.blueCap);
 
     if (isSuper) {
         let blueStrength = (currentEffects.blueStrength) * 15;
@@ -130,6 +140,18 @@ async function ping(interaction, isSuper = false, overrides = {}) {
     }
     if ((Math.random() * 1000 < 1 * currentEffects.RNGmult)) {
         context.rare = true;
+    }
+
+    if (context.specials.artisan) {
+        // extracts the symbol from the button label (looks gross though)
+        context.artisanClickedSymbol = interaction.component.label.match(new RegExp(`[${artisanSymbols.join('')}]`))[0];
+        
+        context.artisanNextSymbols = artisanSymbols;
+        // shuffle
+        for (let i = context.artisanNextSymbols.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [context.artisanNextSymbols[i], context.artisanNextSymbols[j]] = [context.artisanNextSymbols[j], context.artisanNextSymbols[i]];
+        }
     }
     
     context.specials = currentEffects.specials; // update context for later effects
@@ -249,7 +271,7 @@ async function ping(interaction, isSuper = false, overrides = {}) {
     bpMax += (playerProfile.prestigeUpgrades.storage || 0) * 2500;
 
     // move all the spare stuff into currentEffects so it's nice and organized
-    for (const x of ['spawnedSuper','rare','blueCombo']) {
+    for (const x of ['spawnedSuper', 'rare', 'blueCombo', 'artisanNextSymbols']) {
         currentEffects[x] = context[x]
     }
     currentEffects.bpMax = bpMax;

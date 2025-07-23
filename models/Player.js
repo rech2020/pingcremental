@@ -148,6 +148,84 @@ module.exports = (sequelize) => {
 			defaultValue: 0,
 			allowNull: false,
 		},
+		totalPip: {
+			type: DataTypes.NUMBER,
+			defaultValue: 0,
+			allowNull: false,
+		},
+		eternities: {
+			type: DataTypes.NUMBER,
+			defaultValue: 0,
+			allowNull: false,
+		},
+		totalEternities: {
+			type: DataTypes.NUMBER,
+			defaultValue: 0,
+			allowNull: false,
+		},
+
+		// fabric data
+		tears: {
+			type: DataTypes.NUMBER,
+			defaultValue: 0,
+			allowNull: false,
+		},
+		totalTears: {
+			type: DataTypes.NUMBER,
+			defaultValue: 0,
+			allowNull: false,
+		},
+		thread: {
+			type: DataTypes.NUMBER,
+			defaultValue: 0,
+			allowNull: false,
+		},
+		totalThread: {
+			type: DataTypes.NUMBER,
+			defaultValue: 0,
+			allowNull: false,
+		},
+		shopSeed: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			defaultValue: '',
+		},
+		shopEmptySlots: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			defaultValue: '',
+			get() {
+				return this.getDataValue('shopEmptySlots')
+					.split(',')
+					.filter(x => x !== '')
+					.map(x => parseInt(x));
+			},
+			set(value) {
+				this.setDataValue('shopEmptySlots', value.join(','));
+			}
+		},
+		shopRerolls: {
+			type: DataTypes.INTEGER,
+			defaultValue: 0,
+			allowNull: false,
+		},
+		cloakModificationsAllowed: {
+			type: DataTypes.INTEGER,
+			defaultValue: 1,
+			allowNull: false,
+		},
+
+		// note: fabric data isn't stored by level, it's stored by count owned
+		ownedFabrics: {
+			type: DataTypes.JSON,
+			allowNull: false,
+			defaultValue: {},
+		},
+		equippedFabrics: {
+			type: DataTypes.JSON,
+			allowNull: false,
+			defaultValue: {},
+		},
 
 		// slumber upgrade
 		lastPing: {
