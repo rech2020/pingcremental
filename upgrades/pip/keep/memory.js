@@ -7,14 +7,14 @@ module.exports = {
     },
     getDetails() {
         return {
-            description: "start with __10,000__ pts",
+            description: "start with __10,000__ `pts`",
             name: "Distant Memories",
             emoji: getEmoji('ponder_memory', "🧠"),
             flavor: "your past isn't worthless. don't forget it.",
         }
     },
     getEffectString(level) {
-        return `${level*10}K pts`
+        return `${level*10}K \`pts\``
     },
     getEffect(level, context) {
         return {

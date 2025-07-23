@@ -7,7 +7,7 @@ module.exports = {
     },
     getDetails() {
         return {
-            description: "gain 2x pts",
+            description: "gain 2x `pts`",
             name: "Eternity's Welcome",
             emoji: getEmoji('ponder_beginning', "🌃"),
             flavor: "Eternity is glad to have you. it hopes you are glad to have it, as well.",
