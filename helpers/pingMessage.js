@@ -1,3 +1,5 @@
+const { getEmbeddedCommand } = require('./embedCommand.js');
+
 function get(ping, context) {
     // base messages
     let messagesList = [
@@ -197,7 +199,6 @@ function get(ping, context) {
         "breaking news: local ping bot goes rogue, spams messages",
         "i tripped over the stack trace and spilled ping everywhere",
         "the ping is an illusion, lag is real",
-        "have any ideas? try </feedback submit:1363002827664003284>!",
         "did you know? this is my current ping:",
         "ping pong? more like... more like ping wrong",
         "just another friendly neighborhood ping",
@@ -247,7 +248,6 @@ function get(ping, context) {
         "no one asked for this ping message, but here it is",
         "boop",
         "back already? here's another ping",
-        "you should check out our </ping:1360377407109861647> command at some point",
         "ping served fresh, no preservatives",
         "this ping is locally sourced",
         "just a humble ping making its way in the world",
@@ -314,13 +314,6 @@ function get(ping, context) {
         "if you can read this, you're within ping range",
         "this ping could be worse. but it's not. so yay",
         "i ran out of ping jokes so here's a normal one",
-        
-
-        //ok, these next ones are kinda weird but they're fun, so here
-        ping < 30 ? "whoa, that's fast! zoom zoom!" : 
-        ping < 50 ? "solid ping. not bad, not bad" : 
-        ping < 80 ? "acceptable ping levels achieved" : 
-        "could be worse, honestly",
 
         "good vibe pings only",
         "ping has arrived safely",
@@ -359,6 +352,10 @@ function get(ping, context) {
         "if i had to guess, i'd say it's going to be more than 5ms",
         "?!",
 
+        // command-related
+        `you should check out our ${getEmbeddedCommand('ping')} command at some point`,
+        `got any ideas? try ${getEmbeddedCommand('feedback submit')}`,
+        `not a fan of how i'm running? maybe change some ${getEmbeddedCommand('settings')}`,
 
         // these are all references
         "i would never give you up. what? what song?",

@@ -4,6 +4,7 @@ const { ownerId } = require('./../config.json');
 const formatNumber = require('./../helpers/formatNumber.js')
 const ping = require('./../helpers/pingCalc.js');
 const awardBadge = require('../helpers/awardBadge.js');
+const { getEmbeddedCommand } = require('../helpers/embedCommand.js');
 const database = require('../helpers/database.js');
 
 module.exports = {
@@ -170,7 +171,7 @@ async function pingResponse(interaction, isSuper = false) {
         return await interaction.update({
             content:
                 `${pingMessage}
-you have a lot of \`pts\`... why don't you go spend them over in </upgrade:1360377407109861648>?`, // TODO: change to dynamically use ID
+you have a lot of \`pts\`... why don't you go spend them over in ${await getEmbeddedCommand(`upgrade`)}?`, 
             components: [disabledRow]
         })
     }

@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, InteractionContextType, MessageFlags, flatten, ModalBuilder, TextInputAssertions, TextInputBuilder, TextInputStyle } = require('discord.js');
 const { upgrades } = require('./../helpers/upgrades.js')
+const { getEmbeddedCommand } = require('./../helpers/embedCommand.js');
 const database = require('./../helpers/database.js');
 const { UpgradeTypes } = require('./../helpers/upgradeEnums.js');
 const formatNumber = require('./../helpers/formatNumber.js');
@@ -58,7 +59,7 @@ module.exports = {
                 await interaction.followUp({ content: `
 *welcome to Eternity. congratulations on making it here.*
 *i suppose you're wondering why you want to be here.*
-*how about... </ponder:1371248161309593651>? try it out.*
+*how about... ${getEmbeddedCommand(`ponder`)}? try it out.*
 *good luck, pinger.*`, flags: MessageFlags.Ephemeral });
             }
         }),

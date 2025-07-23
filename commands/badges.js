@@ -3,6 +3,7 @@ const database = require('./../helpers/database.js');
 const { getEmoji } = require('./../helpers/emojis.js')
 const { ownerId } = require('./../config.json');
 const { Op } = require('sequelize');
+const { getEmbeddedCommand } = require('../helpers/embedCommand.js');
 const BADGES_PER_PAGE = 10;
 
 module.exports = {
@@ -104,7 +105,7 @@ module.exports = {
             } else {
                 playerBadges.push(badge.dbId);
 
-                dmMessage = `**good news!!**\n\nyou have been manually awarded the badge ${badgeDisplay(badge,true)}! be sure to show it off with \`/badges\`.`;
+                dmMessage = `**good news!!**\n\nyou have been manually awarded the badge ${badgeDisplay(badge,true)}! be sure to show it off with ${getEmbeddedCommand('badges showcase')}.`;
             }
 
             player.badges = playerBadges;
