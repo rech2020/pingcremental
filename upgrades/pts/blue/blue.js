@@ -8,13 +8,13 @@ module.exports = {
     },
     getDetails() {
         return {
-            description: "1% chance (35% cap) of spawning a blue ping for 15x pts",
+            description: "1% chance (35% cap) of spawning a blue ping that grants 15x `pts`",
             name: "blue ping",
             emoji: getEmoji('upgrade_blue', "🟦"),
         }
     },
     getEffectString(level) {
-        return level === 0 ? "0% chance" : "1% chance"
+        return level === 0 ? "not discoverable" : "discoverable"
     },
     getEffect(level, context) {
         return {

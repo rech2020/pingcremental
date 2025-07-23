@@ -62,8 +62,8 @@ async function getGlobalMessage() {
         .setColor('#bd6fb8')
         .setDescription(
                 `${formatNumber(count)} people have pinged at least once\n` +
-                `${formatNumber(totalScore)} total pts gained\n` +
-                `${formatNumber(ownedScore)} pts currently owned\n` +
+                `\`${formatNumber(totalScore)} pts\` gained in total\n` +
+                `\`${formatNumber(ownedScore)} pts\` currently owned\n` +
                 `${formatNumber(totalClicks)} pings dealt with\n` +
                 `${formatNumber(blueClicked)} blue pings clicked\n` +
                 `${formatNumber(blueMissed)} blue pings missed\n` +
@@ -95,7 +95,7 @@ async function getUserMessage(userId, interaction) {
         ? Math.round(player.bluePingsMissed / (player.bluePings + player.bluePingsMissed) * 100)
         : 0;
 
-    const simulatedPing = await ping(interaction, false, { forceNoRNG: true });
+    const simulatedPing = await ping(interaction, false, { forceNoRNG: true, userId: userId });
     const bluePingChance = simulatedPing.currentEffects.blue;
     const blueMult = simulatedPing.currentEffects.blueStrength || 1;
 
@@ -108,15 +108,15 @@ async function getUserMessage(userId, interaction) {
                 `${formatNumber(player.totalClicks)} total ping${player.totalClicks === 1 ? '' : 's'}\n` +
                 // show eternity pings if not the same as total
                 `${player.totalClicks !== player.clicks ? `${formatNumber(player.clicks)} ping${player.clicks === 1 ? '' : 's'} this eternity\n` : ''}` +
-                `${formatNumber(player.totalScore)} total pts\n` +
-                `${formatNumber(player.highestScore)} pts in one ping\n` +
+                `\`${formatNumber(player.totalScore)} pts\` in total\n` +
+                `\`${formatNumber(player.highestScore)} pts\` in one ping\n` +
                 `${formatNumber(player.bluePings)} blue ping${player.bluePings === 1 ? '' : 's'} clicked\n` +
                 `${formatNumber(player.bluePingsMissed)} missed blue ping${player.bluePingsMissed === 1 ? '' : 's'} (${missRate}% miss rate)\n` +
                 `${formatNumber(player.luckyPings)} lucky ping${player.luckyPings === 1 ? '' : 's'}\n` +
                 `${formatNumber(player.highestBlueStreak)} highest blue ping streak\n` +
                 `\n` +
                 `${upgrades.bluePingChance < 0 ? `0%` : `${(bluePingChance).toFixed(1)}%`} blue ping chance\n` + 
-                `${blueMult.toFixed(2)}x blue ping strength = ${(blueMult*15).toFixed(2)}x pts on a blue ping`
+                `${blueMult.toFixed(2)}x blue ping strength = ${(blueMult*15).toFixed(2)}x \`pts\` on a blue ping`
         )
         .setTimestamp();
     return {

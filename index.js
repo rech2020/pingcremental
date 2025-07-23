@@ -2,9 +2,15 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection } = require('discord.js');
-const { token } = require('./config.json');
 
-// Create a new client instance
+require('dotenv').config();
+
+const token = process.env.DISCORD_TOKEN;
+if (!token) throw new Error('variable in .env missing: DISCORD_TOKEN')
+
+const ownerId = process.env.OWNER_ID;
+if (!ownerId) console.warn('variable in .env missing: OWNER_ID, some functionality may not work correctly or be disabled');
+
 const client = new Client({ intents: [] });
 client.commands = new Collection();
 
@@ -27,6 +33,7 @@ const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'
 for (const file of eventFiles) {
 	const filePath = path.join(eventsPath, file);
 	const event = require(filePath);
+	
 	if (event.once) {
 		client.once(event.name, (...args) => event.execute(...args));
 	} else {

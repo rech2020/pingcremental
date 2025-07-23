@@ -119,9 +119,9 @@ ${leaderboardEmojis[Math.min(leaderboardEmojis.length, position) - 1]} ${await f
 function initTypes() {
     leaderboardTypes = {
         totalScore: {
-            name: 'total pts',
+            name: 'total `pts`',
             emoji: '✨',
-            metric: "pts total"
+            metric: "`pts` total"
         },
         totalClicks: {
             name: 'total clicks',
@@ -129,9 +129,9 @@ function initTypes() {
             metric: "clicks"
         },
         score: {
-            name: 'owned pts',
+            name: 'owned `pts`',
             emoji: '💰',
-            metric: "pts currently owned"
+            metric: "`pts` currently owned"
         },
         bluePings: {
             name: 'blue pings',
@@ -156,7 +156,7 @@ function initTypes() {
         highestScore: {
             name: 'highest score',
             emoji: getEmoji('ponder_favored', '🏆'),
-            metric: "pts in best ping"
+            metric: "`pts` in best ping"
         },
     }
 }
@@ -168,5 +168,5 @@ async function formatPlayer(userId, score, leaderboard, interaction) {
     if (interaction.user.id == userId) {
         userDisplay = `__${userDisplay}__` // highlight the user's own score
     }
-    return `**${userDisplay}** - \`${formatNumber(score)}\` ${leaderboardTypes[leaderboard].metric}`
+    return `**${userDisplay}** - \`${formatNumber(score, true, 5)}\` ${leaderboardTypes[leaderboard].metric}`
 }

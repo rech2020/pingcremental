@@ -8,7 +8,7 @@ module.exports = {
     },
     getDetails() {
         return {
-            description: "__+0.5%__ (additive) chance to get x3 pts",
+            description: "__+0.5%__ (additive) chance to get x3 `pts`",
             name: "pipiping",
             emoji: getEmoji('upgrade_pipiping', "🔁"),
         }

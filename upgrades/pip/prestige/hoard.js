@@ -7,7 +7,7 @@ module.exports = {
     },
     getDetails() {
         return {
-            description: "gain __+20%__ pts per digit in your owned PIP count",
+            description: "gain __+20%__ `pts` per digit in your owned PIP count",
             name: "Stardust",
             emoji: getEmoji('ponder_hoard', "🌌"),
             flavor: "the stars offer both beauty and utility.",

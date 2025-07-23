@@ -8,7 +8,7 @@ module.exports = {
     },
     getDetails() {
         return {
-            description: "gain __x1.1__ pts for 1 ping, for every __20__ minutes of non-pinging (up to __144__ pings, or 2d inactive)",
+            description: "gain __x1.1__ `pts` for 1 ping, for every __20__ minutes of non-pinging (up to __144__ pings, or 2d inactive)",
             name: "slumber",
             emoji: getEmoji("upgrade_slumber", "💤"),
         }
@@ -17,18 +17,26 @@ module.exports = {
         return `x${(1+level*0.1).toFixed(1)}, every ${21-level}m, up to ${Math.round((2*24*60)/(21-level))} pings`;
     },
     getEffect(level, context) {
-        if (context.slumberClicks) {
+        let clicks = context.slumberClicks;
+        const intervalMs = 1000 * 60 * (21 - level);
+        const timeSinceLastPing = Date.now() - context.lastPing;
+
+        if (timeSinceLastPing >= intervalMs) {
+            const earnedClicks = Math.floor(timeSinceLastPing / intervalMs);
+            clicks += earnedClicks;
+            clicks = Math.min(clicks, Math.round((2 * 24 * 60) / (21 - level)));
+            clicks = Math.max(clicks, 0);
+        }
+
+        if (clicks > 0) {
             return {
                 multiply: 1 + (level * 0.1),
-                special: { "slumber": -1, "canGainSlumber": true },
-                message: `(${context.slumberClicks} left)`,
+                special: { "slumber": clicks - context.slumberClicks - 1 },
+                message: `(${clicks} left)`,
             }
         }
-        else {
-            return {
-                special: { "canGainSlumber": true },
-            }
-        }
+        
+        return {}
     },
     isBuyable(context) {
         return context.upgrades.multiplier && context.upgrades.multiplier >= 10;

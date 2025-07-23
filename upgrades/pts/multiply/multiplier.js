@@ -17,7 +17,7 @@ module.exports = {
     },
     getDetails() {
         return {
-            description: "gain __x1.02__ pts",
+            description: "gain __x1.02__ `pts`",
             name: "fine, just have a multiplier",
             emoji: getEmoji('upgrade_multiplier', "**X**"),
         }

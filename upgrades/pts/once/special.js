@@ -7,7 +7,7 @@ module.exports = {
     },
     getDetails() {
         return {
-            description: "getting a rare ping message gives 100x pts",
+            description: "getting a rare ping message gives 100x `pts`",
             name: "i feel special",
             emoji: getEmoji('upgrade_special', "✨"),
         }

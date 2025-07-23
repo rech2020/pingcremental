@@ -1,6 +1,6 @@
 const { getEmoji } = require('../helpers/emojis.js');
 const database = require('./database.js');
-const { log } = require('./log.js');
+const log = require('./log.js');
 
 async function awardBadge(userId, badge, client) {
     const player = await database.Player.findOne({

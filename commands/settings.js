@@ -83,8 +83,11 @@ async function getMessage(interaction) {
         );
 
         description += `
-**${value.name}**: ${value.description}
-currently ${playerData.settings[key]}`
+**${value.name}**: ${value.description}\n`
+        description += value.options.map((option) => {
+            const bold = playerData.settings[key] === option ? '__' : '';
+            return `${bold}${option}${bold}`;
+        }).join(' | ') + '\n';
     }
 
     if (settingsUpdated) {
