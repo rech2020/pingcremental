@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, InteractionContextType, MessageFlags } = require('discord.js');
 const pingMessages = require('./../helpers/pingMessage.js')
-const { ownerId } = require('./../config.json');
+const ownerId = process.env.OWNER_ID
 const formatNumber = require('./../helpers/formatNumber.js')
 const ping = require('./../helpers/pingCalc.js');
 const awardBadge = require('../helpers/awardBadge.js');

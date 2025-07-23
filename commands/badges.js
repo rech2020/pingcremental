@@ -1,10 +1,10 @@
 const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, InteractionContextType, MessageFlags, EmbedBuilder, StringSelectMenuBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
 const database = require('./../helpers/database.js');
 const { getEmoji } = require('./../helpers/emojis.js')
-const { ownerId } = require('./../config.json');
 const { Op } = require('sequelize');
 const { getEmbeddedCommand } = require('../helpers/embedCommand.js');
 const BADGES_PER_PAGE = 10;
+const ownerId = process.env.OWNER_ID;
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -345,7 +345,7 @@ async function getShowcaseDisplay(interaction) {
             value: `${badge.dbId}`,
             // emoji: getEmoji(badge.emoji),
         });
-        description += `${badgeDisplay(badge,true)} (${displayedBadges.includes(badge.dbId.toString()) ? 'displayed' : 'not displayed'})\n`;
+        description += `${badgeDisplay(badge,true)} ${displayedBadges.includes(badge.dbId.toString()) ? '🟢' : ''}\n`;
     }
 
     const row = new ActionRowBuilder().addComponents(dropdown);

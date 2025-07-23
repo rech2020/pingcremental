@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, MessageFlags, InteractionContextType } = require('discord.js');
-const { ownerId } = require('./../config.json');
+const ownerId = process.env.OWNER_ID
 const database = require('./../helpers/database.js');
 const { initEmojis } = require('./../helpers/emojis.js');
 const { cacheCommandIds } = require('../helpers/embedCommand.js');

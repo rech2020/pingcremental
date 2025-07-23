@@ -1,8 +1,8 @@
 const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, InteractionContextType, MessageFlags, EmbedBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
 const database = require('./../helpers/database.js');
-const { ownerId } = require('./../config.json');
 const sequelize = require('sequelize');
 const getLatestVersion = require('./../helpers/versions.js');
+const ownerId = process.env.OWNER_ID;
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -76,7 +76,11 @@ module.exports = {
                 return;
             }
 
-            const choices = versions.map(v => v.verNum).filter(v => v.includes(focusedValue));
+            let choices = versions.map(v => v.verNum).filter(v => v.includes(focusedValue));
+            if (choices.length > 25) {
+                choices = choices.slice(0, 25);
+            }
+
             await interaction.respond(choices.map(choice => ({ name: choice, value: choice })));
         }
     },
