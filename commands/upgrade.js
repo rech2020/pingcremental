@@ -6,7 +6,6 @@ const { UpgradeTypes } = require('./../helpers/commonEnums.js');
 const awardBadge = require('./../helpers/awardBadge.js');
 const formatNumber = require('./../helpers/formatNumber.js');
 const { getTearRequirement } = require('./weave.js');
-const { getEmbeddedCommand } = require('./../helpers/embedCommand.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
