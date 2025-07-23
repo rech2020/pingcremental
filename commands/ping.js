@@ -356,7 +356,7 @@ you have until **<t:${Math.floor((shutoutList[interaction.user.id] / 1000))}:R>*
     if (currentEffects.rare) {
         await (new Promise(resolve => setTimeout(resolve, 2000))); // wait a bit
         await interaction.editReply({
-            components: [getButtonRows(currentEffects)], // refresh buttons
+            components: getButtonRows(currentEffects), // refresh buttons
         })
     }
 }

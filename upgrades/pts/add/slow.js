@@ -13,7 +13,7 @@ module.exports = {
         }
     },
     getEffectString(level) {
-        return `+${level} pt\`s\``
+        return `+${level} \`pts\``
     },
     getEffect(level, context) {
         return {

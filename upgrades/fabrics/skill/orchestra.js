@@ -1,4 +1,4 @@
-const { FabricUpgradeTypes } = require('../../../helpers/upgradeEnums.js');
+const { FabricUpgradeTypes } = require('../../../helpers/commonEnums.js');
 
 let recentPingTimes = {}
 let bonusCache = {}

@@ -2,7 +2,7 @@ const formatNumber = require("../helpers/formatNumber");
 const { rawUpgrades, upgrades } = require("../helpers/upgrades");
 const { SlashCommandBuilder, EmbedBuilder, MessageFlags, ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } = require("discord.js");
 const database = require("../helpers/database");
-const { FabricUpgradeTypes } = require("../helpers/upgradeEnums.js");
+const { FabricUpgradeTypes } = require("../helpers/commonEnums.js");
 const RandSeed = require("rand-seed").default;
 
 const WEAVE_SECTION = {
