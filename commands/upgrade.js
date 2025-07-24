@@ -68,7 +68,7 @@ module.exports = {
 *good luck, pinger.*`, flags: MessageFlags.Ephemeral });
             }
 
-            if (tears < 1 && getTearRequirement(playerData.tears) === playerData.eternities) {
+            if (playerData.tears < 1 && getTearRequirement(playerData.tears) === playerData.eternities) {
                 await interaction.followUp({
                     content: 
 `*you've been looking for something more, haven't you...?*
