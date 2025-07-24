@@ -182,20 +182,27 @@ missed **${pingDataTotal.bluesMissed}** blue pings`
                 finalEmbed.setFooter({ text: `${formatNumber(player.apt)} APT remaining` });
             }
             
-            await interaction.editReply({
-                embeds: [finalEmbed],
-                components: [new ActionRowBuilder().addComponents(
+            const components = [
+                new ButtonBuilder()
+                    .setCustomId("autoping:run")
+                    .setLabel(player.apt < 1 ? "out of APT..." : "autoping again!")
+                    .setStyle(player.apt < 1 ? ButtonStyle.Secondary : ButtonStyle.Success)
+                    .setDisabled(player.apt < 1)
+            ];
+            
+            // only show refresh with no APT
+            if (player.apt < 1) {
+                components.push(
                     new ButtonBuilder()
-                        .setCustomId("autoping:run")
-                        .setLabel(player.apt < 1 ? "out of APT..." : "autoping again!")
-                        .setStyle(player.apt < 1 ? ButtonStyle.Secondary : ButtonStyle.Success)
-                        .setDisabled(player.apt < 1),
-                    // only show refresh with no APT
-                    player.apt > 0 ? null : new ButtonBuilder()
                         .setCustomId("autoping:refresh")
                         .setLabel("refresh")
-                        .setStyle(ButtonStyle.Secondary),
-            )],
+                        .setStyle(ButtonStyle.Secondary)
+                );
+            }
+
+            await interaction.editReply({
+                embeds: [finalEmbed],
+                components: [new ActionRowBuilder().addComponents(...components)],
             });
         }
     }
