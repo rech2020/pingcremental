@@ -191,7 +191,7 @@ you can ping again **<t:${Math.floor(allowTime/1000)}:R>**.`
         }
         if (missed) playerProfile.bluePingsMissed += 1; // if the button is still there, it means they didn't click it
     }
-    if (currentEffects.isSuper) playerProfile.bluePings += 1;
+    if (isSuper) playerProfile.bluePings += 1;
 
     // score saving
     playerProfile.score += score;
