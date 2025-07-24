@@ -191,6 +191,7 @@ you can ping again **<t:${Math.floor(allowTime/1000)}:R>**.`
         }
         if (missed) playerProfile.bluePingsMissed += 1; // if the button is still there, it means they didn't click it
     }
+    if (currentEffects.isSuper) playerProfile.bluePings += 1;
 
     // score saving
     playerProfile.score += score;
@@ -410,7 +411,7 @@ function getButtonRows(currentEffects) {
         .setLabel('ping again!')
         .setStyle(ButtonStyle.Secondary);
 
-    if (!currentEffects.specials.budge) {
+    if (!(currentEffects.specials.budge)) {
         row.addComponents(again);
     }
     
@@ -422,7 +423,7 @@ function getButtonRows(currentEffects) {
         row.addComponents(superPing);
     }
 
-    if (currentEffects.spawnedSuper && currentEffects.specials.budge && !currentEffects.specials.bully) {
+    if (currentEffects.spawnedSuper && currentEffects.specials.budge && !(currentEffects.specials.bully)) {
         row.addComponents(again);
     }
 
