@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, MessageFlags } = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, MessageFlags, InteractionContextType } = require("discord.js");
 const database = require("../helpers/database");
 const formatNumber = require("../helpers/formatNumber");
 const ping = require("../helpers/pingCalc");
@@ -6,7 +6,8 @@ const ping = require("../helpers/pingCalc");
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("autoping")
-        .setDescription("ping a ton for you, automatically"),
+        .setDescription("ping a ton for you, automatically")
+        .setContexts(InteractionContextType.BotDM, InteractionContextType.Guild, InteractionContextType.PrivateChannel),
     
     async execute(interaction) {
         await interaction.reply(await getAutopingEmbed(interaction));

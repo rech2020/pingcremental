@@ -1,6 +1,6 @@
 const formatNumber = require("../helpers/formatNumber");
 const { rawUpgrades, upgrades } = require("../helpers/upgrades");
-const { SlashCommandBuilder, EmbedBuilder, MessageFlags, ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder, MessageFlags, ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, InteractionContextType } = require("discord.js");
 const database = require("../helpers/database");
 const { FabricUpgradeTypes } = require("../helpers/commonEnums.js");
 const RandSeed = require("rand-seed").default;
@@ -15,7 +15,8 @@ const WEAVE_SECTION = {
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("weave")
-        .setDescription("weave the fabric of the universe itself...?"),
+        .setDescription("weave the fabric of the universe itself...?")
+        .setContexts(InteractionContextType.BotDM, InteractionContextType.Guild, InteractionContextType.PrivateChannel),
     async execute(interaction) {
         return await interaction.reply(await getEmbed(interaction));
     },
