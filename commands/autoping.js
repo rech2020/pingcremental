@@ -152,8 +152,8 @@ module.exports = {
             let finalDescription =
 `**${formatNumber(pings)}** pings completed, which...
 
-__gained \`**${formatNumber(pingDataTotal.score)}** pts\`__
-got \`**${formatNumber(pingDataTotal.highestScore)}** pts\` in a single ping`
+__gained **\`${formatNumber(pingDataTotal.score)} pts\`**__
+got **\`${formatNumber(pingDataTotal.highestScore)} pts\`** in a single ping`
 
             if (pingDataTotal.bp > 0) { 
                 if (player.bp >= finalEffects.bpMax) {
