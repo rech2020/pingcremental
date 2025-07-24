@@ -39,7 +39,7 @@ module.exports = {
                 player.pip += 1e6;
                 player.thread += 1000;
             } else if (value === 'rerolls') {
-                player.fabricShopRerolls = 0;
+                player.shopRerolls = 0;
                 player.cloakModificationsAllowed += 5;
             } else if (value === 'reset') {
                 const button = new ButtonBuilder()
