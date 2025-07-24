@@ -116,7 +116,7 @@ async function ping(interaction, isSuper = false, overrides = {}) {
         }
     }
 
-    currentEffects.blue = Math.min(currentEffects.blue, currentEffects.blueCap);
+    currentEffects.blue = Math.min(currentEffects.blue, currentEffects.blueCap, 90); // hard cap at 90% chance or whatever the blue cap is
 
     if (isSuper) {
         let blueStrength = (currentEffects.blueStrength) * 15;
