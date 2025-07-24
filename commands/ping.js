@@ -411,7 +411,7 @@ function getButtonRows(currentEffects) {
         .setLabel('ping again!')
         .setStyle(ButtonStyle.Secondary);
 
-    if (!(currentEffects.specials.budge)) {
+    if (!(currentEffects.specials.budge) || !(currentEffects.spawnedSuper)) {
         row.addComponents(again);
     }
     
