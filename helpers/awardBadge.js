@@ -1,4 +1,5 @@
 const { getEmoji } = require('../helpers/emojis.js');
+const { getEmbeddedCommand } = require('../helpers/embedCommand.js');
 const database = require('./database.js');
 const log = require('./log.js');
 
@@ -53,7 +54,7 @@ ${getEmoji(badgeObj.emoji)} ${badgeObj.name}
 *"${badgeObj.flavorText}"*
 ${badgeObj.description}
 
-you can view and display your badges with \`/badges\`.`);
+you can show off your badges with ${getEmbeddedCommand('badges showcase')}.`);
     }
 
     return true;
