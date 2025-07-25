@@ -36,13 +36,13 @@ module.exports = {
 
             playerData.upgrades = {};
             playerData.score = 0;
-            playerData.bp = 0;
             playerData.clicks = 0;
             playerData.glimmerClicks = 0;
             playerData.slumberClicks = 0;
 
             playerData.pip += Math.floor(playerData.bp * mult);
             playerData.totalPip += playerData.pip;
+            playerData.bp = 0;
             playerData.eternities++;
             playerData.totalEternities++;
 
