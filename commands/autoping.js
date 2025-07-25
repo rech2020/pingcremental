@@ -163,7 +163,7 @@ module.exports = {
             player.clicks += pings;
             player.totalClicks += pings;
             player.bp = Math.min(player.bp + pingDataTotal.bp, finalEffects.bpMax);
-            player.rares += pingDataTotal.rares;
+            player.luckyPings += pingDataTotal.rares;
             player.bluePings += pingDataTotal.blues;
             player.bluePingsMissed += pingDataTotal.bluesMissed;
             if (pingDataTotal.highestBlueCombo > player.highestBlueStreak) {
