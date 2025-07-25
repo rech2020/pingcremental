@@ -8,17 +8,17 @@ const { PingCalculationStates } = require('./commonEnums.js');
 const MAX_PING_OFFSET = 5;
 
 async function ping(interaction, isSuper = false, overrides = {}) {
-    let ping = interaction.client.ws.ping;
+    let pingMs = interaction.client.ws.ping;
     if (overrides.developmentMode) {
-        ping = 6; // for testing purposes; prevents too much point gain & bypasses unknown ping
+        pingMs = 6; // for testing purposes; prevents too much point gain & bypasses unknown ping
     }
-    ping += Math.round(Math.random() * MAX_PING_OFFSET * 2) - MAX_PING_OFFSET; // randomize a bit since it only updates occasionally
+    pingMs += Math.round(Math.random() * MAX_PING_OFFSET * 2) - MAX_PING_OFFSET; // randomize a bit since it only updates occasionally
 
     const [playerProfile, _created] = await database.Player.findOrCreate({ where: { userId: overrides.userId || interaction.user.id } })
     let context = { // BIG LONG EVIL CONTEXT (will kill you if it gets the chance)
         // actual context
         user: interaction.user,
-        ping: ping,
+        ping: pingMs,
         isSuper: isSuper,
         versionNumber: await getLatestVersion(),
         interactionTimestamp: interaction.createdAt,
@@ -46,6 +46,7 @@ async function ping(interaction, isSuper = false, overrides = {}) {
         specials: {},
         RNGmult: 1,
         blueCombo: 0,
+        apt: 0,
         state: PingCalculationStates.RNG_AND_SPECIAL
     }
 
@@ -83,12 +84,12 @@ async function ping(interaction, isSuper = false, overrides = {}) {
     }
     const pingFormat = playerProfile.settings.pingFormat || "expanded";
     if (pingFormat === "expanded") {
-        displays.add.push(`${getEmoji('ping')} \`+${ping}\``);
+        displays.add.push(`${getEmoji('ping')} \`+${pingMs}\``);
     } else if (pingFormat === "compact") {
         displays.add.push(`${getEmoji('ping')}`);
     }
     let effect;
-    let score = ping; // base score is ping
+    let score = pingMs; // base score is ping
 
 
     for (const [upgradeId, level] of Object.entries(iterateUpgrades)) {
@@ -273,7 +274,22 @@ async function ping(interaction, isSuper = false, overrides = {}) {
         }
     }
 
+    if (currentEffects.specials.rerolls && !overrides.skipRerolls) {
+        if (Math.random() < currentEffects.specials.rerolls % 1) {
+            currentEffects.specials.rerolls++;
+        }
+        currentEffects.specials.rerolls = Math.floor(currentEffects.specials.rerolls);
 
+        for (let i = 0; i < currentEffects.specials.rerolls; i++) {
+            const reroll = await ping(interaction, isSuper, { skipRerolls: true });
+            if (reroll.score > score) {
+                score = reroll.score;
+                displays = reroll.displays;
+                currentEffects = reroll.currentEffects;
+                context = reroll.context;
+            }
+        }
+    }
 
     if (pingFormat !== "expanded") {
         displays.add.push(`\`+${formatNumber(score)}\``);
