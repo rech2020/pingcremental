@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, InteractionContextType } = require('discord.js');
+const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, InteractionContextType, MessageFlags } = require('discord.js');
 const { upgrades } = require('./../helpers/upgrades.js')
 const database = require('./../helpers/database.js');
 const { PipUpgradeTypes } = require('./../helpers/commonEnums.js');
@@ -64,10 +64,11 @@ module.exports = {
                 }
             }
 
-
             await playerData.save();
 
             const msg = ['alright', 'sure', 'okay', 'uh-huh', 'sure thing'];
+            let followupType = playerData.settings.upgradeFollowup;
+            let ephemeral = followupType === 'ephemeral' || followupType === 'none' ? MessageFlags.Ephemeral : null;
 
             const button = new ButtonBuilder()
                 .setCustomId('ponder:delete')
@@ -97,12 +98,20 @@ module.exports = {
             }
             if (unlockMessage !== "") {
                 unlockMessage = "\nYou also unlocked:\n" + unlockMessage;
+                // force show unlock messages
+                if (followupType === 'none') { 
+                    followupType = 'ephemeral';
+                    ephemeral = MessageFlags.Ephemeral;
+                }
             }
-
-            return await interaction.followUp({
-                content: `**${upgradeClass.getDetails().name}** is now level ${playerUpgradeLevel}. (\`${formatNumber(playerData.pip)} PIP\` left)${unlockMessage}`,
-                components: [new ActionRowBuilder().addComponents(button)]
-            })
+        
+            if (followupType !== 'none') {
+                return await interaction.followUp({
+                    content: `**${upgradeClass.getDetails().name}** is now level ${playerUpgradeLevel}. (\`${formatNumber(playerData.pip)} PIP\` left)${unlockMessage}`,
+                    components: [new ActionRowBuilder().addComponents(button)],
+                    flags: ephemeral
+                })
+            }
         })
     }
 }
