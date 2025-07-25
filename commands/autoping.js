@@ -43,7 +43,7 @@ module.exports = {
                             .setCustomId("value")
                             .setLabel("autoping count")
                             .setStyle(TextInputStyle.Short)
-                            .setPlaceholder(`input a number up to ${player.apt} or "ALL"...`)
+                            .setPlaceholder(`input a number up to ${Math.min(player.apt, 10000)} or "ALL"...`)
                     )
                 );
             await interaction.showModal(modal);
@@ -62,7 +62,7 @@ module.exports = {
 
             let pings;
             if (interaction.fields.getTextInputValue("value").toLowerCase() === "all") {
-                pings = player.apt;
+                pings = Math.min(player.apt, 10000);
             } else {
                 pings = parseInt(interaction.fields.getTextInputValue("value"));
             }
@@ -73,9 +73,9 @@ module.exports = {
                     flags: MessageFlags.Ephemeral,
                 });
             }
-            if (pings < 1 || pings > player.apt) {
+            if (pings < 1 || pings > Math.min(player.apt, 10000)) {
                 return interaction.reply({
-                    content: `please input a number between 1 and ${player.apt}`,
+                    content: `please input a number between 1 and ${Math.min(player.apt, 10000)}.`,
                     flags: MessageFlags.Ephemeral,
                 });
             }
