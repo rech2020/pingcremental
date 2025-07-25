@@ -235,33 +235,19 @@ you have a lot of \`pts\`... why don't you go spend them over in ${await getEmbe
     for (const dispType of ['add', 'mult', 'exponents', 'extra']) {
         const display = displays[dispType];
         if (display.length === 0) continue; // skip empty displays
-        if (pingFormat === "expanded") {
-            displayDisplay += ", " + display.join(', ') 
-        } else {
-            displayDisplay += ", " + display.join(' ')
-        }
-
+        displayDisplay += ", " + formatDisplay(display, pingFormat);
     }
     displayDisplay = displayDisplay.substring(2); // remove first comma and space
-    
-    if (currentEffects.apt) {
-        displayDisplay += `\n-# \`${formatNumber(playerProfile.apt)} APT\` `
-        if (pingFormat === "expanded") {
-            displayDisplay += displays.apt.join(', ');
-        } else if (pingFormat === "compact") {
-            displayDisplay += displays.apt.join(' ');
-        }
-    }
 
     if (currentEffects.bp) {
         displayDisplay += `\n-# \`${formatNumber(Math.ceil(playerProfile.bp))}/${formatNumber(currentEffects.bpMax)} bp\`${playerProfile.bp >= currentEffects.bpMax ? " **(MAX)**" : ""} `
-        if (pingFormat === "expanded") {
-            displayDisplay += displays.bp.join(', ');
-        } else if (pingFormat === "compact") {
-            displayDisplay += displays.bp.join(' ');
-        }
+        displayDisplay += formatDisplay(displays.bp, pingFormat);
     }
 
+    if (currentEffects.apt) {
+        displayDisplay += `\n-# \`${formatNumber(playerProfile.apt)} APT\` `
+        displayDisplay += formatDisplay(displays.apt, pingFormat);
+    }
 
 
     try {
@@ -412,4 +398,12 @@ function getButtonRows(currentEffects) {
     }
 
     return [row];
+}
+
+function formatDisplay(display, format) {
+    if (format === "expanded") {
+        return display.join(', ');
+    } else if (format === "compact") {
+        return display.join(' ');
+    }
 }

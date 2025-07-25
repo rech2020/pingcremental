@@ -7,20 +7,20 @@ module.exports = {
     },
     getDetails() {
         return {
-            description: "gain __+2__ APT when finding a blue ping",
+            description: "gain __+1__ APT when finding a blue ping",
             name: "automation",
             emoji: getEmoji('ponder_template', "⚙️"),
             flavor: "all things eventually converge on industry.",
         }
     },
     getEffectString(level) {
-        return `${level * 2} APT`;
+        return `${level} APT`;
     },
     getEffect(level, context) {
         if (!context.isSuper) return {};
 
         return {
-            apt: level * 2,
+            apt: level,
         }
     },
     upgradeRequirements() {

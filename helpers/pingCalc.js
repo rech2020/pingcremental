@@ -69,6 +69,7 @@ async function ping(interaction, isSuper = false, overrides = {}) {
         blueCap: 35,
         specials: {},
         bp: 0,
+        apt: 0,
         RNGmult: overrides.forceNoRNG ? 0 : 1,
         // add more if needed
         
@@ -81,6 +82,7 @@ async function ping(interaction, isSuper = false, overrides = {}) {
         exponents: [],
         extra: [],
         bp: [],
+        apt: [],
     }
     const pingFormat = playerProfile.settings.pingFormat || "expanded";
     if (pingFormat === "expanded") {
@@ -178,21 +180,14 @@ async function ping(interaction, isSuper = false, overrides = {}) {
         // apply effects where appropriate
         if (effect.add && effect.add !== 0) {
             score += effect.add;
-            effectString += ` \`${effect.add >= 0 ? "+" : ""}${formatNumber(effect.add)}\``
         }
 
         if (effect.multiply && effect.multiply !== 1) {
             currentEffects.mults.push(effect.multiply);
-
-            // prevent floating point jank
-            const formattedMultiplier = effect.multiply.toFixed(2)
-
-            effectString += ` __\`x${formattedMultiplier}\`__`
         }
 
         if (effect.exponent && effect.exponent !== 1) {
             currentEffects.exponents.push(effect.exponent);
-            effectString += ` **__\`^${effect.exponent.toFixed(2)}\`__**`
         }
 
         if (effect.special) { 
@@ -201,23 +196,10 @@ async function ping(interaction, isSuper = false, overrides = {}) {
             }
         }
 
-        if (pingFormat === "compact" && effectString !== upgradeClass.getDetails().emoji) {
-            effectString = `${upgradeClass.getDetails().emoji}~`;
-        }
-        
-        // bypasses compact mode
-        if (effect.message) { effectString += ` ${effect.message}`; }
-        
-        if (pingFormat === "compact emojiless") {
-            effectString = "";
-        }
+        effectString = formatEffect(effect, upgradeClass, pingFormat);
 
         // add to display
-        if (effectString !== upgradeClass.getDetails().emoji && effectString !== "") {
-            if (effectString.includes("~")) {
-                effectString = effectString.replace("~", "");
-            }
-
+        if (effectString) {
             if (effect.add) {
                 displays.add.push(effectString);
             } else if (effect.multiply) {
@@ -240,7 +222,7 @@ async function ping(interaction, isSuper = false, overrides = {}) {
     }
 
     if (totalMult > 1 && pingFormat !== "expanded") {
-        displays.mult.push(`__\`x${totalMult.toFixed(2)}\`__`);
+        displays.mult.push(`__\`x${formatNumber(Math.floor(totalMult))}${(totalMult % 1).toFixed(2).slice(1)}\`__`);
     }
 
     let totalExp = 1;
@@ -269,8 +251,11 @@ async function ping(interaction, isSuper = false, overrides = {}) {
 
         if (effect.bp) { 
             currentEffects.bp += effect.bp;
-            effectString = `\`+${effect.bp} bp\``;
-            displays.bp.push(effectString);
+            displays.bp.push(formatEffect(effect, upgradeClass, pingFormat));
+        }
+        if (effect.apt) {
+            currentEffects.apt += effect.apt;
+            displays.apt.push(formatEffect(effect, upgradeClass, pingFormat))
         }
     }
 
@@ -296,6 +281,9 @@ async function ping(interaction, isSuper = false, overrides = {}) {
         if (currentEffects.bp) {
             displays.bp.push(`\`+${formatNumber(currentEffects.bp)} bp\``);
         }
+        if (currentEffects.apt) {
+            displays.apt.push(`\`+${formatNumber(currentEffects.apt)} APT\``);
+        }
     }
     
     let bpMax = ((playerProfile.upgrades.limit || 0) + 1) * 10000;
@@ -313,6 +301,46 @@ async function ping(interaction, isSuper = false, overrides = {}) {
         currentEffects,
         context,
     }
+}
+
+function formatEffect(effect, upgradeClass, format) {
+    let effectString = upgradeClass.getDetails().emoji;
+
+    if (effect.add && effect.add !== 0) {
+        effectString += ` \`${effect.add >= 0 ? "+" : ""}${formatNumber(effect.add)}\``;
+    }
+    if (effect.multiply && effect.multiply !== 1) {
+        effectString += ` __\`x${formatNumber(Math.floor(effect.multiply))}${(effect.multiply % 1).toFixed(2).slice(1)}\`__`;
+    }
+    if (effect.exponent && effect.exponent !== 1) {
+        effectString += ` **__\`^${effect.exponent.toFixed(2)}\`__**`;
+    }
+    if (effect.bp) {
+        effectString += ` \`+${formatNumber(effect.bp)} bp\``;
+    }
+    if (effect.apt) {
+        effectString += ` \`+${formatNumber(effect.apt)} APT\``;
+    }
+
+    if (format === "compact" && effectString !== upgradeClass.getDetails().emoji) {
+        effectString = `${upgradeClass.getDetails().emoji}Ñ`;
+    }
+
+    // bypasses compact mode
+    if (effect.message) { effectString += ` ${effect.message}`; }
+
+    if (format === "compact emojiless") {
+        effectString = "";
+    }
+
+    if (effectString !== upgradeClass.getDetails().emoji && effectString !== "") {
+        if (effectString.includes("Ñ")) {
+            effectString = effectString.replace("Ñ", "");
+        }
+        return effectString;
+    }
+
+    return null
 }
 
 module.exports = ping;
