@@ -11,10 +11,10 @@ module.exports = {
             emoji: "💍",
         }
     },
-    getEffect(_level, context) {
+    getEffect(level, context) {
         if (context.rare) {
             return {
-                exponent: 1.35,
+                exponent: 1.35 ** level,
             }
         }
 

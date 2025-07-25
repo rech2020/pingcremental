@@ -15,14 +15,19 @@ module.exports = {
     },
     getEffect(level, context) {
         let roll;
+        let hits = 0;
         
         for (let i = 0; i < level; i++) {
             roll = Math.floor(Math.random() * 3000);
             if (roll === 0) {
-                return {
-                    exponent: 1.6,
-                    message: `***__A SURGE OF POWER!__***`
-                };
+                hits++;
+            }
+        }
+
+        if (hits > 0) {
+            return {
+                exponent: 1.6 ** hits,
+                message: `***__A ${['', 'BRILLIANT ', 'LEGENDARY '][hits]}SURGE OF POWER!__***`
             }
         }
 
