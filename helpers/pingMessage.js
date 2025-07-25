@@ -654,8 +654,6 @@ function get(ping, context) {
             `this button isn’t addictive. you’re just... very motivated`,
 
         ]
-        if (context.score % 1000 === 0) messagesList = [`your score is a very satisfying multiple of 1000. good job`]
-        if (context.score % 1000000 === 0) messagesList = [`your current score is an impressive multiple of 1 million! that's really cool`]
     }
 
     if (context.slumberClicks && Math.random() * 100 <= 12) {
