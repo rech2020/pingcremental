@@ -105,6 +105,7 @@ module.exports = {
             let pingDataTotal = {
                 score: 0,
                 highestScore: 0,
+                worstScore: Infinity,
                 bp: 0,
                 apt: 0,
 
@@ -131,6 +132,7 @@ module.exports = {
 
                 pingDataTotal.score += score;
                 pingDataTotal.highestScore = Math.max(pingDataTotal.highestScore, score);
+                pingDataTotal.worstScore = Math.min(pingDataTotal.worstScore, score);
                 pingDataTotal.bp += currentEffects.bp || 0;
                 pingDataTotal.apt += currentEffects.apt || 0;
 
@@ -176,7 +178,7 @@ module.exports = {
 `**${formatNumber(pings)}** pings completed, which...
 
 __gained **\`${formatNumber(pingDataTotal.score, true, 4)} pts\`**__
-got **\`${formatNumber(pingDataTotal.highestScore, true, 3)} pts\`** in a single ping`
+got **\`${formatNumber(pingDataTotal.highestScore, true, 3)} pts\`** at most, **\`${formatNumber(pingDataTotal.worstScore, true, 3)} pts\`** at worst`;
 
             if (pingDataTotal.bp > 0) { 
                 if (player.bp >= finalEffects.bpMax) {
