@@ -13,7 +13,7 @@ module.exports = {
         }
     }, 
     getEffect(_level, context) {
-        if (!context.interactionTimestamp) return {};
+        if (context.autopinging) return {};
 
         const timeSinceLastPing = Date.now() - context.lastPing;
         const aptGain = Math.min(Math.floor(timeSinceLastPing / (2 * 60 * 1000)), 720);

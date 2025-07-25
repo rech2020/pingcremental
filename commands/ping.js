@@ -167,10 +167,12 @@ you can ping again **<t:${Math.floor(allowTime/1000)}:R>**.`
     if (currentEffects.blueCombo > playerProfile.highestBlueStreak) playerProfile.highestBlueStreak = currentEffects.blueCombo;
     if (!isSuper) {
         let missed = false;
-        for (const messageButton of interaction.message.components[0].components) { // check every button in the first row
-            if (messageButton.data.custom_id === 'ping:super') {
-                missed = true;
-                break;
+        for (const row of interaction.message.components) {
+            for (const messageButton of row.components) {
+                if (messageButton.data.custom_id === 'ping:super') {
+                    missed = true;
+                    break;
+                }
             }
         }
         if (missed) playerProfile.bluePingsMissed += 1; // if the button is still there, it means they didn't click it
@@ -181,6 +183,17 @@ you can ping again **<t:${Math.floor(allowTime/1000)}:R>**.`
     playerProfile.score += score;
     playerProfile.totalScore += score;
     if (playerProfile.highestScore < score) playerProfile.highestScore = score;
+
+    // upgrade-specific
+    if (context.specials.artisanCombo && context.specials.artisanCombo > playerProfile.highestArtisanCombo) {
+        playerProfile.highestArtisanCombo = context.specials.artisanCombo;
+    }
+    if (context.specials.coinflipCount && context.specials.coinflipCount > playerProfile.highestCoinflipCount) {
+        playerProfile.highestCoinflipCount = context.specials.coinflipCount;
+    }
+    if (context.specials.orchestraCombo && context.specials.orchestraCombo > playerProfile.highestOrchestraCombo) {
+        playerProfile.highestOrchestraCombo = context.specials.orchestraCombo;
+    }
 
     // etc
     playerProfile.bp = Math.min(currentEffects.bp + playerProfile.bp, currentEffects.bpMax);
@@ -347,7 +360,7 @@ function getButtonRows(currentEffects) {
             ind++;
         }
 
-        if (!currentEffects.specials.budge) {
+        if (!(currentEffects.specials.budge) || !(currentEffects.spawnedSuper)) {
             rows.push(againRow);
         }
 
@@ -358,7 +371,7 @@ function getButtonRows(currentEffects) {
             for (const symbol of currentEffects.artisanNextSymbols.reverse()) {
                 const superPing = new ButtonBuilder()
                     .setCustomId(`ping:super-${ind}`)
-                    .setLabel(`${symbol} blue ping! ${currentEffects.blueCombo > 0 ? ` x${currentEffects.blueCombo + 1}` : ''}`)
+                    .setLabel(`${symbol} blue ping!${currentEffects.blueCombo > 0 ? ` x${currentEffects.blueCombo + 1}` : ''}`)
                     .setStyle(ButtonStyle.Primary);
                 superRow.addComponents(superPing);
                 ind++;
@@ -367,7 +380,7 @@ function getButtonRows(currentEffects) {
             rows.push(superRow);
         }
 
-        if (currentEffects.spawnedSuper && currentEffects.specials.budge && !currentEffects.specials.bully) {
+        if (currentEffects.spawnedSuper && currentEffects.specials.budge && !(currentEffects.specials.bully)) {
             rows.push(againRow);
         }
 

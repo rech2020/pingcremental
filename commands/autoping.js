@@ -114,6 +114,7 @@ module.exports = {
                 highestBlueCombo: 0,
             }
             let nextPingBlue = false;
+            let nextPingArtisan = null;
             let currentChain = 0;
             let finalEffects;
             let nextUpdate = updateEmbedEvery;
@@ -125,7 +126,7 @@ module.exports = {
                     nextUpdate += updateEmbedEvery + Math.ceil(Math.random() - 0.5 * pings / 1000);
                 }
 
-                const {score, currentEffects} = await ping(interaction, nextPingBlue);
+                const {score, currentEffects} = await ping(interaction, nextPingBlue, { autopinging: true, blueCombo: currentChain, artisanClickedSymbol: nextPingArtisan });
                 nextPingBlue = currentEffects.spawnedSuper && currentEffects.specials.budge;
 
                 pingDataTotal.score += score;
@@ -142,6 +143,10 @@ module.exports = {
                 }
                 pingDataTotal.bluesMissed += currentEffects.spawnedSuper && !currentEffects.specials.budge ? 1 : 0;
                 pingDataTotal.rares += currentEffects.rare ? 1 : 0;
+
+                if (currentEffects.artisanClickedSymbol) {
+                    nextPingArtisan = currentEffects.artisanNextSymbols[0];
+                }
 
                 if (i === pings - 1) {
                     finalEffects = currentEffects;
@@ -190,8 +195,6 @@ missed **${pingDataTotal.bluesMissed}** blue ping${pingDataTotal.bluesMissed ===
             }
 
             if (pingDataTotal.rares > 0) finalDescription += `\nfound **${pingDataTotal.rares}** rare ping${pingDataTotal.rares === 1 ? '' : 's'}`;
-
-            console.log(pingDataTotal);
 
             const finalEmbed = new EmbedBuilder()
                 .setTitle("autoping finished!")

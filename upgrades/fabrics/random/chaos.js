@@ -1,4 +1,5 @@
 const { FabricUpgradeTypes } = require('../../../helpers/commonEnums.js');
+const RandSeed = require("rand-seed").default;
 
 module.exports = {
     getPrice() {
@@ -12,7 +13,7 @@ module.exports = {
         }
     },
     getEffect(level, context) {
-        const roll = Math.random() * 100;
+        const roll = new RandSeed(`${context.interactionTimestamp}`).next() * 100;
 
         if (roll < 25) {
             return {

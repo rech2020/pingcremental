@@ -34,6 +34,9 @@ module.exports = {
             return {
                 multiply: mult,
                 message: `${tails} tails`,
+                special: {
+                    coinflipCount: tails,
+                }
             }
         }
         return {};

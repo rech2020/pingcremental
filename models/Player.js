@@ -103,7 +103,6 @@ module.exports = (sequelize) => {
 			defaultValue: {},
 		},
 
-		// misc stats (move to separate table?)
 		bluePings: {
 			type: DataTypes.NUMBER,
 			defaultValue: 0,
@@ -113,6 +112,26 @@ module.exports = (sequelize) => {
 			type: DataTypes.NUMBER,
 			defaultValue: 0,
 			allowNull: false,
+		},
+		bluePingRate: {
+			type: DataTypes.VIRTUAL,
+			get() {
+				if (this.bluePings + this.bluePingsMissed === 0) return undefined;
+				return Math.round((this.bluePings / (this.bluePings + this.bluePingsMissed)) * 10000) / 100;
+			},
+			set() {
+				throw new Error('bluePingRate is virtual and shouldn\'t be set directly');
+			}
+		},
+		bluePingMissRate: {
+			type: DataTypes.VIRTUAL,
+			get() {
+				if (this.bluePings + this.bluePingsMissed === 0) return undefined;
+				return Math.round((this.bluePingsMissed / (this.bluePings + this.bluePingsMissed)) * 10000) / 100;
+			},
+			set() {
+				throw new Error('bluePingMissRate is virtual and shouldn\'t be set directly');
+			}
 		},
 		luckyPings: {
 			type: DataTypes.NUMBER,
@@ -244,8 +263,26 @@ module.exports = (sequelize) => {
 			type: DataTypes.NUMBER,
 			defaultValue: 0,
 			allowNull: false,
-		}
+		},
 
+
+		// upgrade effect records
+		// note: cannot be set with autopings
+		highestArtisanCombo: {
+			type: DataTypes.NUMBER,
+			defaultValue: 0,
+			allowNull: false,
+		},
+		highestOrchestraCombo: {
+			type: DataTypes.NUMBER,
+			defaultValue: 0,
+			allowNull: false,
+		},
+		highestCoinflipCount: {
+			type: DataTypes.NUMBER,
+			defaultValue: 0,
+			allowNull: false,
+		},
 	}, {
 		sequelize,
 		timestamps: true,

@@ -4,10 +4,10 @@ let recentPingTimes = {}
 let bonusCache = {}
 let comboCache = {}
 
-const COMBO_WINDOW = 160;
-const GREAT_WINDOW = 90;
-const PERFECT_WINDOW = 50;
-const PURE_WINDOW = 15;
+const COMBO_WINDOW = 300;
+const GREAT_WINDOW = 150;
+const PERFECT_WINDOW = 80;
+const NOTELESS_WINDOW = 60;
 
 module.exports = {
     getPrice() {
@@ -25,6 +25,7 @@ skipping one beat is okay, but more will break the combo.`,
     },
     getEffect(_level, context) {
         if (context.state !== PingCalculationStates.SCORING) return {};
+        if (context.autopinging) return {};
 
         if (!context.interactionTimestamp) return {};
         if (!recentPingTimes[context.user.id]) {
@@ -68,10 +69,10 @@ skipping one beat is okay, but more will break the combo.`,
         if (Math.abs(distFromTarget) > COMBO_WINDOW) {
             bonusCache[context.user.id] = 1;
             comboCache[context.user.id] = 0;
-            if (distFromTarget > 0) {
-                msg += `EARLY!`;
+            if (distFromTarget < 0) {
+                msg += `EARLY...`;
             } else {
-                msg += `LATE!`;
+                msg += `LATE...`;
             }
         }
 
@@ -79,20 +80,17 @@ skipping one beat is okay, but more will break the combo.`,
             recentPingTimes[context.user.id] = [];
         }
 
-        if (distFromTarget > 0 && Math.abs(distFromTarget) < COMBO_WINDOW) {
+        if (distFromTarget > 0 && Math.abs(distFromTarget) < COMBO_WINDOW && Math.abs(distFromTarget) > NOTELESS_WINDOW) {
             msg += `L`
-        } else if (distFromTarget < 0 && Math.abs(distFromTarget) < COMBO_WINDOW) {
+        } else if (distFromTarget < 0 && Math.abs(distFromTarget) < COMBO_WINDOW && Math.abs(distFromTarget) > NOTELESS_WINDOW) {
             msg += `E`
         }
 
-        if (Math.abs(distFromTarget) < PURE_WINDOW) {
-            addBonus(context.user.id, 3 / 100);
-            msg = `PURE!`;
-        } else if (Math.abs(distFromTarget) < PERFECT_WINDOW) {
-            addBonus(context.user.id, 1 / 100);
-            msg = `perfect!`;
+        if (Math.abs(distFromTarget) < PERFECT_WINDOW) {
+            addBonus(context.user.id, 1.2 / 100);
+            msg += `perfect!`;
         } else if (Math.abs(distFromTarget) < GREAT_WINDOW) {
-            addBonus(context.user.id, 0.4 / 100);
+            addBonus(context.user.id, 0.5 / 100);
             msg += `great!`;
         } else if (Math.abs(distFromTarget) <= COMBO_WINDOW) {
             addBonus(context.user.id, 0); // only maintains combo
@@ -102,6 +100,9 @@ skipping one beat is okay, but more will break the combo.`,
         return {
             exponent: bonusCache[context.user.id],
             message: `${msg} (x${comboCache[context.user.id]})`,
+            special: {
+                orchestraCombo: comboCache[context.user.id] || 0,
+            }
         }
     },
     type() { return FabricUpgradeTypes.SKILL_BASED },

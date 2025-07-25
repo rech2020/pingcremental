@@ -119,7 +119,7 @@ ${leaderboardEmojis[Math.min(leaderboardEmojis.length, position) - 1]} ${await f
 function initTypes() {
     leaderboardTypes = {
         totalScore: {
-            name: 'total `pts`',
+            name: 'total pts',
             emoji: '✨',
             metric: "`pts` total"
         },
@@ -129,7 +129,7 @@ function initTypes() {
             metric: "clicks"
         },
         score: {
-            name: 'owned `pts`',
+            name: 'owned pts',
             emoji: '💰',
             metric: "`pts` currently owned"
         },
@@ -143,15 +143,15 @@ function initTypes() {
             emoji: getEmoji('ponder_regret', '😔'),
             metric: "blue pings missed"
         },
-        luckyPings: {
-            name: 'lucky pings',
-            emoji: getEmoji('upgrade_special', '🍀'),
-            metric: "rare pings discovered"
-        },
         highestBlueStreak: {
             name: 'highest blue streak',
             emoji: getEmoji('upgrade_chain', '🔗'),
             metric: "blue pings in a row"
+        },
+        luckyPings: {
+            name: 'lucky pings',
+            emoji: getEmoji('upgrade_special', '🍀'),
+            metric: "rare pings discovered"
         },
         highestScore: {
             name: 'highest score',

@@ -22,6 +22,7 @@ async function ping(interaction, isSuper = false, overrides = {}) {
         isSuper: isSuper,
         versionNumber: await getLatestVersion(),
         interactionTimestamp: interaction.createdAt,
+        autopinging: overrides.autopinging || false,
 
         // player profile bits
         score: playerProfile.score,
@@ -130,10 +131,16 @@ async function ping(interaction, isSuper = false, overrides = {}) {
             displays.mult.push(`${getEmoji('upgrade_blue')}`)
         }
 
-        for (const messageButton of interaction.message.components[0].components) { // check every button in the first row
-            if (messageButton.data.custom_id === 'ping:super') {
-                context.blueCombo = (parseInt(messageButton.data.label.split('x')[1]) || 1); // get the current combo
+        for (const row of interaction.message.components) {
+            for (const messageButton of row.components) {
+                if (messageButton.data.custom_id.startsWith('ping:super')) {
+                    context.blueCombo = (parseInt(messageButton.data.label.split('x')[1]) || 1); // get the current combo
+                }
             }
+        }
+
+        if (overrides.blueCombo) {
+            context.blueCombo = overrides.blueCombo;
         }
     }
 
@@ -144,9 +151,15 @@ async function ping(interaction, isSuper = false, overrides = {}) {
         context.rare = true;
     }
 
-    if (context.specials.artisan) {
-        // extracts the symbol from the button label (looks gross though)
-        context.artisanClickedSymbol = interaction.component.label.match(new RegExp(`[${artisanSymbols.join('')}]`))[0];
+    if (currentEffects.specials.artisan) {
+        const symbolMatcher = new RegExp(`[${artisanSymbols.join('')}]`);
+
+        if (overrides.artisanClickedSymbol) {
+            context.artisanClickedSymbol = overrides.artisanClickedSymbol;
+        } else if (interaction.component && interaction.component.label.match(symbolMatcher)) {
+            // extracts the symbol from the button label (looks gross though)
+            context.artisanClickedSymbol = interaction.component.label.match(new RegExp(`[${artisanSymbols.join('')}]`))[0];
+        }
         
         context.artisanNextSymbols = artisanSymbols;
         // shuffle
