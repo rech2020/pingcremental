@@ -3,6 +3,8 @@ const database = require("../helpers/database");
 const formatNumber = require("../helpers/formatNumber");
 const ping = require("../helpers/pingCalc");
 
+let usersAutopinging = [];
+
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("autoping")
@@ -17,6 +19,13 @@ module.exports = {
             await interaction.update(await getAutopingEmbed(interaction));
         },
         run: async (interaction) => {
+            if (usersAutopinging.includes(interaction.user.id)) {
+                return interaction.reply({
+                    content: "you are already autopinging!",
+                    flags: MessageFlags.Ephemeral,
+                });
+            }
+
             const player = await database.Player.findByPk(interaction.user.id);
             if (player.apt < 1) {
                 return interaction.reply({
@@ -42,6 +51,13 @@ module.exports = {
     },
     modals: {
         run: async (interaction) => {
+            if (usersAutopinging.includes(interaction.user.id)) {
+                return interaction.reply({
+                    content: "you are already autopinging!",
+                    flags: MessageFlags.Ephemeral,
+                });
+            }
+            
             const player = await database.Player.findByPk(interaction.user.id);
 
             let pings;
@@ -79,6 +95,8 @@ module.exports = {
                 embeds: [embed],
                 components: [],
             })
+
+            usersAutopinging.push(interaction.user.id);
 
             let updateEmbedEvery = Math.ceil(pings / (5 + (Math.random() * Math.log2(pings))));
             if (updateEmbedEvery <= 1) updateEmbedEvery = pings;
@@ -123,7 +141,7 @@ module.exports = {
                     currentChain = 0;
                 }
                 pingDataTotal.bluesMissed += currentEffects.spawnedSuper && !currentEffects.specials.budge ? 1 : 0;
-                pingDataTotal.rares += currentEffects.specials.rare ? 1 : 0;
+                pingDataTotal.rares += currentEffects.rare ? 1 : 0;
 
                 if (i === pings - 1) {
                     finalEffects = currentEffects;
@@ -152,8 +170,8 @@ module.exports = {
             let finalDescription =
 `**${formatNumber(pings)}** pings completed, which...
 
-__gained **\`${formatNumber(pingDataTotal.score)} pts\`**__
-got **\`${formatNumber(pingDataTotal.highestScore)} pts\`** in a single ping`
+__gained **\`${formatNumber(pingDataTotal.score, true, 4)} pts\`**__
+got **\`${formatNumber(pingDataTotal.highestScore, true, 3)} pts\`** in a single ping`
 
             if (pingDataTotal.bp > 0) { 
                 if (player.bp >= finalEffects.bpMax) {
@@ -166,12 +184,14 @@ got **\`${formatNumber(pingDataTotal.highestScore)} pts\`** in a single ping`
             
             if (pingDataTotal.blues > 0 || pingDataTotal.bluesMissed > 0) {
                 finalDescription += `
-clicked **${pingDataTotal.blues}** blue pings
+clicked **${pingDataTotal.blues}** blue ping${pingDataTotal.blues === 1 ? '' : 's'}
 found a **${pingDataTotal.highestBlueCombo}** blue ping chain
-missed **${pingDataTotal.bluesMissed}** blue pings`
+missed **${pingDataTotal.bluesMissed}** blue ping${pingDataTotal.bluesMissed === 1 ? '' : 's'}`
             }
 
-            if (pingDataTotal.rares > 0) finalDescription += `\nfound **${pingDataTotal.rares}** rare pings`
+            if (pingDataTotal.rares > 0) finalDescription += `\nfound **${pingDataTotal.rares}** rare ping${pingDataTotal.rares === 1 ? '' : 's'}`;
+
+            console.log(pingDataTotal);
 
             const finalEmbed = new EmbedBuilder()
                 .setTitle("autoping finished!")
@@ -199,6 +219,8 @@ missed **${pingDataTotal.bluesMissed}** blue pings`
                         .setStyle(ButtonStyle.Secondary)
                 );
             }
+
+            usersAutopinging = usersAutopinging.filter(id => id !== interaction.user.id);
 
             await interaction.editReply({
                 embeds: [finalEmbed],
